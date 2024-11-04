@@ -168,16 +168,16 @@ internal void panic_expr(char* msg) {
         type items[capacity];  \
     }
 
-#define DARRAY_PUSH(arr) (                                                    \
-    (arr).count < ARRAY_LEN((arr).items)                                      \
-        ? &((arr).items[(arr).count++])                                       \
-        : (panic_expr("Attempted to push onto a full arr!"), &(arr).items[0]) \
+#define DARRAY_PUSH(arr) (                                                       \
+    (arr).count < ARRAY_LEN((arr).items)                                         \
+        ? &((arr).items[(arr).count++])                                          \
+        : (panic_expr("Attempted to push onto a full darray!"), &(arr).items[0]) \
 )
 
-#define DARRAY_POP(arr) (                                                 \
-    (arr).count >= 1                                                      \
-        ? &((arr).items[--(arr).count])                                   \
-        : (panic_expr("Attempted to pop an empty arr!"), &(arr).items[0]) \
+#define DARRAY_POP(arr) (                                                    \
+    (arr).count >= 1                                                         \
+        ? &((arr).items[--(arr).count])                                      \
+        : (panic_expr("Attempted to pop an empty darray!"), &(arr).items[0]) \
 )
 
 #define DARRAY_SORT(arr, comparator)                      \
