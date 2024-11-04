@@ -25,50 +25,17 @@ internal HashArray* hasharray_alloc(Arena* arena, size_t key_size, size_t value_
     return map;
 }
 
-internal u32 hasharray_murmur3_32_hash(void* data, size_t len) {
-    u8* bytes = (u8*)data;
-    i32 nblocks = len / 4;
-    u32 h1 = 0x87c263d1;  // seed
-    u32* blocks = (u32*)(bytes + nblocks * 4);
-
-    for (i32 i = -nblocks; i; i++) {
-        u32 k1 = blocks[i];
-        k1 *= 0xcc9e2d51;
-        k1 = (k1 << 15) | (k1 >> 17);
-        k1 *= 0x1b873593;
-        h1 ^= k1;
-        h1 = (h1 << 13) | (h1 >> 19);
-        h1 = h1 * 5 + 0xe6546b64;
+internal u32 hasharray_djb2_hash(void* data, size_t len) {
+    u32 hash = 5381;
+    u8* str = data;
+    while (len-- > 0) {
+        hash = ((hash << 5) + hash) + *str++;
     }
-
-    u8* tail = bytes + nblocks * 4;
-    u32 k1 = 0;
-
-    switch (len & 3) {
-        case 3:
-            k1 ^= tail[2] << 16;
-        case 2:
-            k1 ^= tail[1] << 8;
-        case 1:
-            k1 ^= tail[0];
-            k1 *= 0xcc9e2d51;
-            k1 = (k1 << 15) | (k1 >> 17);
-            k1 *= 0x1b873593;
-            h1 ^= k1;
-    };
-
-    h1 ^= len;
-    h1 ^= h1 >> 16;
-    h1 *= 0x85ebca6b;
-    h1 ^= h1 >> 13;
-    h1 *= 0xc2b2ae35;
-    h1 ^= h1 >> 16;
-
-    return h1;
+    return hash;
 }
 
 internal u32 hasharray_get_idx(HashArray* map, void* key) {
-    u32 hash = hasharray_murmur3_32_hash(key, map->key_size);
+    u32 hash = hasharray_djb2_hash(key, map->key_size);
     if (hash < 2) hash += 2;
     u32 start_idx = hash & (map->capacity - 1);
     u32 i;
@@ -108,7 +75,7 @@ internal void* hasharray_insert(HashArray* map, void* key) {
     if (map->count >= map->max_elems) {
         PANIC("Fixed-size hasharray is full and cannot be resized");
     }
-    u32 hash = hasharray_murmur3_32_hash(key, map->key_size);
+    u32 hash = hasharray_djb2_hash(key, map->key_size);
     if (hash < 2) hash += 2;
     return hasharray_insert_with_hash(map, hash, key);
 }
