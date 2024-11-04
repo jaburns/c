@@ -2,13 +2,11 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 
-internal void channel_alloc_into(Channel* chan, Arena* arena, size_t item_size, size_t capacity) {
-    ZERO_STRUCT(chan);
-
+internal Channel channel_alloc(Arena* arena, size_t item_size, size_t capacity) {
     size_t buffer_size = capacity * item_size;
     u8* buffers = arena_alloc(arena, 2 * buffer_size);
 
-    *chan = (Channel){
+    return (Channel){
         .capacity = capacity,
         .item_size = item_size,
         .buffer = {buffers, buffers + buffer_size},
@@ -116,8 +114,7 @@ internal void test_channel(void) {
 
         arena_clear(&arena);
 
-        Channel chan;
-        channel_alloc_into(&chan, &arena, sizeof(u64), THREAD_COUNT * NUM_ITEMS);
+        Channel chan = channel_alloc(&arena, sizeof(u64), THREAD_COUNT * NUM_ITEMS);
 
         pthread_t threads[THREAD_COUNT];
         pthread_t drain_thread;

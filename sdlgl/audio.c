@@ -80,9 +80,11 @@ internal void audio_clip_play(AudioPlayer* player, AudioClip* clip) {
     channel_push(&player->msg_chan, &msg);
 }
 
-internal void audio_player_alloc_into(AudioPlayer* player, Arena* arena) {
-    ZERO_STRUCT(player);
-    channel_alloc_into(&player->msg_chan, arena, sizeof(AudioPlayerMsg), 256);
+internal AudioPlayer audio_player_alloc(Arena* arena) {
+    Channel msg_chan = channel_alloc(arena, sizeof(AudioPlayerMsg), 256);
+    return (AudioPlayer){
+        .msg_chan = msg_chan,
+    };
 }
 
 #define AUDIO_MASTER_VOLUME 0  // .25

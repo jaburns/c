@@ -34,5 +34,5 @@ typedef void (*AudioCallbackFn)(AudioPlayer* player, u8* out_stream, i32 out_str
 internal void audio_clip_load(Arena* arena, AudioClip* clip, char* path);
 internal void audio_clip_play(AudioPlayer* player, AudioClip* clip);
 
-internal void audio_player_alloc_into(AudioPlayer* player, Arena* arena);
+internal AudioPlayer audio_player_alloc(Arena* arena);
 internal void audio_player_stream_callback(AudioPlayer* player, u8* out_stream, i32 out_stream_byte_len);

@@ -22,8 +22,10 @@ typedef struct {
     bool done;
 } ChannelIter;
 
-internal void channel_alloc_into(Channel* chan, Arena* arena, size_t item_size, size_t capacity);
+internal Channel channel_alloc(Arena* arena, size_t item_size, size_t capacity);
 internal void channel_push(Channel* chan, void* item);
+
+// for (ChannelIter it = channel_drain_iter(&chan); !it.done; channel_drain_iter_next(&it)) { ... }
 internal ChannelIter channel_drain_iter(Channel* chan);
 internal void channel_drain_iter_next(ChannelIter* it);
 
