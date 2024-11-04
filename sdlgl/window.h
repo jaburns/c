@@ -31,6 +31,6 @@ typedef struct {
     bool mouse_button;
 } SdlGlWindow;
 
-internal void sdlgl_create(SdlGlWindow* mw, char* window_title, SDL_AudioCallback sdl_audio_callback);
-internal i32 sdlgl_poll(SdlGlWindow* mw);
-internal void sdlgl_swap(SdlGlWindow* mw);
+internal void sdlgl_create(SdlGlWindow* win, char* window_title, SDL_AudioCallback sdl_audio_callback);
+internal i32 sdlgl_poll(SdlGlWindow* win);
+internal void sdlgl_swap(SdlGlWindow* win);
