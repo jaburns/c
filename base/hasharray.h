@@ -29,5 +29,6 @@ internal void* hasharray_get(HashArray* map, void* key);
 internal bool hasharray_remove(HashArray* map, void* key);
 internal void hasharray_clear(HashArray* map);
 
+// for (HashArrayIter it = hasharray_iter(&map); !it.done; hasharray_iter_next(&it)) { ... }
 internal HashArrayIter hasharray_iter(HashArray* map);
 internal void hasharray_iter_next(HashArrayIter* it);
