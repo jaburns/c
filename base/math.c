@@ -127,9 +127,8 @@ internal vec2 vec2_clamp(vec2 v, vec2 min, vec2 max) {
 }
 
 internal vec2 vec2_normalize(vec2 a) {
-    f32 len = vec2_length(a);
-    if (len < FLT_EPSILON) return VEC2_ZERO;
-    return vec2_scale(1.f / len, a);
+    f32 inv_len = 1.f / sqrtf(a.x * a.x + a.y * a.y);
+    return (vec2){a.x * inv_len, a.y * inv_len};
 }
 
 internal vec2 vec2_rotate(vec2 v, f32 radians) {
@@ -143,7 +142,7 @@ internal vec2 vec2_rotate(vec2 v, f32 radians) {
 
 internal vec2 vec2_reflect_and_scale(vec2 v, vec2 normal, f32 norm_scale, f32 tan_scale) {
     f32 n = vec2_dot(v, normal);
-    if (n > 0.f) return v;
+    if (n >= 0.f) return v;
     vec2 tangent = vec2_perp(normal);
     f32 t = vec2_dot(v, tangent);
 
@@ -233,8 +232,9 @@ internal vec3 vec3_scale(vec3 v, f32 scale) {
     return (vec3){scale * v.x, scale * v.y, scale * v.z};
 }
 
-internal vec3 vec3_normalize(vec3 v) {
-    return vec3_scale(v, 1.0f / sqrtf(vec3_dot(v, v)));
+internal vec3 vec3_normalize(vec3 a) {
+    f32 inv_len = 1.f / sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
+    return (vec3){a.x * inv_len, a.y * inv_len, a.z * inv_len};
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -474,7 +474,7 @@ internal LineSegIntersectResult geo_line_hit_oriented_line(vec2 a0, vec2 a1, vec
     f32 rxs = vec2_cross(r, s);
 
     // Only include hits of line A against the left side of line B
-    if (rxs < FLT_EPSILON) return result;
+    if (rxs <= 0.f) return result;
 
     f32 t = vec2_cross(ba, s) / rxs;
     if (t < 0.f || t > 1.f) return result;

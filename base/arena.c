@@ -63,18 +63,13 @@ internal void* arena_array_push(ArenaArray* array) {
     u8* ret = array->arena->cur;
     array->arena->allocator->memory_commit_size(&array->arena->reservation, (array->arena->cur - array->arena->reservation.base) + array->elem_size);
     array->arena->cur += array->elem_size;
-    memset(ret, 0, array->elem_size);
     ++array->count;
-    return ret;
+    return memset(ret, 0, array->elem_size);
 }
 
 internal void* arena_alloc(Arena* self, size_t size) {
-    arena_align(self);
-    u8* ret = self->cur;
-    self->allocator->memory_commit_size(&self->reservation, (self->cur - self->reservation.base) + size);
-    self->cur += size;
-    memset(ret, 0, size);
-    return ret;
+    void* ret = arena_alloc_not_zeroed(self, size);
+    return memset(ret, 0, size);
 }
 
 internal void* arena_alloc_not_zeroed(Arena* self, size_t size) {

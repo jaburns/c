@@ -66,9 +66,8 @@ found:
     memcpy((u8*)map->keys + map->key_size * i, key, map->key_size);
 
     void* value = (u8*)map->values + map->value_size * i;
-    memset(value, 0, map->value_size);
 
-    return value;
+    return memset(value, 0, map->value_size);
 }
 
 internal void* hasharray_insert(HashArray* map, void* key) {

@@ -55,10 +55,7 @@ typedef double f64;
 
 #define alignof(x) _Alignof(x)
 
-#define ZERO_STRUCT(struct_ptr) (                   \
-    memset((struct_ptr), 0, sizeof(*(struct_ptr))), \
-    (struct_ptr)                                    \
-)
+#define ZERO_STRUCT(struct_ptr) memset((struct_ptr), 0, sizeof(*(struct_ptr)))
 
 #define PANIC(...)                    \
     do {                              \
@@ -160,7 +157,7 @@ internal void panic_expr(char* msg) {
                 right = mid - 1;                                                    \
             }                                                                       \
         }                                                                           \
-    } while (0);
+    } while (0)
 
 #define DARRAY(type, capacity) \
     struct {                   \
