@@ -2,7 +2,7 @@
 
 #define HASHARRAY_LOAD_FACTOR_PERCENT 70
 
-typedef struct {
+structdef(HashArray) {
     size_t capacity;
     size_t max_elems;
     size_t key_size;
@@ -13,15 +13,15 @@ typedef struct {
     void* keys;
     void* values;
     void* value_stub;
-} HashArray;
+};
 
-typedef struct {
+structdef(HashArrayIter) {
     size_t idx_;
     HashArray* target;
     void* key;
     void* value;
     bool done;
-} HashArrayIter;
+};
 
 internal HashArray* hasharray_alloc(Arena* arena, size_t key_size, size_t value_size, size_t capacity);
 internal void* hasharray_insert(HashArray* map, void* key);

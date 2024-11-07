@@ -48,6 +48,8 @@ typedef double f64;
 #define int
 #define float
 #define double
+#define signed
+#define unsigned
 
 #define KB(n) (((u64)(n)) << 10)
 #define MB(n) (((u64)(n)) << 20)
@@ -77,11 +79,11 @@ internal void panic_expr(char* msg) {
         fprintf(stderr, "\n");        \
     } while (0)
 
-#define DBG(x) (                                                                                                                                                    \
-    printf(">> %s:%i : %s = ", __FILE__, __LINE__, #x),                                                                                                             \
-    printf((_Generic((x), u16: "%u", i16: "%i", u32: "%u", i32: "%i", u64: "%lu", i64: "%li", size_t: "%lu", f32: "%f", f64: "%f", char*: "%s", bool: "%i")), (x)), \
-    printf("\n"),                                                                                                                                                   \
-    (x)                                                                                                                                                             \
+#define DBG(x) (                                                                                                                                                  \
+    printf(">> %s:%i : %s = ", __FILE__, __LINE__, #x),                                                                                                           \
+    printf((_Generic((x), u16: "%u", i16: "%i", u32: "%u", i32: "%i", u64: "%lu", i64: "%li", size_t: "%lu", f32: "%f", f64: "%f", u8*: "%s", bool: "%i")), (x)), \
+    printf("\n"),                                                                                                                                                 \
+    (x)                                                                                                                                                           \
 )
 
 #define DBG_TYPED(fmtstring, x, ...) (                  \
@@ -126,6 +128,58 @@ internal void panic_expr(char* msg) {
     enum name
 #endif
 
+#define DEF_ARRAY_TYPES(type)     \
+    typedef struct Slice_##type { \
+        type* items;              \
+        size_t count;             \
+    } Slice_##type;               \
+                                  \
+    typedef struct Array_##type { \
+        union {                   \
+            struct {              \
+                type* items;      \
+                size_t count;     \
+            };                    \
+            Slice_##type slice;   \
+        };                        \
+        size_t capacity;          \
+    } Array_##type;
+
+#define structdef(name)       \
+    typedef struct name name; \
+    DEF_ARRAY_TYPES(name);    \
+    struct name
+
+DEF_ARRAY_TYPES(char);
+DEF_ARRAY_TYPES(u8);
+DEF_ARRAY_TYPES(i8);
+DEF_ARRAY_TYPES(u16);
+DEF_ARRAY_TYPES(i16);
+DEF_ARRAY_TYPES(u32);
+DEF_ARRAY_TYPES(i32);
+DEF_ARRAY_TYPES(u64);
+DEF_ARRAY_TYPES(i64);
+DEF_ARRAY_TYPES(f32);
+DEF_ARRAY_TYPES(f64);
+DEF_ARRAY_TYPES(bool);
+DEF_ARRAY_TYPES(size_t);
+
+#define ARRAY_ALLOC(type, arena, capacity) (Array_##type){             \
+    {{arena_alloc((arena), (capacity) * sizeof(type)), 0}}, (capacity) \
+};
+
+#define ARRAY_PUSH(arr) (                                                       \
+    (arr).count < (arr).capacity                                                \
+        ? &((arr).items[(arr).count++])                                         \
+        : (panic_expr("Attempted to push onto a full array!"), &(arr).items[0]) \
+)
+
+#define ARRAY_POP(arr) (                                                    \
+    (arr).count >= 1                                                        \
+        ? &((arr).items[--(arr).count])                                     \
+        : (panic_expr("Attempted to pop an empty array!"), &(arr).items[0]) \
+)
+
 #if DEBUG
 #define DEBUG_ASSERT(x) ASSERT(x)
 #define DEBUG_FN
@@ -159,6 +213,7 @@ internal void panic_expr(char* msg) {
         }                                                                           \
     } while (0)
 
+// TODO(jaburns) rename to static_array
 #define DARRAY(type, capacity) \
     struct {                   \
         size_t count;          \

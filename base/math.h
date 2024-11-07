@@ -1,32 +1,15 @@
 #pragma once
 
-typedef struct {
-    f32 x, y;
-} vec2;
-typedef struct {
-    f32 x, y, z;
-} vec3;
-typedef struct {
-    f32 x, y, z, w;
-} vec4;
+structdef(vec2) { f32 x, y; };
+structdef(vec3) { f32 x, y, z; };
+structdef(vec4) { f32 x, y, z, w; };
 
-typedef struct {
-    i32 x, y;
-} ivec2;
-typedef struct {
-    i32 x, y, z;
-} ivec3;
-typedef struct {
-    i32 x, y, z, w;
-} ivec4;
+structdef(ivec2) { i32 x, y; };
+structdef(ivec3) { i32 x, y, z; };
+structdef(ivec4) { i32 x, y, z, w; };
 
-typedef struct {
-    vec2 a, b;
-} mat2;
-
-typedef struct {
-    vec4 a, b, c, d;
-} mat4;
+structdef(mat2) { vec2 a, b; };
+structdef(mat4) { vec4 a, b, c, d; };
 
 #define sincosf(x, sinp, cosp) __sincosf(x, sinp, cosp)
 

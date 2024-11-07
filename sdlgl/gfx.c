@@ -14,7 +14,7 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
     Str log = str_from_cstr(info_log);
     for (StrSplitIter lines = str_split_iter('\n', log); !lines.done; str_split_iter_next(&lines)) {
         Str trim_line = str_trim(lines.item);
-        if (trim_line.len == 0)
+        if (trim_line.count == 0)
             continue;
 
         i32 i = 0;

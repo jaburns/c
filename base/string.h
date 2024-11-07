@@ -1,34 +1,31 @@
 #pragma once
 
-typedef struct {
+structdef(Str32) {
     char value[31];
     char zero;
-} Str32;
+};
 
-typedef struct {
-    char* start;
-    size_t len;
-} Str;
+typedef Slice_char Str;
 
-typedef struct {
+structdef(StrSplitIter) {
     bool done;
     char split;
     Str target;
     Str item;
     char* target_end_;
     char* item_end_;
-} StrSplitIter;
+};
 
-typedef struct {
+structdef(StrSplitWhitespaceIter) {
     bool done;
     Str target;
     Str item;
     char* target_end_;
     char* item_end_;
-} StrSplitWhitespaceIter;
+};
 
 // usage: printf(" %.*s ", STR_PRINTF_ARGS(some_str));
-#define STR_PRINTF_ARGS(str) (i32)(str).len, (str).start
+#define STR_PRINTF_ARGS(str) (i32)(str).count, (str).items
 
 internal Str32 str32_from_cstr(char* str);
 internal bool str32_eq(Str32* a, Str32* b);

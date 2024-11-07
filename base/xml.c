@@ -1,10 +1,11 @@
 #include "inc.h"
 
 internal void xml_parse(
+    Arena* arena,
     char* file_contents,
     size_t file_length,
     void* user_ctx,
-    void (*on_element_open)(void* ctx, Str path, XmlParseAttributeList* attributes),
+    void (*on_element_open)(void* ctx, Str path, Slice_XmlParseAttribute attributes),
     void (*on_element_close)(void* ctx, Str path, Str content)
 ) {
     char* read = file_contents;
@@ -13,7 +14,8 @@ internal void xml_parse(
     char path[256] = {0};
     char* path_write = path;
 
-    XmlParseAttributeList attribute_list = {0};
+    Array_XmlParseAttribute attributes = ARRAY_ALLOC(XmlParseAttribute, arena, 256);
+
     char* content_start = NULL;
 
     while (read < file_end) {
@@ -26,37 +28,37 @@ internal void xml_parse(
             continue;
         }
 
-        Str whole_tag = str_before_first_index('>', (Str){.start = read, .len = file_end - read});
+        Str whole_tag = str_before_first_index('>', (Str){.items = read, .count = file_end - read});
         Str tag = str_trim(whole_tag);
-        ASSERT(tag.len > 0);
+        ASSERT(tag.count > 0);
         bool pop_path = false;
 
-        if (tag.start[0] == '/') {
-            ++tag.start;
-            --tag.len;
+        if (tag.items[0] == '/') {
+            ++tag.items;
+            --tag.count;
             pop_path = true;
 
             Str content = content_start
-                              ? (Str){.start = content_start, .len = read - 1 - content_start}
+                              ? (Str){.items = content_start, .count = read - 1 - content_start}
                               : (Str){0};
 
-            Str str_path = (Str){.start = path, .len = path_write - path};
+            Str str_path = (Str){.items = path, .count = path_write - path};
             on_element_close(user_ctx, str_path, content);
 
-        } else if (tag.start[0] != '?') {
-            pop_path = tag.start[tag.len - 1] == '/';
-            if (pop_path) tag.len--;
+        } else if (tag.items[0] != '?') {
+            pop_path = tag.items[tag.count - 1] == '/';
+            if (pop_path) tag.count--;
 
             if (path_write != path && path_write < path + 256) {
                 *path_write++ = '/';
             }
 
-            attribute_list.count = 0;
+            attributes.count = 0;
 
-            char* cur = tag.start;
-            char* end = tag.start + tag.len;
+            char* cur = tag.items;
+            char* end = tag.items + tag.count;
             while (cur < end && !isspace(*cur)) ++cur;
-            Str tag_name = {.start = tag.start, .len = cur - tag.start};
+            Str tag_name = {.items = tag.items, .count = cur - tag.items};
 
             PRINTF_BUF(path_write, path, 256, "%.*s", STR_PRINTF_ARGS(tag_name));
 
@@ -66,7 +68,7 @@ internal void xml_parse(
 
                 char* key_start = cur;
                 while (cur < end && !isspace(*cur) && *cur != '=') ++cur;
-                Str key = {.start = key_start, .len = cur - key_start};
+                Str key = {.items = key_start, .count = cur - key_start};
 
                 while (cur < end && isspace(*cur)) ++cur;
                 ASSERT(cur < end && *cur == '=');
@@ -83,20 +85,20 @@ internal void xml_parse(
                 while (cur < end && *cur != quote) ++cur;
                 ASSERT(cur < end);
 
-                *DARRAY_PUSH(attribute_list) = (XmlParseAttribute){
+                *ARRAY_PUSH(attributes) = (XmlParseAttribute){
                     .key = key,
-                    .value = (Str){.start = val_start, .len = cur - val_start},
+                    .value = (Str){.items = val_start, .count = cur - val_start},
                 };
 
                 ++cur;
             }
 
-            Str str_path = (Str){.start = path, .len = path_write - path};
-            on_element_open(user_ctx, str_path, &attribute_list);
+            Str str_path = (Str){.items = path, .count = path_write - path};
+            on_element_open(user_ctx, str_path, attributes.slice);
             if (pop_path) on_element_close(user_ctx, str_path, (Str){0});
         }
 
-        read = whole_tag.start + whole_tag.len + 1;
+        read = whole_tag.items + whole_tag.count + 1;
         content_start = NULL;
 
         if (pop_path) {

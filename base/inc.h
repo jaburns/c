@@ -16,7 +16,7 @@
 
 #include "../vendor/simde/arm/neon.h"
 
-#include "base.h"
+#include "defs.h"
 #include "memory.h"
 #include "arena.h"
 #include "string.h"

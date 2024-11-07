@@ -1,34 +1,32 @@
 #pragma once
 
 typedef void (*ArenaDropFn)(void*);
+typedef void* ArenaMark;
 
-typedef struct ArenaResourceNode ArenaResourceNode;
-struct ArenaResourceNode {
+structdef(ArenaResourceNode) {
     ArenaResourceNode* next;
     void* target;
     ArenaDropFn drop;
 };
 
-typedef struct {
+structdef(Arena) {
     MemoryAllocator* allocator;
     MemoryReservation reservation;
     u8* cur;
     ArenaResourceNode* resources_stack;
-} Arena;
+};
 
-typedef void* ArenaMark;
-
-typedef struct {
+structdef(ArenaTemp) {
     Arena* arena;
     ArenaMark mark;
-} ArenaTemp;
+};
 
-typedef struct {
+structdef(ArenaArray) {
     Arena* arena;
     size_t elem_size;
     size_t count;
     void* items;
-} ArenaArray;
+};
 
 internal Arena arena_create(MemoryAllocator* allocator);
 internal Arena* arena_fork(Arena* self);

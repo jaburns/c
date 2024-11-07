@@ -7,7 +7,7 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
 
     size_t read_len;
     char* cfile = read_file(scratch.arena, file_path, &read_len);
-    Str file = (Str){.start = cfile, .len = read_len};
+    Str file = (Str){.items = cfile, .count = read_len};
     char path_buf[256];
     i32 line = 1;
 
