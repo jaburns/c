@@ -260,11 +260,11 @@ internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* 
 
 #if DEBUG
 
-typedef struct {
+structdef(DebugLine) {
     vec4 color;
     vec2 a;
     vec2 b;
-} DebugLine;
+};
 
 global GfxShader* g_debug_shader;
 global GfxMesh* g_debug_mesh;

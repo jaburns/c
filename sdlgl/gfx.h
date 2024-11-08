@@ -2,32 +2,32 @@
 
 typedef u32 UniformNameId;
 
-typedef struct {
+structdef(UniformNamedLocation) {
     UniformNameId name_id;
     u32 location;
-} UniformNamedLocation;
+};
 
-typedef struct {
+structdef(GfxShader) {
     u32 glid;
     SARRAY(UniformNamedLocation, 64) uniforms;
-} GfxShader;
+};
 
-typedef struct {
+structdef(GfxTexture) {
     u32 glid;
     u32 width;
     u32 height;
-} GfxTexture;
+};
 
-typedef struct {
+structdef(GfxMesh) {
     u32 vao;
     u32 elem_count;
-} GfxMesh;
+};
 
-typedef struct {
+structdef(LineRendererBuffers) {
     size_t vert_count;
     vec2* pos;
     vec2* uv;
-} LineRendererBuffers;
+};
 
 internal void gfx_shader_create_or_update(
     GfxShader* out_shader, char* shader_source, char** opt_shader_linenos,
