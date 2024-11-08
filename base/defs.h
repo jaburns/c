@@ -84,11 +84,11 @@ internal void panic_expr(char* msg) {
         fprintf(stderr, "\n");        \
     } while (0)
 
-#define DBG(x) (                                                                                                                                                  \
-    printf(">> %s:%i : %s = ", __FILE__, __LINE__, #x),                                                                                                           \
-    printf((_Generic((x), u16: "%u", i16: "%i", u32: "%u", i32: "%i", u64: "%lu", i64: "%li", size_t: "%lu", f32: "%f", f64: "%f", u8*: "%s", bool: "%i")), (x)), \
-    printf("\n"),                                                                                                                                                 \
-    (x)                                                                                                                                                           \
+#define DBG(x) (                                                                                                                                                    \
+    printf(">> %s:%i : %s = ", __FILE__, __LINE__, #x),                                                                                                             \
+    printf((_Generic((x), u16: "%u", i16: "%i", u32: "%u", i32: "%i", u64: "%lu", i64: "%li", size_t: "%lu", f32: "%f", f64: "%f", char*: "%s", bool: "%i")), (x)), \
+    printf("\n"),                                                                                                                                                   \
+    (x)                                                                                                                                                             \
 )
 
 #define DBG_TYPED(fmtstring, x, ...) (                  \
