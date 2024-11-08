@@ -390,6 +390,35 @@ internal f32 f32_fract(f32 a) {
     return a - floorf(a);
 }
 
+internal f32 ease_out_back(f32 x) {
+    f32 c1 = 1.70158f;
+    f32 c3 = c1 + 1.f;
+    f32 z = x - 1.f;
+    return 1.f + c3 * z * z * z + c1 * z * z;
+}
+
+internal f32 ease_out_quad(f32 x) {
+    f32 u = 1.f - x;
+    return 1.f - u * u;
+}
+
+internal f32 ease_in_quad(f32 x) {
+    return x * x;
+}
+internal f32 ease_out_cubic(f32 x) {
+    f32 u = 1.f - x;
+    return 1.f - u * u * u;
+}
+
+internal f32 ease_in_cubic(f32 x) {
+    return x * x * x;
+}
+
+internal f32 ease_in_out_quad(f32 x) {
+    f32 a = -2.f * x + 2.f;
+    return x < .5f ? 2.f * x * x : 1.f - a * a * .5f;
+}
+
 internal f32 radians_sub(f32 lhs, f32 rhs) {
     f32 diff = fmodf(lhs - rhs, 2.f * M_PI);
 

@@ -115,6 +115,14 @@ internal void mat4_make_rotation(mat4* m, f32 angle, vec3 normalized_axis);
 
 internal f32 f32_lerp(f32 a, f32 b, f32 t);
 internal f32 f32_fract(f32 a);
+
+internal f32 ease_out_back(f32 x);
+internal f32 ease_out_quad(f32 x);
+internal f32 ease_in_quad(f32 x);
+internal f32 ease_out_cubic(f32 x);
+internal f32 ease_in_cubic(f32 x);
+internal f32 ease_in_out_quad(f32 x);
+
 internal f32 radians_sub(f32 lhs, f32 rhs);
 internal f32 radians_lerp(f32 a, f32 b, f32 t);
 internal f32 radians_mod_zero_to_2pi(f32 rads);
