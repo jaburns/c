@@ -6,5 +6,5 @@ UseTab: Never
 DerivePointerAlignment: false
 SortIncludes: false
 PointerAlignment: Left
-AttributeMacros: [DARRAY]
+AttributeMacros: [SARRAY]
 AlignAfterOpenBracket: BlockIndent

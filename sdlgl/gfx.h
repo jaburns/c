@@ -9,7 +9,7 @@ typedef struct {
 
 typedef struct {
     u32 glid;
-    DARRAY(UniformNamedLocation, 64) uniforms;
+    SARRAY(UniformNamedLocation, 64) uniforms;
 } GfxShader;
 
 typedef struct {

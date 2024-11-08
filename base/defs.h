@@ -18,12 +18,23 @@
 #define TRAP()
 #endif
 
+#if DEBUG
+#define DEBUG_ASSERT(x) ASSERT(x)
+#define DEBUG_FN
+#else
+#define DEBUG_ASSERT(x)
+#define DEBUG_FN \
+    {            \
+    }
+#endif
+
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define CLAMP(x, min, max) (MAX((min), MIN((max), (x))))
 #define CLAMP01(x) CLAMP(x, 0, 1)
 #define ABS(a) ((a) >= 0 ? (a) : -(a))
 #define SIGN(a) ((a) >= 0 ? 1 : -1)
+#define LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #define NEXT_POWER_OF_2(x) ((x) <= 1 ? 1 : 1U << (32 - __builtin_clz((x) - 1)))
 
@@ -44,12 +55,6 @@ typedef uint64_t u64;
 typedef int64_t i64;
 typedef float f32;
 typedef double f64;
-
-#define int
-#define float
-#define double
-#define signed
-#define unsigned
 
 #define KB(n) (((u64)(n)) << 10)
 #define MB(n) (((u64)(n)) << 20)
@@ -150,6 +155,11 @@ internal void panic_expr(char* msg) {
     DEF_ARRAY_TYPES(name);    \
     struct name
 
+#define uniondef(name)       \
+    typedef union name name; \
+    DEF_ARRAY_TYPES(name);   \
+    union name
+
 DEF_ARRAY_TYPES(char);
 DEF_ARRAY_TYPES(u8);
 DEF_ARRAY_TYPES(i8);
@@ -164,8 +174,8 @@ DEF_ARRAY_TYPES(f64);
 DEF_ARRAY_TYPES(bool);
 DEF_ARRAY_TYPES(size_t);
 
-#define ARRAY_ALLOC(type, arena, capacity) (Array_##type){             \
-    {{arena_alloc((arena), (capacity) * sizeof(type)), 0}}, (capacity) \
+#define ARRAY_ALLOC(type, arena_ptr, capacity) (Array_##type){             \
+    {{arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
 };
 
 #define ARRAY_PUSH(arr) (                                                       \
@@ -180,59 +190,42 @@ DEF_ARRAY_TYPES(size_t);
         : (panic_expr("Attempted to pop an empty array!"), &(arr).items[0]) \
 )
 
-#if DEBUG
-#define DEBUG_ASSERT(x) ASSERT(x)
-#define DEBUG_FN
-#else
-#define DEBUG_ASSERT(x)
-#define DEBUG_FN \
-    {            \
-    }
-#endif
-
-#define ARRAY_LEN(arr) (sizeof(arr) / sizeof((arr)[0]))
-
-#define ARRAY_BINARY_SEARCH(i32_result_idx, array, array_len, Type, field, seeking) \
-    do {                                                                            \
-        (i32_result_idx) = -1;                                                      \
-        i32 left = 0;                                                               \
-        i32 right = (array_len) - 1;                                                \
-                                                                                    \
-        while (left <= right) {                                                     \
-            i32 mid = left + ((right - left) >> 1);                                 \
-            Type found = (array)[mid] field;                                        \
-                                                                                    \
-            if (found == (seeking)) {                                               \
-                (i32_result_idx) = mid;                                             \
-                break;                                                              \
-            } else if (found < (seeking)) {                                         \
-                left = mid + 1;                                                     \
-            } else {                                                                \
-                right = mid - 1;                                                    \
-            }                                                                       \
-        }                                                                           \
-    } while (0)
-
-// TODO(jaburns) rename to static_array
-#define DARRAY(type, capacity) \
+#define SARRAY(type, capacity) \
     struct {                   \
         size_t count;          \
         type items[capacity];  \
     }
 
-#define DARRAY_PUSH(arr) (                                                       \
-    (arr).count < ARRAY_LEN((arr).items)                                         \
+#define SARRAY_PUSH(arr) (                                                       \
+    (arr).count < LENGTH((arr).items)                                            \
         ? &((arr).items[(arr).count++])                                          \
         : (panic_expr("Attempted to push onto a full darray!"), &(arr).items[0]) \
 )
 
-#define DARRAY_POP(arr) (                                                    \
-    (arr).count >= 1                                                         \
-        ? &((arr).items[--(arr).count])                                      \
-        : (panic_expr("Attempted to pop an empty darray!"), &(arr).items[0]) \
-)
+#define SARRAY_POP ARRAY_POP
 
-#define DARRAY_SORT(arr, comparator)                      \
+#define ARRAY_BINARY_SEARCH(i32_result_idx, arr, field_type, field, seeking) \
+    do {                                                                     \
+        (i32_result_idx) = -1;                                               \
+        i32 left = 0;                                                        \
+        i32 right = (arr).count - 1;                                         \
+                                                                             \
+        while (left <= right) {                                              \
+            i32 mid = left + ((right - left) >> 1);                          \
+            field_type found = (arr).items[mid] field;                       \
+                                                                             \
+            if (found == (seeking)) {                                        \
+                (i32_result_idx) = mid;                                      \
+                break;                                                       \
+            } else if (found < (seeking)) {                                  \
+                left = mid + 1;                                              \
+            } else {                                                         \
+                right = mid - 1;                                             \
+            }                                                                \
+        }                                                                    \
+    } while (0)
+
+#define ARRAY_SORT(arr, comparator)                       \
     qsort(                                                \
         (arr).items,                                      \
         (arr).count,                                      \

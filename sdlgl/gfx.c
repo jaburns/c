@@ -108,7 +108,7 @@ internal void gfx_shader_create_or_update(
 
     for (i32 i = 0; i < uniform_total_names; ++i) {
         if (shader_has_uniform_name[i]) {
-            *DARRAY_PUSH(out_shader->uniforms) = (UniformNamedLocation){
+            *SARRAY_PUSH(out_shader->uniforms) = (UniformNamedLocation){
                 .name_id = i,
                 .location = glGetUniformLocation(program, uniform_names[i]),
             };
@@ -135,7 +135,7 @@ internal void gfx_shader_destroy(GfxShader* program) {
 
 internal u32 gfx_shader_uniform(GfxShader* program, UniformNameId uniform) {
     i32 found_idx;
-    ARRAY_BINARY_SEARCH(found_idx, program->uniforms.items, program->uniforms.count, u32, .name_id, uniform);
+    ARRAY_BINARY_SEARCH(found_idx, program->uniforms, u32, .name_id, uniform);
     if (found_idx < 0) PANIC("Couldn't find uniform location for name id");
     return program->uniforms.items[found_idx].location;
 }
@@ -268,7 +268,7 @@ typedef struct {
 
 global GfxShader* g_debug_shader;
 global GfxMesh* g_debug_mesh;
-global DARRAY(DebugLine, 32768) g_debug_lines;
+global SARRAY(DebugLine, 32768) g_debug_lines;
 
 internal void gfx_debug_init(GfxShader* shader, GfxMesh* mesh) {
     g_debug_shader = shader;
@@ -276,7 +276,7 @@ internal void gfx_debug_init(GfxShader* shader, GfxMesh* mesh) {
 }
 
 internal void gfx_debug_line2d(vec2 a, vec2 b, vec4 color) {
-    *DARRAY_PUSH(g_debug_lines) = (DebugLine){.a = a, .b = b, .color = color};
+    *SARRAY_PUSH(g_debug_lines) = (DebugLine){.a = a, .b = b, .color = color};
 }
 
 internal void gfx_debug_circle(vec2 a, f32 radius, vec4 color) {
