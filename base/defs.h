@@ -174,9 +174,10 @@ DEF_ARRAY_TYPES(f64);
 DEF_ARRAY_TYPES(bool);
 DEF_ARRAY_TYPES(size_t);
 
-#define ARRAY_ALLOC(type, arena_ptr, capacity) (Array_##type){             \
-    {{arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
-};
+#define ARRAY_ALLOC(type, arena_ptr, capacity)                                 \
+    (Array_##type) {                                                           \
+        {{arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
+    }
 
 #define ARRAY_PUSH(arr) (                                                       \
     (arr).count < (arr).capacity                                                \

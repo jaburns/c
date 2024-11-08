@@ -43,7 +43,7 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
 }
 
 internal void gfx_shader_create_or_update(
-    GfxShader* out_shader, char* shader_source, char** opt_shader_linenos,
+    Shader* out_shader, char* shader_source, char** opt_shader_linenos,
     char** uniform_names, bool* shader_has_uniform_name, size_t uniform_total_names
 ) {
     bool panic_on_error = !DEBUG || !out_shader->glid;
@@ -128,19 +128,19 @@ error_exit:
     scratch_release(scratch);
 }
 
-internal void gfx_shader_destroy(GfxShader* program) {
+internal void gfx_shader_destroy(Shader* program) {
     glDeleteProgram(program->glid);
     ZERO_STRUCT(program);
 }
 
-internal u32 gfx_shader_uniform(GfxShader* program, UniformNameId uniform) {
+internal u32 gfx_shader_uniform(Shader* program, UniformNameId uniform) {
     i32 found_idx;
     ARRAY_BINARY_SEARCH(found_idx, program->uniforms, u32, .name_id, uniform);
     if (found_idx < 0) PANIC("Couldn't find uniform location for name id");
     return program->uniforms.items[found_idx].location;
 }
 
-internal void gfx_mesh_create_2d(GfxMesh* mesh, vec2* positions, vec2* uvs, size_t vert_count, u32* indices, size_t index_count) {
+internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, size_t vert_count, u32* indices, size_t index_count) {
     ZERO_STRUCT(mesh);
 
     u32 vbo_position, vbo_uv, vao, ebo;
@@ -177,12 +177,12 @@ internal void gfx_matrix_construct_model_2d(mat4* model, vec2 position, f32 rota
     model->d.y = position.y;
 }
 
-internal void gfx_mesh_draw(GfxMesh* mesh) {
+internal void gfx_mesh_draw(Mesh* mesh) {
     glBindVertexArray(mesh->vao);
     glDrawElements(GL_TRIANGLES, mesh->elem_count, GL_UNSIGNED_INT, NULL);
 }
 
-internal void gfx_mesh_destroy(GfxMesh* mesh) {
+internal void gfx_mesh_destroy(Mesh* mesh) {
     u32 vbo0, vbo1, ebo;
 
     glBindVertexArray(mesh->vao);
@@ -198,7 +198,7 @@ internal void gfx_mesh_destroy(GfxMesh* mesh) {
     ZERO_STRUCT(mesh);
 }
 
-internal void gfx_texture_create(GfxTexture* texture, char* path) {
+internal void gfx_texture_create(Texture* texture, char* path) {
     ZERO_STRUCT(texture);
 
     i32 channels_in_file;
@@ -219,7 +219,7 @@ internal void gfx_texture_create(GfxTexture* texture, char* path) {
     stbi_image_free(data);
 }
 
-internal void gfx_texture_destroy(GfxTexture* texture) {
+internal void gfx_texture_destroy(Texture* texture) {
     glDeleteTextures(1, &texture->glid);
     ZERO_STRUCT(texture);
 }
@@ -260,23 +260,24 @@ internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* 
 
 #if DEBUG
 
-structdef(DebugLine) {
-    vec4 color;
-    vec2 a;
-    vec2 b;
-};
+global DebugGeometry* g_debug_geometry;
 
-global GfxShader* g_debug_shader;
-global GfxMesh* g_debug_mesh;
-global SARRAY(DebugLine, 32768) g_debug_lines;
+internal DebugGeometry* gfx_debug_geometry_alloc(Arena* arena, Shader* shader, Mesh* line_mesh) {
+    DebugGeometry* geo = arena_alloc(arena, sizeof(DebugGeometry));
+    *geo = (DebugGeometry){
+        .lines = ARRAY_ALLOC(DebugLine, arena, KB(32)),
+        .shader = shader,
+        .line_mesh = line_mesh,
+    };
+    return geo;
+}
 
-internal void gfx_debug_init(GfxShader* shader, GfxMesh* mesh) {
-    g_debug_shader = shader;
-    g_debug_mesh = mesh;
+internal void gfx_debug_set_global_geometry(DebugGeometry* geo) {
+    g_debug_geometry = geo;
 }
 
 internal void gfx_debug_line2d(vec2 a, vec2 b, vec4 color) {
-    *SARRAY_PUSH(g_debug_lines) = (DebugLine){.a = a, .b = b, .color = color};
+    *ARRAY_PUSH(g_debug_geometry->lines) = (DebugLine){.a = a, .b = b, .color = color};
 }
 
 internal void gfx_debug_circle(vec2 a, f32 radius, vec4 color) {
@@ -299,18 +300,18 @@ internal void gfx_debug_rect(vec2 a, vec2 b, vec4 color) {
 }
 
 internal void gfx_debug_draw(mat4* vp, UniformNameId start_pos, UniformNameId end_pos, UniformNameId color, UniformNameId mvp) {
-    for (i32 i = 0; i < g_debug_lines.count; ++i) {
-        DebugLine line = g_debug_lines.items[i];
+    for (i32 i = 0; i < g_debug_geometry->lines.count; ++i) {
+        DebugLine line = g_debug_geometry->lines.items[i];
         glDisable(GL_DEPTH_TEST);
-        glUseProgram(g_debug_shader->glid);
-        glUniform2fv(gfx_shader_uniform(g_debug_shader, start_pos), 1, (f32*)&line.a);
-        glUniform2fv(gfx_shader_uniform(g_debug_shader, end_pos), 1, (f32*)&line.b);
-        glUniform4fv(gfx_shader_uniform(g_debug_shader, color), 1, (f32*)&line.color);
-        glUniformMatrix4fv(gfx_shader_uniform(g_debug_shader, mvp), 1, false, (f32*)vp);
-        glBindVertexArray(g_debug_mesh->vao);
-        glDrawElements(GL_LINES, g_debug_mesh->elem_count, GL_UNSIGNED_INT, NULL);
+        glUseProgram(g_debug_geometry->shader->glid);
+        glUniform2fv(gfx_shader_uniform(g_debug_geometry->shader, start_pos), 1, (f32*)&line.a);
+        glUniform2fv(gfx_shader_uniform(g_debug_geometry->shader, end_pos), 1, (f32*)&line.b);
+        glUniform4fv(gfx_shader_uniform(g_debug_geometry->shader, color), 1, (f32*)&line.color);
+        glUniformMatrix4fv(gfx_shader_uniform(g_debug_geometry->shader, mvp), 1, false, (f32*)vp);
+        glBindVertexArray(g_debug_geometry->line_mesh->vao);
+        glDrawElements(GL_LINES, g_debug_geometry->line_mesh->elem_count, GL_UNSIGNED_INT, NULL);
     }
-    g_debug_lines.count = 0;
+    g_debug_geometry->lines.count = 0;
 }
 
 #endif  // DEBUG
