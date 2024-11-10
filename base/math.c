@@ -131,6 +131,13 @@ internal vec2 vec2_normalize(vec2 a) {
     return (vec2){a.x * inv_len, a.y * inv_len};
 }
 
+internal vec2 vec2_normalize_or_zero(vec2 a) {
+    f32 len = sqrtf(a.x * a.x + a.y * a.y);
+    if (len < .000001f) return VEC2_ZERO;
+    f32 inv_len = 1.f / len;
+    return (vec2){a.x * inv_len, a.y * inv_len};
+}
+
 internal vec2 vec2_rotate(vec2 v, f32 radians) {
     f32 s, c;
     sincosf(radians, &s, &c);

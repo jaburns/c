@@ -47,6 +47,7 @@ internal vec2 vec2_abs(vec2 a);
 internal vec2 vec2_sign(vec2 a);
 internal vec2 vec2_clamp(vec2 v, vec2 min, vec2 max);
 internal vec2 vec2_normalize(vec2 a);
+internal vec2 vec2_normalize_or_zero(vec2 a);
 internal vec2 vec2_rotate(vec2 v, f32 radians);
 internal vec2 vec2_reflect_and_scale(vec2 v, vec2 normal, f32 norm_scale, f32 tan_scale);
 

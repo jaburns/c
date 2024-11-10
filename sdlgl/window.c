@@ -80,6 +80,11 @@ internal i32 sdlgl_poll(SdlGlWindow* win) {
     while (SDL_PollEvent(&event)) {
 #if DEBUG
         ImGui_ImplSdlGL3_ProcessEvent(&event);
+        bool imgui_wants_mouse = igGetIO()->WantCaptureMouse;
+        bool imgui_wants_keyboard = igGetIO()->WantCaptureKeyboard;
+#else
+        bool imgui_wants_mouse = false;
+        bool imgui_wants_keyboard = false;
 #endif
         switch (event.type) {
             case SDL_WINDOWEVENT: {
@@ -95,34 +100,43 @@ internal i32 sdlgl_poll(SdlGlWindow* win) {
                 break;
             }
             case SDL_MOUSEBUTTONDOWN: {
-                win->mouse_button = true;
+                if (!imgui_wants_mouse) {
+                    win->mouse_button = true;
+                }
                 break;
             }
             case SDL_MOUSEBUTTONUP: {
-                win->mouse_button = false;
+                if (!imgui_wants_mouse) {
+                    win->mouse_button = false;
+                }
                 break;
             }
             case SDL_MOUSEMOTION: {
-                win->mouse_delta.x = event.motion.xrel;
-                win->mouse_delta.y = -event.motion.yrel;
+                if (!imgui_wants_mouse) {
+                    win->mouse_delta.x = event.motion.xrel;
+                    win->mouse_delta.y = -event.motion.yrel;
+                }
                 break;
             }
             case SDL_MOUSEWHEEL: {
-                win->mouse_delta_wheel = event.wheel.preciseY;
+                if (!imgui_wants_mouse) {
+                    win->mouse_delta_wheel = event.wheel.preciseY;
+                }
                 break;
             }
             case SDL_QUIT: {
                 return 1;
             }
             case SDL_KEYDOWN: {
-                if (event.key.keysym.scancode == SDL_SCANCODE_Q)
-                    return 1;
-
-                win->keyboard.scancodes_down[event.key.keysym.scancode] = true;
+                if (!imgui_wants_keyboard) {
+                    win->keyboard.scancodes_down[event.key.keysym.scancode] = true;
+                }
                 break;
             }
             case SDL_KEYUP: {
-                win->keyboard.scancodes_down[event.key.keysym.scancode] = false;
+                if (!imgui_wants_keyboard) {
+                    win->keyboard.scancodes_down[event.key.keysym.scancode] = false;
+                }
                 break;
             }
             case SDL_JOYAXISMOTION: {
