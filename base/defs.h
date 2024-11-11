@@ -205,6 +205,9 @@ DEF_ARRAY_TYPES(size_t);
 
 #define SARRAY_POP ARRAY_POP
 
+#define ARRAY_COPY(dest, src, start_idx, end_idx) \
+    memcpy(&(dest)[start_idx], &(src)[start_idx], ((end_idx) - (start_idx)) * sizeof((dest)[0]))
+
 #define ARRAY_BINARY_SEARCH(i32_result_idx, arr, field_type, field, seeking) \
     do {                                                                     \
         (i32_result_idx) = -1;                                               \
