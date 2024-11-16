@@ -196,6 +196,29 @@ internal bool str_starts_with_cstr(char* cstr, Str str) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+internal char* u64_print_with_commas(Arena* arena, u64 num) {
+    char buffer[32];
+    i32 len = snprintf(buffer, sizeof(buffer), "%llu", num);
+    i32 commas = (len - 1) / 3;
+
+    char* ret = arena_alloc(arena, len + commas + 1);
+    char* out = ret + len + commas;
+
+    *out-- = '\0';
+
+    for (i32 i = len - 1, c = 0; i >= 0; --i) {
+        *out-- = buffer[i];
+        if (++c == 3 && i != 0) {
+            *out-- = ',';
+            c = 0;
+        }
+    }
+
+    return ret;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
     FILE* file = fopen(filename, "r");
     if (file == NULL) {

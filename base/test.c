@@ -1,6 +1,6 @@
 #include "inc.h"
 
-global u64 timer_start_secs;
+global u64 g_timer_start_secs;
 
 internal void test_timer_init(void) {
     struct timespec ts;

@@ -1,5 +1,6 @@
 #include "inc.h"
 
+#include "timing.c"
 #include "memory.c"
 #include "arena.c"
 #include "string.c"

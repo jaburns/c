@@ -32,7 +32,7 @@ internal Str32 str32_from_str(Str str);
 // usage: printf(" %.*s ", STR_PRINTF_ARGS(some_str));
 #define STR_PRINTF_ARGS(str) (i32)(str).count, (str).items
 
-#define STR(cstr_lit) ((Str){ (cstr_lit), sizeof(cstr_lit) - 1) })
+#define STR(cstr_lit) ((Str){(cstr_lit), sizeof(cstr_lit) - 1})
 
 internal Str str_from_cstr(char* str);
 internal char* str_to_cstr(Arena* arena, Str str);
@@ -52,5 +52,7 @@ internal bool str_eq(Str a, Str b);
 internal Str str_copy(Arena* arena, Str src);
 internal i32 str_atoi(Str str);
 internal bool str_starts_with_cstr(char* cstr, Str str);
+
+internal char* u64_print_with_commas(Arena* arena, u64 num);
 
 internal char* read_file(Arena* arena, char* filename, size_t* out_length);
