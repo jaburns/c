@@ -24,13 +24,15 @@ structdef(StrSplitWhitespaceIter) {
     char* item_end_;
 };
 
-// usage: printf(" %.*s ", STR_PRINTF_ARGS(some_str));
-#define STR_PRINTF_ARGS(str) (i32)(str).count, (str).items
-
 internal Str32 str32_from_cstr(char* str);
 internal bool str32_eq(Str32* a, Str32* b);
 internal bool str32_eq_cstr(char* cstr, Str32* a);
 internal Str32 str32_from_str(Str str);
+
+// usage: printf(" %.*s ", STR_PRINTF_ARGS(some_str));
+#define STR_PRINTF_ARGS(str) (i32)(str).count, (str).items
+
+#define STR(cstr_lit) ((Str){ (cstr_lit), sizeof(cstr_lit) - 1) })
 
 internal Str str_from_cstr(char* str);
 internal char* str_to_cstr(Arena* arena, Str str);
