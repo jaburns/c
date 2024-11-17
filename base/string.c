@@ -86,7 +86,6 @@ internal Str str_after_last_index(char split, Str str) {
 }
 
 internal void str_split_iter_next(StrSplitIter* it) {
-    if (it->done) return;
     it->item_end_++;
     it->item.items = it->item_end_;
     if (it->item.items >= it->target_end_) {
@@ -113,7 +112,6 @@ internal StrSplitIter str_split_iter(char split, Str str) {
 }
 
 internal void str_split_whitespace_iter_next(StrSplitWhitespaceIter* it) {
-    if (it->done) return;
     while (it->item_end_ < it->target_end_ && isspace(*it->item_end_)) {
         it->item_end_++;
     }
@@ -127,6 +125,7 @@ internal void str_split_whitespace_iter_next(StrSplitWhitespaceIter* it) {
     }
     it->item.count = it->item_end_ - it->item.items;
 }
+
 internal StrSplitWhitespaceIter str_split_whitespace_iter(Str str) {
     StrSplitWhitespaceIter it = (StrSplitWhitespaceIter){
         .done = false,
@@ -194,6 +193,13 @@ internal bool str_starts_with_cstr(char* cstr, Str str) {
     return !cstr[i];
 }
 
+internal Str str_substr_from(Str str, size_t idx) {
+    if (idx >= str.count) return (Str){0};
+    str.items += idx;
+    str.count -= idx;
+    return str;
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 internal char* u64_print_with_commas(Arena* arena, u64 num) {
@@ -222,7 +228,7 @@ internal char* u64_print_with_commas(Arena* arena, u64 num) {
 internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
-        PANIC("Failed to open file: %s", filename);
+        Panic("Failed to open file: %s", filename);
     }
 
     fseek(file, 0, SEEK_END);
@@ -231,7 +237,7 @@ internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
 
     char* content = arena_alloc_not_zeroed(arena, file_size + 1);
     if (fread(content, 1, file_size, file) != file_size && ferror(file)) {
-        PANIC("Failed to read file: %s", filename);
+        Panic("Failed to read file: %s", filename);
     }
 
     content[file_size] = 0;
@@ -241,6 +247,12 @@ internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
         *out_length = file_size;
     }
     return content;
+}
+
+internal Str str_read_file(Arena* arena, char* filename) {
+    size_t size;
+    char* data = read_file(arena, filename, &size);
+    return (Str){.count = size, .items = data};
 }
 
 // --------------------------------------------------------------------------------------------------------------------

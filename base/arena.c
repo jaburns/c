@@ -25,7 +25,7 @@ internal ArenaMark arena_mark(Arena* self) {
 internal void arena_restore(Arena* self, ArenaMark saved) {
     while (self->resources_stack && self->resources_stack->target >= saved) {
         self->resources_stack->drop(self->resources_stack->target);
-        SLL_STACK_POP(self->resources_stack);
+        SllStackPop(self->resources_stack);
     }
     self->cur = saved;
     self->allocator->memory_commit_size(&self->reservation, self->cur - self->reservation.base);
@@ -34,7 +34,7 @@ internal void arena_restore(Arena* self, ArenaMark saved) {
 internal void arena_clear(Arena* self) {
     while (self->resources_stack) {
         self->resources_stack->drop(self->resources_stack->target);
-        SLL_STACK_POP(self->resources_stack);
+        SllStackPop(self->resources_stack);
     }
     self->cur = self->reservation.base;
     self->allocator->memory_commit_size(&self->reservation, 0);
@@ -43,7 +43,7 @@ internal void arena_clear(Arena* self) {
 internal void arena_destroy(Arena* self) {
     arena_clear(self);
     self->allocator->memory_release(&self->reservation);
-    ZERO_STRUCT(self);
+    ZeroStruct(self);
 }
 
 internal void arena_align(Arena* arena) {
@@ -86,7 +86,7 @@ internal void* arena_alloc_resource(Arena* self, size_t size, ArenaDropFn drop) 
 
     node->target = result;
     node->drop = drop;
-    SLL_STACK_PUSH(self->resources_stack, node);
+    SllStackPush(self->resources_stack, node);
 
     return result;
 }
@@ -121,7 +121,7 @@ internal ArenaTemp scratch_acquire(Arena** conflicts, size_t conflict_count) {
         .mark = mark,
     };
 err:
-    PANIC("Both scratch arenas passed as conflicts to scratch_acquire");
+    Panic("Both scratch arenas passed as conflicts to scratch_acquire");
 }
 
 internal void scratch_release(ArenaTemp scratch) {

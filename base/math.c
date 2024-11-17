@@ -28,15 +28,15 @@ internal void vec2_sub_from(vec2* a, vec2 b) {
 
 internal vec2 vec2_min(vec2 a, vec2 b) {
     return (vec2){
-        .x = MIN(a.x, b.x),
-        .y = MIN(a.y, b.y),
+        .x = Min(a.x, b.x),
+        .y = Min(a.y, b.y),
     };
 }
 
 internal vec2 vec2_max(vec2 a, vec2 b) {
     return (vec2){
-        .x = MAX(a.x, b.x),
-        .y = MAX(a.y, b.y),
+        .x = Max(a.x, b.x),
+        .y = Max(a.y, b.y),
     };
 }
 
@@ -116,13 +116,13 @@ internal vec2 vec2_abs(vec2 a) {
 }
 
 internal vec2 vec2_sign(vec2 a) {
-    return (vec2){SIGN(a.x), SIGN(a.y)};
+    return (vec2){Sign(a.x), Sign(a.y)};
 }
 
 internal vec2 vec2_clamp(vec2 v, vec2 min, vec2 max) {
     return (vec2){
-        MAX(min.x, MIN(max.x, v.x)),
-        MAX(min.y, MIN(max.y, v.y)),
+        Max(min.x, Min(max.x, v.x)),
+        Max(min.y, Min(max.y, v.y)),
     };
 }
 
@@ -177,15 +177,15 @@ internal ivec2 ivec2_sub(ivec2 a, ivec2 b) {
 
 internal ivec2 ivec2_min(ivec2 a, ivec2 b) {
     return (ivec2){
-        .x = MIN(a.x, b.x),
-        .y = MIN(a.y, b.y),
+        .x = Min(a.x, b.x),
+        .y = Min(a.y, b.y),
     };
 }
 
 internal ivec2 ivec2_max(ivec2 a, ivec2 b) {
     return (ivec2){
-        .x = MAX(a.x, b.x),
-        .y = MAX(a.y, b.y),
+        .x = Max(a.x, b.x),
+        .y = Max(a.y, b.y),
     };
 }
 
@@ -544,7 +544,7 @@ internal LineSegIntersectResult geo_line_hit_circle(vec2 p0, vec2 p1, vec2 cente
 
     if (t1 < 0.f || t0 > 1.f) return result;
 
-    f32 t = CLAMP(t0, 0.f, 1.f);
+    f32 t = Clamp01(t0);
     vec2 point = vec2_add(p0, vec2_scale(t, d));
 
     result.hit = true;

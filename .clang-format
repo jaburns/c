@@ -8,3 +8,4 @@ SortIncludes: false
 PointerAlignment: Left
 AttributeMacros: [SARRAY]
 AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveMacros: true

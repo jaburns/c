@@ -1,7 +1,7 @@
 #include "inc.h"
 
 internal HashArray* hasharray_alloc(Arena* arena, size_t key_size, size_t value_size, size_t max_elems) {
-    size_t capacity = NEXT_POWER_OF_2(max_elems * 100 / HASHARRAY_LOAD_FACTOR_PERCENT);
+    size_t capacity = NextPowerOf2(max_elems * 100 / HASHARRAY_LOAD_FACTOR_PERCENT);
 
     u32* hashes = arena_alloc(arena, capacity * sizeof(u32));
     void* keys = arena_alloc(arena, capacity * key_size);
@@ -59,7 +59,7 @@ internal void* hasharray_insert_with_hash(HashArray* map, u32 hash, void* key) {
     for (i = 0; i < start_idx; ++i) {
         if (map->hashes[i] < 2) goto found;
     }
-    PANIC("Failed to find an empty hasharray slot (should never happen!)");
+    Panic("Failed to find an empty hasharray slot (should never happen!)");
 found:
     map->count++;
     map->hashes[i] = hash;
@@ -72,7 +72,7 @@ found:
 
 internal void* hasharray_insert(HashArray* map, void* key) {
     if (map->count >= map->max_elems) {
-        PANIC("Fixed-size hasharray is full and cannot be resized");
+        Panic("Fixed-size hasharray is full and cannot be resized");
     }
     u32 hash = hasharray_djb2_hash(key, map->key_size);
     if (hash < 2) hash += 2;

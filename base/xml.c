@@ -14,7 +14,7 @@ internal void xml_parse(
     char path[256] = {0};
     char* path_write = path;
 
-    Array_XmlParseAttribute attributes = ARRAY_ALLOC(XmlParseAttribute, arena, 256);
+    Vec_XmlParseAttribute attributes = VecAlloc(XmlParseAttribute, arena, 256);
 
     char* content_start = NULL;
 
@@ -30,7 +30,7 @@ internal void xml_parse(
 
         Str whole_tag = str_before_first_index('>', (Str){.items = read, .count = file_end - read});
         Str tag = str_trim(whole_tag);
-        ASSERT(tag.count > 0);
+        Assert(tag.count > 0);
         bool pop_path = false;
 
         if (tag.items[0] == '/') {
@@ -60,7 +60,7 @@ internal void xml_parse(
             while (cur < end && !isspace(*cur)) ++cur;
             Str tag_name = {.items = tag.items, .count = cur - tag.items};
 
-            PRINTF_BUF(path_write, path, 256, "%.*s", STR_PRINTF_ARGS(tag_name));
+            PrintfBuf(path_write, path, 256, "%.*s", StrPrintfArgs(tag_name));
 
             while (cur < end) {
                 while (cur < end && isspace(*cur)) ++cur;
@@ -71,21 +71,21 @@ internal void xml_parse(
                 Str key = {.items = key_start, .count = cur - key_start};
 
                 while (cur < end && isspace(*cur)) ++cur;
-                ASSERT(cur < end && *cur == '=');
+                Assert(cur < end && *cur == '=');
                 ++cur;
 
                 while (cur < end && isspace(*cur)) ++cur;
-                ASSERT(cur < end);
+                Assert(cur < end);
 
                 char quote = *cur;
-                ASSERT(quote == '"' || quote == '\'');
+                Assert(quote == '"' || quote == '\'');
                 ++cur;
 
                 char* val_start = cur;
                 while (cur < end && *cur != quote) ++cur;
-                ASSERT(cur < end);
+                Assert(cur < end);
 
-                *ARRAY_PUSH(attributes) = (XmlParseAttribute){
+                *VecPush(attributes) = (XmlParseAttribute){
                     .key = key,
                     .value = (Str){.items = val_start, .count = cur - val_start},
                 };

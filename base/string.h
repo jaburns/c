@@ -30,9 +30,13 @@ internal bool str32_eq_cstr(char* cstr, Str32* a);
 internal Str32 str32_from_str(Str str);
 
 // usage: printf(" %.*s ", STR_PRINTF_ARGS(some_str));
-#define STR_PRINTF_ARGS(str) (i32)(str).count, (str).items
+#define StrPrintfArgs(str) (i32)(str).count, (str).items
 
-#define STR(cstr_lit) ((Str){(cstr_lit), sizeof(cstr_lit) - 1})
+#define DbgStr(v) DBG_TYPED("\"%.*s\"", (v), STR_PRINTF_ARGS(v))
+
+#define CstrLen(cstr_lit) (sizeof(cstr_lit) - 1)
+
+#define Str(cstr_lit) ((Str){(cstr_lit), CSTR_LEN(cstr_lit)})
 
 internal Str str_from_cstr(char* str);
 internal char* str_to_cstr(Arena* arena, Str str);
@@ -52,7 +56,9 @@ internal bool str_eq(Str a, Str b);
 internal Str str_copy(Arena* arena, Str src);
 internal i32 str_atoi(Str str);
 internal bool str_starts_with_cstr(char* cstr, Str str);
+internal Str str_substr_from(Str str, size_t idx);
 
 internal char* u64_print_with_commas(Arena* arena, u64 num);
 
 internal char* read_file(Arena* arena, char* filename, size_t* out_length);
+internal Str str_read_file(Arena* arena, char* filename);

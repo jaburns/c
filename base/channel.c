@@ -19,7 +19,7 @@ internal void channel_push(Channel* chan, void* item) {
     u32 reserved_idx = cur_buf_reserve & 0x7fffffff;
 
     if (reserved_idx >= chan->capacity) {
-        PANIC("Channel is full");
+        Panic("Channel is full");
     }
 
     void* target = (u8*)chan->buffer[buf] + chan->item_size * reserved_idx;
@@ -69,7 +69,7 @@ internal void channel_drain_iter_next(ChannelIter* it) {
 #if TEST
 
 #define THREAD_COUNT 32
-#define NUM_ITEMS 32768
+#define NUM_ITEMS    32768
 
 global atomic_bool test_channel_start;
 global atomic_bool test_channel_done;
