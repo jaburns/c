@@ -9,7 +9,7 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
     char* out = arena_alloc(scratch.arena, 2 * MAX_SHADER_ERROR_LEN);
     char* out_write = out;
 
-#define PRINT(...) PRINTF_BUF(out_write, out, 2 * MAX_SHADER_ERROR_LEN, __VA_ARGS__)
+#define Print(...) PrintfBuf(out_write, out, 2 * MAX_SHADER_ERROR_LEN, __VA_ARGS__)
 
     Str log = str_from_cstr(info_log);
     for (StrSplitIter lines = str_split_iter('\n', log); !lines.done; str_split_iter_next(&lines)) {
@@ -23,22 +23,23 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
                 i32 line = atoi(str_to_cstr(scratch.arena, it.item));
                 line -= line_offset;
                 char* line_name = opt_shader_linenos ? opt_shader_linenos[line - 1] : "";
-                PRINT("%s: ", line_name);
+                Print("%s: ", line_name);
             } else if (i == 3) {
                 Str trim_item = str_trim(it.item);
-                PRINT("%.*s", STR_PRINTF_ARGS(trim_item));
+                Print("%.*s", StrPrintfArgs(trim_item));
             } else if (i > 3) {
-                PRINT(":%.*s", STR_PRINTF_ARGS(it.item));
+                Print(":%.*s", StrPrintfArgs(it.item));
             }
         }
-        PRINT("\n");
+        Print("\n");
     }
     *out_write = '\0';
 
     fprintf(stderr, "\033[1m\033[91m  %s ERROR \033[0m %s", title, out);
 
     scratch_release(scratch);
-#undef PRINT
+
+#undef Print
 #endif  // DEBUG
 }
 
@@ -108,7 +109,7 @@ internal void gfx_shader_create_or_update(
 
     for (i32 i = 0; i < uniform_total_names; ++i) {
         if (shader_has_uniform_name[i]) {
-            *SARRAY_PUSH(out_shader->uniforms) = (UniformNamedLocation){
+            *StaticVecPush(out_shader->uniforms) = (UniformNamedLocation){
                 .name_id = i,
                 .location = glGetUniformLocation(program, uniform_names[i]),
             };
@@ -130,18 +131,18 @@ error_exit:
 
 internal void gfx_shader_destroy(Shader* program) {
     glDeleteProgram(program->glid);
-    ZERO_STRUCT(program);
+    ZeroStruct(program);
 }
 
 internal u32 gfx_shader_uniform(Shader* program, UniformNameId uniform) {
     i32 found_idx;
-    ARRAY_BINARY_SEARCH(found_idx, program->uniforms, u32, .name_id, uniform);
-    if (found_idx < 0) PANIC("Couldn't find uniform location for name id");
+    SliceBinarySearch(found_idx, program->uniforms, u32, .name_id, uniform);
+    if (found_idx < 0) Panic("Couldn't find uniform location for name id");
     return program->uniforms.items[found_idx].location;
 }
 
 internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, size_t vert_count, u32* indices, size_t index_count) {
-    ZERO_STRUCT(mesh);
+    ZeroStruct(mesh);
 
     u32 vbo_position, vbo_uv, vao, ebo;
 
@@ -195,16 +196,16 @@ internal void gfx_mesh_destroy(Mesh* mesh) {
     glDeleteBuffers(1, &ebo);
     glDeleteVertexArrays(1, &mesh->vao);
 
-    ZERO_STRUCT(mesh);
+    ZeroStruct(mesh);
 }
 
 internal void gfx_texture_create(Texture* texture, char* path) {
-    ZERO_STRUCT(texture);
+    ZeroStruct(texture);
 
     i32 channels_in_file;
     u8* data = stbi_load(path, (i32*)&texture->width, (i32*)&texture->height, &channels_in_file, 4);
     if (!data) {
-        PANIC("Error loading texture: %s", path);
+        Panic("Error loading texture: %s", path);
     }
 
     glGenTextures(1, &texture->glid);
@@ -221,7 +222,7 @@ internal void gfx_texture_create(Texture* texture, char* path) {
 
 internal void gfx_texture_destroy(Texture* texture) {
     glDeleteTextures(1, &texture->glid);
-    ZERO_STRUCT(texture);
+    ZeroStruct(texture);
 }
 
 internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* positions, size_t position_count, f32 half_width) {
@@ -265,7 +266,7 @@ global DebugGeometry* g_debug_geometry;
 internal DebugGeometry* gfx_debug_geometry_alloc(Arena* arena, Shader* shader, Mesh* line_mesh) {
     DebugGeometry* geo = arena_alloc(arena, sizeof(DebugGeometry));
     *geo = (DebugGeometry){
-        .lines = ARRAY_ALLOC(DebugLine, arena, KB(32)),
+        .lines = VecAlloc(DebugLine, arena, Kb(32)),
         .shader = shader,
         .line_mesh = line_mesh,
     };
@@ -277,7 +278,7 @@ internal void gfx_debug_set_global_geometry(DebugGeometry* geo) {
 }
 
 internal void gfx_debug_line2d(vec2 a, vec2 b, vec4 color) {
-    *ARRAY_PUSH(g_debug_geometry->lines) = (DebugLine){.a = a, .b = b, .color = color};
+    *VecPush(g_debug_geometry->lines) = (DebugLine){.a = a, .b = b, .color = color};
 }
 
 internal void gfx_debug_circle(vec2 a, f32 radius, vec4 color) {

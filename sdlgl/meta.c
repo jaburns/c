@@ -15,10 +15,10 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
         Str trim_line = str_trim(lines_it.item);
         if (str_starts_with_cstr("#include", trim_line)) {
             Str path = str_before_first_index('"', str_after_first_index('"', trim_line));
-            snprintf(path_buf, 256, "assets/shaders/%.*s", STR_PRINTF_ARGS(path));
+            snprintf(path_buf, 256, "assets/shaders/%.*s", StrPrintfArgs(path));
             resolve_shader_inner(shader_sources, shader_log_lines, path_buf, total_lines);
         } else {
-            *shader_sources += sprintf(*shader_sources, "\"%.*s\\n\"\n", STR_PRINTF_ARGS(trim_line));
+            *shader_sources += sprintf(*shader_sources, "\"%.*s\\n\"\n", StrPrintfArgs(trim_line));
             *shader_log_lines += sprintf(*shader_log_lines, "\"%s:%i:0\",\n", file_path, line);
             ++*total_lines;
         }
@@ -32,7 +32,7 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
 internal void resolve_shader(char* name, char** shader_sources, char** shader_log_lines, char* file_path) {
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
-    char* shader_log_temp = arena_alloc_not_zeroed(scratch.arena, MB(1));
+    char* shader_log_temp = arena_alloc_not_zeroed(scratch.arena, Mb(1));
     char* shader_log_temp_0 = shader_log_temp;
 
     u32 total_lines = 1;
@@ -49,8 +49,8 @@ internal void resolve_shader(char* name, char** shader_sources, char** shader_lo
 // --------------------------------------------------------------------------------------------------------------------
 
 #define MAX_PATH_LENGTH 256
-#define MAX_UNIFORMS 100
-#define MAX_ENTRIES 100
+#define MAX_UNIFORMS    100
+#define MAX_ENTRIES     100
 
 typedef struct {
     char name[MAX_PATH_LENGTH];
@@ -74,7 +74,7 @@ internal void to_enum_name(char* filename) {
 
 internal i32 generate_enum_entries(char* directory, char* extension, AssetEntry* entries, i32 max_entries) {
     DIR* dir = opendir(directory);
-    if (!dir) PANIC("Failed to open directory");
+    if (!dir) Panic("Failed to open directory");
 
     struct dirent* entry;
     i32 count = 0;
@@ -96,7 +96,7 @@ internal i32 generate_enum_entries(char* directory, char* extension, AssetEntry*
 
 internal i32 extract_uniforms_from_shader(char* file_path, char uniforms[MAX_UNIFORMS][MAX_PATH_LENGTH]) {
     FILE* f = fopen(file_path, "r");
-    if (!f) PANIC("Failed to open shader file");
+    if (!f) Panic("Failed to open shader file");
 
     i32 count = 0;
     char line[256];
@@ -124,8 +124,8 @@ internal i32 extract_uniforms_from_shader(char* file_path, char uniforms[MAX_UNI
 internal void sdlgl_meta_write_assets_header(char* path) {
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
-    char* shader_sources = arena_alloc_not_zeroed(scratch.arena, MB(1));
-    char* shader_log_lines = arena_alloc_not_zeroed(scratch.arena, MB(1));
+    char* shader_sources = arena_alloc_not_zeroed(scratch.arena, Mb(1));
+    char* shader_log_lines = arena_alloc_not_zeroed(scratch.arena, Mb(1));
     char* shader_sources_0 = shader_sources;
     char* shader_log_lines_0 = shader_log_lines;
 
@@ -168,7 +168,7 @@ internal void sdlgl_meta_write_assets_header(char* path) {
     }
 
     FILE* f = fopen(path, "w");
-    if (!f) PANIC("Failed to create header file");
+    if (!f) Panic("Failed to create header file");
 
     fprintf(f, "#pragma once\n\n");
 

@@ -3,6 +3,7 @@
 structdef(XmlParseAttribute) {
     Str key, value;
 };
+DefArrayTypes(XmlParseAttribute);
 
 internal void xml_parse(
     Arena* arena,

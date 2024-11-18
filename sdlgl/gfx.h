@@ -9,7 +9,7 @@ structdef(UniformNamedLocation) {
 
 structdef(Shader) {
     u32 glid;
-    SARRAY(UniformNamedLocation, 64) uniforms;
+    StaticVec(UniformNamedLocation, 64) uniforms;
 };
 
 structdef(Texture) {
@@ -54,11 +54,12 @@ structdef(DebugLine) {
     vec2 a;
     vec2 b;
 };
+DefArrayTypes(DebugLine);
 
 structdef(DebugGeometry) {
     Shader* shader;
     Mesh* line_mesh;
-    Array_DebugLine lines;
+    Vec_DebugLine lines;
 };
 
 internal DebugGeometry* gfx_debug_geometry_alloc(Arena* arena, Shader* shader, Mesh* line_mesh);

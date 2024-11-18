@@ -9,6 +9,8 @@ internal void test_run_(char* name, void (*fn)(void)) {
     fprintf(stderr, "\t- completed in %llu μs\n", (finish_nanos - start_nanos) / 1000);
 }
 
+#if TEST
 internal void test_base(void) {
     test_run(test_channel);
 }
+#endif

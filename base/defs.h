@@ -66,7 +66,7 @@ typedef double f64;
 
 #define Panic(...)                    \
     do {                              \
-        fprintf(stderr, "PANIC: ");   \
+        fprintf(stderr, "Panic: ");   \
         fprintf(stderr, __VA_ARGS__); \
         fprintf(stderr, "\n");        \
         Trap();                       \
@@ -133,7 +133,7 @@ internal void panic_expr(char* msg) {
     enum name
 #endif
 
-#define DefExtraTypes(type)       \
+#define DefArrayTypes(type)       \
     typedef struct Slice_##type { \
         type* items;              \
         size_t count;             \
@@ -152,27 +152,25 @@ internal void panic_expr(char* msg) {
 
 #define structdef(name)       \
     typedef struct name name; \
-    DefExtraTypes(name);      \
     struct name
 
 #define uniondef(name)       \
     typedef union name name; \
-    DefExtraTypes(name);     \
     union name
 
-DefExtraTypes(char);
-DefExtraTypes(u8);
-DefExtraTypes(i8);
-DefExtraTypes(u16);
-DefExtraTypes(i16);
-DefExtraTypes(u32);
-DefExtraTypes(i32);
-DefExtraTypes(u64);
-DefExtraTypes(i64);
-DefExtraTypes(f32);
-DefExtraTypes(f64);
-DefExtraTypes(bool);
-DefExtraTypes(size_t);
+DefArrayTypes(char);
+DefArrayTypes(u8);
+DefArrayTypes(i8);
+DefArrayTypes(u16);
+DefArrayTypes(i16);
+DefArrayTypes(u32);
+DefArrayTypes(i32);
+DefArrayTypes(u64);
+DefArrayTypes(i64);
+DefArrayTypes(f32);
+DefArrayTypes(f64);
+DefArrayTypes(bool);
+DefArrayTypes(size_t);
 
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
@@ -199,10 +197,10 @@ DefExtraTypes(size_t);
         type items[capacity];     \
     }
 
-#define StaticVecPush(arr) (                                                         \
-    (arr).count < ArrayLen((arr).items)                                              \
-        ? &((arr).items[(arr).count++])                                              \
-        : (panic_expr("Attempted to push onto a full static vec!"), &(arr).items[0]) \
+#define StaticVecPush(vec) (                                                         \
+    (vec).count < ArrayLen((vec).items)                                              \
+        ? &((vec).items[(vec).count++])                                              \
+        : (panic_expr("Attempted to push onto a full static vec!"), &(vec).items[0]) \
 )
 
 #define StaticVecPop VecPop
@@ -210,25 +208,25 @@ DefExtraTypes(size_t);
 #define SliceCopy(dest, src, start_idx, end_idx) \
     memcpy(&(dest)[start_idx], &(src)[start_idx], ((end_idx) - (start_idx)) * sizeof((dest)[0]))
 
-#define SliceBinarySearch(i32_result_idx, arr, field_type, field, seeking) \
-    do {                                                                   \
-        (i32_result_idx) = -1;                                             \
-        i32 left = 0;                                                      \
-        i32 right = (arr).count - 1;                                       \
-                                                                           \
-        while (left <= right) {                                            \
-            i32 mid = left + ((right - left) >> 1);                        \
-            field_type found = (arr).items[mid] field;                     \
-                                                                           \
-            if (found == (seeking)) {                                      \
-                (i32_result_idx) = mid;                                    \
-                break;                                                     \
-            } else if (found < (seeking)) {                                \
-                left = mid + 1;                                            \
-            } else {                                                       \
-                right = mid - 1;                                           \
-            }                                                              \
-        }                                                                  \
+#define SliceBinarySearch(i32_result_idx, slice, field_type, field, seeking) \
+    do {                                                                     \
+        (i32_result_idx) = -1;                                               \
+        i32 left = 0;                                                        \
+        i32 right = (slice).count - 1;                                       \
+                                                                             \
+        while (left <= right) {                                              \
+            i32 mid = left + ((right - left) >> 1);                          \
+            field_type found = (slice).items[mid] field;                     \
+                                                                             \
+            if (found == (seeking)) {                                        \
+                (i32_result_idx) = mid;                                      \
+                break;                                                       \
+            } else if (found < (seeking)) {                                  \
+                left = mid + 1;                                              \
+            } else {                                                         \
+                right = mid - 1;                                             \
+            }                                                                \
+        }                                                                    \
     } while (0)
 
 #define SliceSort(slice, comparator)                      \

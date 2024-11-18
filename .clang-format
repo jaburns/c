@@ -6,6 +6,6 @@ UseTab: Never
 DerivePointerAlignment: false
 SortIncludes: false
 PointerAlignment: Left
-AttributeMacros: [SARRAY]
+AttributeMacros: [StaticVec]
 AlignAfterOpenBracket: BlockIndent
 AlignConsecutiveMacros: true

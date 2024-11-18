@@ -94,7 +94,7 @@ internal void* test_channel_drain_thread(void* arg) {
     for (;;) {
         for (ChannelIter it = channel_drain_iter(chan); !it.done; channel_drain_iter_next(&it)) {
             u64* item = (u64*)it.item;
-            if (*item == 0) PANIC("");
+            if (*item == 0) Panic("");
             sum += *item;
         }
 
@@ -139,7 +139,7 @@ internal void test_channel(void) {
         u64 expected_sum = (u64)THREAD_COUNT * (NUM_ITEMS * (NUM_ITEMS + 1)) / 2;
 
         if (sum != expected_sum) {
-            PANIC("Expected %llu but got %llu\n", expected_sum, sum);
+            Panic("Expected %llu but got %llu\n", expected_sum, sum);
         }
     }
 

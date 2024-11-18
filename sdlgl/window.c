@@ -1,10 +1,10 @@
 #include "inc.h"
 
 internal void sdlgl_create(SdlGlWindow* win, char* window_title, SDL_AudioCallback sdl_audio_callback) {
-    ZERO_STRUCT(win);
+    ZeroStruct(win);
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0) {
-        PANIC("Failed to initialize SDL: %s\n", SDL_GetError());
+        Panic("Failed to initialize SDL: %s\n", SDL_GetError());
     }
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -23,22 +23,22 @@ internal void sdlgl_create(SdlGlWindow* win, char* window_title, SDL_AudioCallba
     );
 
     if (!win->sdl_window) {
-        PANIC("Failed to create SDL window: %s\n", SDL_GetError());
+        Panic("Failed to create SDL window: %s\n", SDL_GetError());
     }
 
     win->sdl_context = SDL_GL_CreateContext(win->sdl_window);
     if (!win->sdl_context) {
-        PANIC("Failed to create SDL GL context: %s\n", SDL_GetError());
+        Panic("Failed to create SDL GL context: %s\n", SDL_GetError());
     }
 
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        PANIC("Error initializing GLEW: %s\n", glewGetErrorString(err));
+        Panic("Error initializing GLEW: %s\n", glewGetErrorString(err));
     }
 
     if (SDL_GL_SetSwapInterval(1) < 0) {
-        PANIC("Unable to set VSync: %s", SDL_GetError());
+        Panic("Unable to set VSync: %s", SDL_GetError());
     }
 
 #if DEBUG
@@ -60,7 +60,7 @@ internal void sdlgl_create(SdlGlWindow* win, char* window_title, SDL_AudioCallba
 
     win->sdl_audio_device = SDL_OpenAudioDevice(NULL, 0, &desired_spec, &obtained_spec, 0);
     if (win->sdl_audio_device == 0) {
-        PANIC("Failed to open audio device: %s\n", SDL_GetError());
+        Panic("Failed to open audio device: %s\n", SDL_GetError());
     }
     SDL_PauseAudioDevice(win->sdl_audio_device, 0);
 

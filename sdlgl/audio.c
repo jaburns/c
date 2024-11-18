@@ -1,23 +1,23 @@
 #include "inc.h"
 
 internal void audio_clip_load(Arena* arena, AudioClip* clip, char* path) {
-    ZERO_STRUCT(clip);
+    ZeroStruct(clip);
 
     ArenaTemp scratch = scratch_acquire(&arena, 1);
 
     FILE* fp = fopen(path, "rb");
-    if (!fp) PANIC("Failed to open audio file %s", path);
+    if (!fp) Panic("Failed to open audio file %s", path);
 
     OggVorbis_File vorbis;
     if (ov_open_callbacks(fp, &vorbis, NULL, 0, OV_CALLBACKS_DEFAULT) != 0) {
-        PANIC("Invalid ogg file");
+        Panic("Invalid ogg file");
     }
     i64 total_sample_count = 2 * ov_pcm_total(&vorbis, -1);
 
     vorbis_info* vi = ov_info(&vorbis, -1);
     i32 channels = vi->channels;
     if (channels != 1 && channels != 2) {
-        PANIC("Unsupported number of channels. Only mono and stereo are supported.");
+        Panic("Unsupported number of channels. Only mono and stereo are supported.");
     }
 
     bool must_resample = vi->rate != AUDIO_SAMPLE_RATE;
