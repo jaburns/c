@@ -4,11 +4,12 @@ typedef u32 UniformNameId;
 
 structdef(UniformNamedLocation) {
     UniformNameId name_id;
-    u32 location;
+    u32           location;
 };
 
 structdef(Shader) {
     u32 glid;
+
     StaticVec(UniformNamedLocation, 64) uniforms;
 };
 
@@ -25,8 +26,8 @@ structdef(Mesh) {
 
 structdef(LineRendererBuffers) {
     size_t vert_count;
-    vec2* pos;
-    vec2* uv;
+    vec2*  pos;
+    vec2*  uv;
 };
 
 internal void gfx_shader_create_or_update(
@@ -34,7 +35,7 @@ internal void gfx_shader_create_or_update(
     char** uniform_names, bool* shader_has_uniform_name, size_t uniform_total_names
 );
 internal void gfx_shader_destroy(Shader* shader);
-internal u32 gfx_shader_uniform(Shader* program, UniformNameId uniform);
+internal u32  gfx_shader_uniform(Shader* program, UniformNameId uniform);
 
 internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, size_t vert_count, u32* indices, size_t index_count);
 internal void gfx_mesh_destroy(Mesh* mesh);
@@ -57,13 +58,13 @@ structdef(DebugLine) {
 DefArrayTypes(DebugLine);
 
 structdef(DebugGeometry) {
-    Shader* shader;
-    Mesh* line_mesh;
+    Shader*       shader;
+    Mesh*         line_mesh;
     Vec_DebugLine lines;
 };
 
 internal DebugGeometry* gfx_debug_geometry_alloc(Arena* arena, Shader* shader, Mesh* line_mesh);
-internal void gfx_debug_set_global_geometry(DebugGeometry* geo);
+internal void           gfx_debug_set_global_geometry(DebugGeometry* geo);
 
 #endif
 

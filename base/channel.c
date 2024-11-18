@@ -4,19 +4,19 @@
 
 internal Channel channel_alloc(Arena* arena, size_t item_size, size_t capacity) {
     size_t buffer_size = capacity * item_size;
-    u8* buffers = arena_alloc(arena, 2 * buffer_size);
+    u8*    buffers     = arena_alloc(arena, 2 * buffer_size);
 
     return (Channel){
-        .capacity = capacity,
+        .capacity  = capacity,
         .item_size = item_size,
-        .buffer = {buffers, buffers + buffer_size},
+        .buffer    = {buffers, buffers + buffer_size},
     };
 }
 
 internal void channel_push(Channel* chan, void* item) {
     u32 cur_buf_reserve = atomic_fetch_add_explicit(&chan->cur_buffer_reserve, 1, memory_order_relaxed);
-    u32 buf = cur_buf_reserve & 0x80000000 ? 1 : 0;
-    u32 reserved_idx = cur_buf_reserve & 0x7fffffff;
+    u32 buf             = cur_buf_reserve & 0x80000000 ? 1 : 0;
+    u32 reserved_idx    = cur_buf_reserve & 0x7fffffff;
 
     if (reserved_idx >= chan->capacity) {
         Panic("Channel is full");
@@ -29,11 +29,11 @@ internal void channel_push(Channel* chan, void* item) {
 }
 
 internal ChannelIter ChannelIter_new(Channel* chan) {
-    u32 prev_peek = atomic_load_explicit(&chan->cur_buffer_reserve, memory_order_acquire);
-    u32 new_value = prev_peek & 0x80000000 ? 0 : 0x80000000;
+    u32 prev_peek        = atomic_load_explicit(&chan->cur_buffer_reserve, memory_order_acquire);
+    u32 new_value        = prev_peek & 0x80000000 ? 0 : 0x80000000;
     u32 prev_buf_reserve = atomic_exchange_explicit(&chan->cur_buffer_reserve, new_value, memory_order_acq_rel);
 
-    u32 prev_buf = prev_peek & 0x80000000 ? 1 : 0;
+    u32 prev_buf          = prev_peek & 0x80000000 ? 1 : 0;
     u32 prev_reserved_idx = prev_buf_reserve & 0x7fffffff;
 
     for (;;) {
@@ -44,10 +44,10 @@ internal ChannelIter ChannelIter_new(Channel* chan) {
     *(u32*)&chan->count_commit[prev_buf] = 0;
 
     ChannelIter it = {
-        .count_ = prev_reserved_idx,
-        .idx_ = -1,
+        .count_     = prev_reserved_idx,
+        .idx_       = -1,
         .item_size_ = chan->item_size,
-        .buffer_ = chan->buffer[prev_buf],
+        .buffer_    = chan->buffer[prev_buf],
     };
 
     ChannelIter_next(&it);
@@ -87,9 +87,9 @@ internal void* test_channel_push_thread(void* arg) {
 internal void* test_channel_drain_thread(void* arg) {
     while (!test_channel_start);
 
-    Channel* chan = (Channel*)arg;
-    u64 sum = 0;
-    bool should_finish = false;
+    Channel* chan          = (Channel*)arg;
+    u64      sum           = 0;
+    bool     should_finish = false;
 
     for (;;) {
         foreach (ChannelIter, it, chan) {
@@ -110,7 +110,7 @@ internal void test_channel(void) {
 
     for (i32 i = 0; i < 10; ++i) {
         test_channel_start = false;
-        test_channel_done = false;
+        test_channel_done  = false;
 
         arena_clear(&arena);
 

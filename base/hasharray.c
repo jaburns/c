@@ -3,22 +3,22 @@
 internal HashArray* hasharray_alloc(Arena* arena, size_t key_size, size_t value_size, size_t max_elems) {
     size_t capacity = NextPowerOf2(max_elems * 100 / HASHARRAY_LOAD_FACTOR_PERCENT);
 
-    u32* hashes = arena_alloc(arena, capacity * sizeof(u32));
-    void* keys = arena_alloc(arena, capacity * key_size);
-    void* values = arena_alloc(arena, capacity * value_size);
-    void* value_stub = arena_alloc(arena, value_size);
-    HashArray* map = arena_alloc(arena, sizeof(HashArray));
+    u32*       hashes     = arena_alloc(arena, capacity * sizeof(u32));
+    void*      keys       = arena_alloc(arena, capacity * key_size);
+    void*      values     = arena_alloc(arena, capacity * value_size);
+    void*      value_stub = arena_alloc(arena, value_size);
+    HashArray* map        = arena_alloc(arena, sizeof(HashArray));
 
     *map = (HashArray){
-        .capacity = capacity,
-        .max_elems = max_elems,
-        .key_size = key_size,
+        .capacity   = capacity,
+        .max_elems  = max_elems,
+        .key_size   = key_size,
         .value_size = value_size,
 
-        .count = 0,
-        .hashes = hashes,
-        .keys = keys,
-        .values = values,
+        .count      = 0,
+        .hashes     = hashes,
+        .keys       = keys,
+        .values     = values,
         .value_stub = value_stub,
     };
 
@@ -27,7 +27,7 @@ internal HashArray* hasharray_alloc(Arena* arena, size_t key_size, size_t value_
 
 internal u32 hasharray_djb2_hash(void* data, size_t len) {
     u32 hash = 5381;
-    u8* str = data;
+    u8* str  = data;
     while (len-- > 0) {
         hash = ((hash << 5) + hash) + *str++;
     }
@@ -100,11 +100,11 @@ internal void hasharray_clear(HashArray* map) {
 
 internal HashArrayIter HashArrayIter_new(HashArray* map) {
     HashArrayIter it = {
-        .idx_ = -1,
+        .idx_   = -1,
         .target = map,
-        .key = NULL,
-        .value = NULL,
-        .done = false,
+        .key    = NULL,
+        .value  = NULL,
+        .done   = false,
     };
     HashArrayIter_next(&it);
     return it;
@@ -118,7 +118,7 @@ internal void HashArrayIter_next(HashArrayIter* it) {
             return;
         }
         if (it->target->hashes[it->idx_] > 1) {
-            it->key = (u8*)it->target->keys + it->target->key_size * it->idx_;
+            it->key   = (u8*)it->target->keys + it->target->key_size * it->idx_;
             it->value = (u8*)it->target->values + it->target->value_size * it->idx_;
             return;
         }

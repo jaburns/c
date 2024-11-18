@@ -151,7 +151,7 @@ internal vec2 vec2_reflect_and_scale(vec2 v, vec2 normal, f32 norm_scale, f32 ta
     f32 n = vec2_dot(v, normal);
     if (n >= 0.f) return v;
     vec2 tangent = vec2_perp(normal);
-    f32 t = vec2_dot(v, tangent);
+    f32  t       = vec2_dot(v, tangent);
 
     return vec2_add(
         vec2_scale(tan_scale * t, tangent),
@@ -296,7 +296,7 @@ internal vec2 mat2_mul_vec2(mat2* m, vec2 v) {
 // --------------------------------------------------------------------------------------------------------------------
 
 internal void mat4_identity(mat4* dest) {
-    *dest = (mat4){0};
+    *dest     = (mat4){0};
     dest->a.x = 1.0f;
     dest->b.y = 1.0f;
     dest->c.z = 1.0f;
@@ -306,7 +306,7 @@ internal void mat4_identity(mat4* dest) {
 internal void mat4_mul(mat4* dest, mat4* m1, mat4* m2) {
     simde_float32x4_t l, r0, r1, r2, r3, v0, v1, v2, v3;
 
-    l = simde_vld1q_f32((simde_float32*)&m1->a);
+    l  = simde_vld1q_f32((simde_float32*)&m1->a);
     r0 = simde_vld1q_f32((simde_float32*)&m2->a);
     r1 = simde_vld1q_f32((simde_float32*)&m2->b);
     r2 = simde_vld1q_f32((simde_float32*)&m2->c);
@@ -317,19 +317,19 @@ internal void mat4_mul(mat4* dest, mat4* m1, mat4* m2) {
     v2 = simde_vmulq_n_f32(l, simde_vgetq_lane_f32(r2, 0));
     v3 = simde_vmulq_n_f32(l, simde_vgetq_lane_f32(r3, 0));
 
-    l = simde_vld1q_f32((simde_float32*)&m1->b);
+    l  = simde_vld1q_f32((simde_float32*)&m1->b);
     v0 = simde_vmlaq_n_f32(v0, l, simde_vgetq_lane_f32(r0, 1));
     v1 = simde_vmlaq_n_f32(v1, l, simde_vgetq_lane_f32(r1, 1));
     v2 = simde_vmlaq_n_f32(v2, l, simde_vgetq_lane_f32(r2, 1));
     v3 = simde_vmlaq_n_f32(v3, l, simde_vgetq_lane_f32(r3, 1));
 
-    l = simde_vld1q_f32((simde_float32*)&m1->c);
+    l  = simde_vld1q_f32((simde_float32*)&m1->c);
     v0 = simde_vmlaq_n_f32(v0, l, simde_vgetq_lane_f32(r0, 2));
     v1 = simde_vmlaq_n_f32(v1, l, simde_vgetq_lane_f32(r1, 2));
     v2 = simde_vmlaq_n_f32(v2, l, simde_vgetq_lane_f32(r2, 2));
     v3 = simde_vmlaq_n_f32(v3, l, simde_vgetq_lane_f32(r3, 2));
 
-    l = simde_vld1q_f32((simde_float32*)&m1->d);
+    l  = simde_vld1q_f32((simde_float32*)&m1->d);
     v0 = simde_vmlaq_n_f32(v0, l, simde_vgetq_lane_f32(r0, 3));
     v1 = simde_vmlaq_n_f32(v1, l, simde_vgetq_lane_f32(r1, 3));
     v2 = simde_vmlaq_n_f32(v2, l, simde_vgetq_lane_f32(r2, 3));
@@ -366,12 +366,12 @@ internal void mat4_apply_scale(mat4* m, vec3 scale) {
 }
 
 internal void mat4_make_rotation(mat4* m, f32 angle, vec3 normalized_axis) {
-    f32 c = cosf(angle);
-    vec3 v = vec3_scale(normalized_axis, 1.0f - c);
+    f32  c  = cosf(angle);
+    vec3 v  = vec3_scale(normalized_axis, 1.0f - c);
     vec3 vs = vec3_scale(normalized_axis, sinf(angle));
-    m->a = vec4_from_vec3(vec3_scale(normalized_axis, v.x), 0.0f);
-    m->b = vec4_from_vec3(vec3_scale(normalized_axis, v.y), 0.0f);
-    m->c = vec4_from_vec3(vec3_scale(normalized_axis, v.z), 0.0f);
+    m->a    = vec4_from_vec3(vec3_scale(normalized_axis, v.x), 0.0f);
+    m->b    = vec4_from_vec3(vec3_scale(normalized_axis, v.y), 0.0f);
+    m->c    = vec4_from_vec3(vec3_scale(normalized_axis, v.z), 0.0f);
 
     m->a.x += c;
     m->b.x -= vs.z;
@@ -384,7 +384,7 @@ internal void mat4_make_rotation(mat4* m, f32 angle, vec3 normalized_axis) {
     m->c.z += c;
 
     m->a.w = m->b.w = m->c.w = m->d.x = m->d.y = m->d.z = 0.0f;
-    m->d.w = 1.0f;
+    m->d.w                                              = 1.0f;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -400,7 +400,7 @@ internal f32 f32_fract(f32 a) {
 internal f32 ease_out_back(f32 x) {
     f32 c1 = 1.70158f;
     f32 c3 = c1 + 1.f;
-    f32 z = x - 1.f;
+    f32 z  = x - 1.f;
     return 1.f + c3 * z * z * z + c1 * z * z;
 }
 
@@ -469,24 +469,24 @@ internal f32 radians_minimize_unknown_sine(f32 (*f)(f32)) {
 internal LineSegPointResult geo_closest_point_on_line_seg(vec2 pt, vec2 line0, vec2 line1) {
     LineSegPointResult result = {0};
 
-    vec2 to_pt = vec2_sub(pt, line0);
+    vec2 to_pt    = vec2_sub(pt, line0);
     vec2 line_vec = vec2_sub(line1, line0);
 
-    f32 dot = vec2_dot(to_pt, line_vec);
+    f32 dot     = vec2_dot(to_pt, line_vec);
     f32 len_sqr = vec2_dot(line_vec, line_vec);
-    f32 t = -1.f;
+    f32 t       = -1.f;
 
     if (len_sqr != 0.f) t = dot / len_sqr;
 
     if (t <= 0.f) {
         result.on_line = false;
-        result.pt = line0;
+        result.pt      = line0;
     } else if (t >= 1.f) {
         result.on_line = false;
-        result.pt = line1;
+        result.pt      = line1;
     } else {
         result.on_line = true;
-        result.pt = vec2_add(line0, vec2_scale(t, line_vec));
+        result.pt      = vec2_add(line0, vec2_scale(t, line_vec));
     }
 
     return result;
@@ -504,10 +504,10 @@ internal bool geo_rect_overlaps_rect(vec2 min0, vec2 max0, vec2 min1, vec2 max1)
 internal LineSegIntersectResult geo_line_hit_oriented_line(vec2 a0, vec2 a1, vec2 b0, vec2 b1) {
     LineSegIntersectResult result = {0};
 
-    vec2 r = vec2_sub(a1, a0);
-    vec2 s = vec2_sub(b1, b0);
-    vec2 ba = vec2_sub(b0, a0);
-    f32 rxs = vec2_cross(r, s);
+    vec2 r   = vec2_sub(a1, a0);
+    vec2 s   = vec2_sub(b1, b0);
+    vec2 ba  = vec2_sub(b0, a0);
+    f32  rxs = vec2_cross(r, s);
 
     // Only include hits of line A against the left side of line B
     if (rxs <= 0.f) return result;
@@ -518,10 +518,10 @@ internal LineSegIntersectResult geo_line_hit_oriented_line(vec2 a0, vec2 a1, vec
     f32 u = vec2_cross(ba, r) / rxs;
     if (u < 0.f || u > 1.f) return result;
 
-    result.hit = true;
-    result.point = vec2_add(a0, vec2_scale(t, r));
+    result.hit    = true;
+    result.point  = vec2_add(a0, vec2_scale(t, r));
     result.normal = (vec2){-s.y, s.x};
-    result.t = t;
+    result.t      = t;
     return result;
 }
 
@@ -531,36 +531,36 @@ internal LineSegIntersectResult geo_line_hit_circle(vec2 p0, vec2 p1, vec2 cente
     vec2 d = vec2_sub(p1, p0);
     vec2 f = vec2_sub(p0, center);
 
-    f32 a = vec2_dot(d, d);
-    f32 b = 2.f * vec2_dot(f, d);
-    f32 c = vec2_dot(f, f) - radius * radius;
+    f32 a    = vec2_dot(d, d);
+    f32 b    = 2.f * vec2_dot(f, d);
+    f32 c    = vec2_dot(f, f) - radius * radius;
     f32 disc = b * b - 4.f * a * c;
 
     if (disc < 0.f) return result;
 
-    disc = sqrtf(disc);
+    disc   = sqrtf(disc);
     f32 t0 = (-b - disc) / (2.f * a);
     f32 t1 = (-b + disc) / (2.f * a);
 
     if (t1 < 0.f || t0 > 1.f) return result;
 
-    f32 t = Clamp01(t0);
+    f32  t     = Clamp01(t0);
     vec2 point = vec2_add(p0, vec2_scale(t, d));
 
-    result.hit = true;
-    result.point = point;
+    result.hit    = true;
+    result.point  = point;
     result.normal = vec2_normalize(vec2_sub(point, center));
-    result.t = t;
+    result.t      = t;
     return result;
 }
 
 internal LineSegIntersectResult geo_line_hit_rect(vec2 p0, vec2 p1, vec2 rect_min, vec2 rect_max) {
     LineSegIntersectResult result = {0};
     if (geo_rect_contains_point(rect_min, rect_max, p0)) {
-        result.hit = true;
+        result.hit    = true;
         result.normal = vec2_normalize(vec2_sub(p0, p1));
-        result.point = p0;
-        result.t = 0.f;
+        result.point  = p0;
+        result.t      = 0.f;
     }
 
     result = geo_line_hit_oriented_line(p0, p1, rect_min, (vec2){rect_min.x, rect_max.y});

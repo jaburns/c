@@ -87,11 +87,11 @@ internal Str str_after_last_index(char split, Str str) {
 
 internal StrSplitIter StrSplitIter_new(char split, Str str) {
     StrSplitIter it = (StrSplitIter){
-        .done = false,
-        .split = split,
-        .target = str,
-        .item = {NULL, 0},
-        .item_end_ = str.items - 1,
+        .done        = false,
+        .split       = split,
+        .target      = str,
+        .item        = {NULL, 0},
+        .item_end_   = str.items - 1,
         .target_end_ = str.items + str.count,
     };
     StrSplitIter_next(&it);
@@ -113,10 +113,10 @@ internal void StrSplitIter_next(StrSplitIter* it) {
 
 internal StrSplitWhitespaceIter StrSplitWhitespaceIter_new(Str str) {
     StrSplitWhitespaceIter it = (StrSplitWhitespaceIter){
-        .done = false,
-        .target = str,
-        .item = {NULL, 0},
-        .item_end_ = str.items,
+        .done        = false,
+        .target      = str,
+        .item        = {NULL, 0},
+        .item_end_   = str.items,
         .target_end_ = str.items + str.count,
     };
     StrSplitWhitespaceIter_next(&it);
@@ -204,8 +204,8 @@ internal Str str_substr_from(Str str, size_t idx) {
 
 internal char* u64_print_with_commas(Arena* arena, u64 num) {
     char buffer[32];
-    i32 len = snprintf(buffer, sizeof(buffer), "%llu", num);
-    i32 commas = (len - 1) / 3;
+    i32  len    = snprintf(buffer, sizeof(buffer), "%llu", num);
+    i32  commas = (len - 1) / 3;
 
     char* ret = arena_alloc(arena, len + commas + 1);
     char* out = ret + len + commas;
@@ -216,7 +216,7 @@ internal char* u64_print_with_commas(Arena* arena, u64 num) {
         *out-- = buffer[i];
         if (++c == 3 && i != 0) {
             *out-- = ',';
-            c = 0;
+            c      = 0;
         }
     }
 
@@ -251,7 +251,7 @@ internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
 
 internal Str str_read_file(Arena* arena, char* filename) {
     size_t size;
-    char* data = read_file(arena, filename, &size);
+    char*  data = read_file(arena, filename, &size);
     return (Str){.count = size, .items = data};
 }
 

@@ -32,7 +32,7 @@ internal void sdlgl_create(SdlGlWindow* win, char* window_title, SDL_AudioCallba
     }
 
     glewExperimental = GL_TRUE;
-    GLenum err = glewInit();
+    GLenum err       = glewInit();
     if (err != GLEW_OK) {
         Panic("Error initializing GLEW: %s\n", glewGetErrorString(err));
     }
@@ -42,18 +42,18 @@ internal void sdlgl_create(SdlGlWindow* win, char* window_title, SDL_AudioCallba
     }
 
 #if DEBUG
-    win->imgui_context = igCreateContext(NULL);
-    ImGuiIO* io = igGetIO();
-    io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    win->imgui_context  = igCreateContext(NULL);
+    ImGuiIO* io         = igGetIO();
+    io->ConfigFlags    |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui_ImplSdlGL3_Init(win->sdl_window, NULL);
 #endif
 
     SDL_AudioSpec obtained_spec;
     SDL_AudioSpec desired_spec = (SDL_AudioSpec){
-        .freq = AUDIO_SAMPLE_RATE,
-        .format = AUDIO_F32,
+        .freq     = AUDIO_SAMPLE_RATE,
+        .format   = AUDIO_F32,
         .channels = 2,
-        .samples = 512,
+        .samples  = 512,
         .callback = sdl_audio_callback,
         .userdata = win,
     };
@@ -66,32 +66,32 @@ internal void sdlgl_create(SdlGlWindow* win, char* window_title, SDL_AudioCallba
 
     for (u32 i = 0; i < SDL_NumJoysticks(); ++i) {
         printf("Using joystick: %s\n", SDL_JoystickNameForIndex(i));
-        win->sdl_joystick = SDL_JoystickOpen(i);
+        win->sdl_joystick       = SDL_JoystickOpen(i);
         win->active_joystick_id = i;
         break;
     }
 }
 
 internal i32 sdlgl_poll(SdlGlWindow* win) {
-    win->mouse_delta = (ivec2){0};
+    win->mouse_delta       = (ivec2){0};
     win->mouse_delta_wheel = 0.f;
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
 #if DEBUG
         ImGui_ImplSdlGL3_ProcessEvent(&event);
-        bool imgui_wants_mouse = igGetIO()->WantCaptureMouse;
+        bool imgui_wants_mouse    = igGetIO()->WantCaptureMouse;
         bool imgui_wants_keyboard = igGetIO()->WantCaptureKeyboard;
 #else
-        bool imgui_wants_mouse = false;
+        bool imgui_wants_mouse    = false;
         bool imgui_wants_keyboard = false;
 #endif
         switch (event.type) {
             case SDL_WINDOWEVENT: {
                 switch (event.window.event) {
                     case SDL_WINDOWEVENT_RESIZED: {
-                        i32 w = event.window.data1;
-                        i32 h = event.window.data2;
+                        i32 w              = event.window.data1;
+                        i32 h              = event.window.data2;
                         win->screen_size.x = w;
                         win->screen_size.y = h;
                         break;

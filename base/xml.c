@@ -2,16 +2,16 @@
 
 internal void xml_parse(
     Arena* arena,
-    char* file_contents,
+    char*  file_contents,
     size_t file_length,
-    void* user_ctx,
-    void (*on_element_open)(void* ctx, Str path, Slice_XmlParseAttribute attributes),
-    void (*on_element_close)(void* ctx, Str path, Str content)
+    void*  user_ctx,
+    void   (*on_element_open)(void* ctx, Str path, Slice_XmlParseAttribute attributes),
+    void   (*on_element_close)(void* ctx, Str path, Str content)
 ) {
-    char* read = file_contents;
+    char* read     = file_contents;
     char* file_end = file_contents + file_length;
 
-    char path[256] = {0};
+    char  path[256]  = {0};
     char* path_write = path;
 
     Vec_XmlParseAttribute attributes = VecAlloc(XmlParseAttribute, arena, 256);
@@ -29,7 +29,7 @@ internal void xml_parse(
         }
 
         Str whole_tag = str_before_first_index('>', (Str){.items = read, .count = file_end - read});
-        Str tag = str_trim(whole_tag);
+        Str tag       = str_trim(whole_tag);
         Assert(tag.count > 0);
         bool pop_path = false;
 
@@ -86,7 +86,7 @@ internal void xml_parse(
                 Assert(cur < end);
 
                 *VecPush(attributes) = (XmlParseAttribute){
-                    .key = key,
+                    .key   = key,
                     .value = (Str){.items = val_start, .count = cur - val_start},
                 };
 
@@ -98,7 +98,7 @@ internal void xml_parse(
             if (pop_path) on_element_close(user_ctx, str_path, (Str){0});
         }
 
-        read = whole_tag.items + whole_tag.count + 1;
+        read          = whole_tag.items + whole_tag.count + 1;
         content_start = NULL;
 
         if (pop_path) {

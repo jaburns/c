@@ -6,7 +6,7 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
 #if DEBUG
-    char* out = arena_alloc(scratch.arena, 2 * MAX_SHADER_ERROR_LEN);
+    char* out       = arena_alloc(scratch.arena, 2 * MAX_SHADER_ERROR_LEN);
     char* out_write = out;
 
 #define Print(...) PrintfBuf(out_write, out, 2 * MAX_SHADER_ERROR_LEN, __VA_ARGS__)
@@ -20,9 +20,9 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
         i32 i = 0;
         foreach (StrSplitIter, it, ':', trim_line) {
             if (i == 2) {
-                i32 line = atoi(str_to_cstr(scratch.arena, it.item));
-                line -= line_offset;
-                char* line_name = opt_shader_linenos ? opt_shader_linenos[line - 1] : "";
+                i32 line         = atoi(str_to_cstr(scratch.arena, it.item));
+                line            -= line_offset;
+                char* line_name  = opt_shader_linenos ? opt_shader_linenos[line - 1] : "";
                 Print("%s: ", line_name);
             } else if (i == 3) {
                 Str trim_item = str_trim(it.item);
@@ -50,9 +50,9 @@ internal void gfx_shader_create_or_update(
     bool panic_on_error = !DEBUG || !out_shader->glid;
 
     ArenaTemp scratch = scratch_acquire(NULL, 0);
-    u32 program = 0;
+    u32       program = 0;
 
-    i32 chunks = 5;
+    i32         chunks        = 5;
     const char* vert_source[] = {
         "#version 330 core\n",
         "precision highp float;\n",
@@ -110,14 +110,14 @@ internal void gfx_shader_create_or_update(
     for (i32 i = 0; i < uniform_total_names; ++i) {
         if (shader_has_uniform_name[i]) {
             *StaticVecPush(out_shader->uniforms) = (UniformNamedLocation){
-                .name_id = i,
+                .name_id  = i,
                 .location = glGetUniformLocation(program, uniform_names[i]),
             };
         }
     }
 
     out_shader->glid = program;
-    panic_on_error = false;
+    panic_on_error   = false;
 
 error_exit:
     if (panic_on_error)
@@ -167,7 +167,7 @@ internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, size_t 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * index_count, indices, GL_STATIC_DRAW);
 
-    mesh->vao = vao;
+    mesh->vao        = vao;
     mesh->elem_count = index_count;
 }
 
@@ -230,8 +230,8 @@ internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* 
 
     LineRendererBuffers result = {
         .vert_count = vert_count,
-        .pos = arena_alloc(arena, vert_count * sizeof(vec2)),
-        .uv = arena_alloc(arena, vert_count * sizeof(vec2)),
+        .pos        = arena_alloc(arena, vert_count * sizeof(vec2)),
+        .uv         = arena_alloc(arena, vert_count * sizeof(vec2)),
     };
 
     for (u32 i = 0; i < position_count; ++i) {
@@ -245,15 +245,15 @@ internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* 
         } else {
             vec2 a = vec2_normalize(vec2_sub(positions[i + 1], midpt));
             vec2 b = vec2_normalize(vec2_sub(midpt, positions[i - 1]));
-            tan = vec2_perp(vec2_scale(.5f, vec2_add(a, b)));
+            tan    = vec2_perp(vec2_scale(.5f, vec2_add(a, b)));
         }
 
         tan = vec2_scale(half_width, vec2_normalize(tan));
 
-        result.pos[2 * i] = vec2_sub(midpt, tan);
+        result.pos[2 * i]     = vec2_sub(midpt, tan);
         result.pos[2 * i + 1] = vec2_add(midpt, tan);
-        result.uv[2 * i] = VEC2_ZERO;
-        result.uv[2 * i + 1] = VEC2_ZERO;
+        result.uv[2 * i]      = VEC2_ZERO;
+        result.uv[2 * i + 1]  = VEC2_ZERO;
     }
 
     return result;
@@ -265,10 +265,10 @@ global DebugGeometry* g_debug_geometry;
 
 internal DebugGeometry* gfx_debug_geometry_alloc(Arena* arena, Shader* shader, Mesh* line_mesh) {
     DebugGeometry* geo = arena_alloc(arena, sizeof(DebugGeometry));
-    *geo = (DebugGeometry){
-        .lines = VecAlloc(DebugLine, arena, Kb(32)),
-        .shader = shader,
-        .line_mesh = line_mesh,
+    *geo               = (DebugGeometry){
+                      .lines     = VecAlloc(DebugLine, arena, Kb(32)),
+                      .shader    = shader,
+                      .line_mesh = line_mesh,
     };
     return geo;
 }

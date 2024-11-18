@@ -6,10 +6,10 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
     size_t read_len;
-    char* cfile = read_file(scratch.arena, file_path, &read_len);
-    Str file = (Str){.items = cfile, .count = read_len};
-    char path_buf[256];
-    i32 line = 1;
+    char*  cfile = read_file(scratch.arena, file_path, &read_len);
+    Str    file  = (Str){.items = cfile, .count = read_len};
+    char   path_buf[256];
+    i32    line = 1;
 
     foreach (StrSplitIter, lines_it, '\n', file) {
         Str trim_line = str_trim(lines_it.item);
@@ -18,7 +18,7 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
             snprintf(path_buf, 256, "assets/shaders/%.*s", StrPrintfArgs(path));
             resolve_shader_inner(shader_sources, shader_log_lines, path_buf, total_lines);
         } else {
-            *shader_sources += sprintf(*shader_sources, "\"%.*s\\n\"\n", StrPrintfArgs(trim_line));
+            *shader_sources   += sprintf(*shader_sources, "\"%.*s\\n\"\n", StrPrintfArgs(trim_line));
             *shader_log_lines += sprintf(*shader_log_lines, "\"%s:%i:0\",\n", file_path, line);
             ++*total_lines;
         }
@@ -32,15 +32,15 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
 internal void resolve_shader(char* name, char** shader_sources, char** shader_log_lines, char* file_path) {
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
-    char* shader_log_temp = arena_alloc_not_zeroed(scratch.arena, Mb(1));
+    char* shader_log_temp   = arena_alloc_not_zeroed(scratch.arena, Mb(1));
     char* shader_log_temp_0 = shader_log_temp;
 
-    u32 total_lines = 1;
+    u32 total_lines  = 1;
     *shader_sources += sprintf(*shader_sources, "readonly_global char* SHADER_SOURCE_%s =\n", name);
     resolve_shader_inner(shader_sources, &shader_log_temp, file_path, &total_lines);
 
     *shader_log_lines += sprintf(*shader_log_lines, "readonly_global char* SHADER_LINENO_%s[%u] = {\n%s", name, total_lines, shader_log_temp_0);
-    *shader_sources += sprintf(*shader_sources, ";\n\n");
+    *shader_sources   += sprintf(*shader_sources, ";\n\n");
     *shader_log_lines += sprintf(*shader_log_lines, "\"\"};\n\n");
 
     scratch_release(scratch);
@@ -77,7 +77,7 @@ internal i32 generate_enum_entries(char* directory, char* extension, AssetEntry*
     if (!dir) Panic("Failed to open directory");
 
     struct dirent* entry;
-    i32 count = 0;
+    i32            count = 0;
     while ((entry = readdir(dir)) != NULL && count < max_entries) {
         if (strstr(entry->d_name, ".inc.glsl")) {
             continue;
@@ -98,7 +98,7 @@ internal i32 extract_uniforms_from_shader(char* file_path, char uniforms[MAX_UNI
     FILE* f = fopen(file_path, "r");
     if (!f) Panic("Failed to open shader file");
 
-    i32 count = 0;
+    i32  count = 0;
     char line[256];
     while (fgets(line, sizeof(line), f) && count < MAX_UNIFORMS) {
         if (strstr(line, "uniform")) {
@@ -124,21 +124,21 @@ internal i32 extract_uniforms_from_shader(char* file_path, char uniforms[MAX_UNI
 internal void sdlgl_meta_write_assets_header(char* path) {
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
-    char* shader_sources = arena_alloc_not_zeroed(scratch.arena, Mb(1));
-    char* shader_log_lines = arena_alloc_not_zeroed(scratch.arena, Mb(1));
-    char* shader_sources_0 = shader_sources;
+    char* shader_sources     = arena_alloc_not_zeroed(scratch.arena, Mb(1));
+    char* shader_log_lines   = arena_alloc_not_zeroed(scratch.arena, Mb(1));
+    char* shader_sources_0   = shader_sources;
     char* shader_log_lines_0 = shader_log_lines;
 
     AssetEntry audio[MAX_ENTRIES];
     AssetEntry textures[MAX_ENTRIES];
     AssetEntry shaders[MAX_ENTRIES];
 
-    i32 audio_count = generate_enum_entries("assets/audio", ".ogg", audio, MAX_ENTRIES);
+    i32 audio_count   = generate_enum_entries("assets/audio", ".ogg", audio, MAX_ENTRIES);
     i32 texture_count = generate_enum_entries("assets/textures", ".png", textures, MAX_ENTRIES);
-    i32 shader_count = generate_enum_entries("assets/shaders", ".glsl", shaders, MAX_ENTRIES);
+    i32 shader_count  = generate_enum_entries("assets/shaders", ".glsl", shaders, MAX_ENTRIES);
 
     char uniform_names[MAX_UNIFORMS][MAX_PATH_LENGTH];
-    i32 uniform_name_count = 0;
+    i32  uniform_name_count = 0;
 
     bool shader_uniform_map[MAX_ENTRIES][MAX_UNIFORMS] = {false};
 
@@ -146,7 +146,7 @@ internal void sdlgl_meta_write_assets_header(char* path) {
         resolve_shader(shaders[i].name, &shader_sources, &shader_log_lines, shaders[i].path);
 
         char shader_uniforms[MAX_UNIFORMS][MAX_PATH_LENGTH];
-        i32 shader_uniform_count = extract_uniforms_from_shader(shaders[i].path, shader_uniforms);
+        i32  shader_uniform_count = extract_uniforms_from_shader(shaders[i].path, shader_uniforms);
 
         for (i32 j = 0; j < shader_uniform_count; j++) {
             i32 uniform_index = -1;

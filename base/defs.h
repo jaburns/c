@@ -55,14 +55,14 @@
 
 #define DefArrayTypes(type)       \
     typedef struct Slice_##type { \
-        type* items;              \
+        type*  items;             \
         size_t count;             \
     } Slice_##type;               \
                                   \
     typedef struct Vec_##type {   \
         union {                   \
             struct {              \
-                type* items;      \
+                type*  items;     \
                 size_t count;     \
             };                    \
             Slice_##type slice;   \
@@ -81,16 +81,16 @@
 #define foreach(type, it, ...) \
     for (type it = type##_new(__VA_ARGS__); !it.done; type##_next(&it))
 
-typedef uint8_t u8;
-typedef int8_t i8;
-typedef uint8_t u16;
-typedef int8_t i16;
+typedef uint8_t  u8;
+typedef int8_t   i8;
+typedef uint8_t  u16;
+typedef int8_t   i16;
 typedef uint32_t u32;
-typedef int32_t i32;
+typedef int32_t  i32;
 typedef uint64_t u64;
-typedef int64_t i64;
-typedef float f32;
-typedef double f64;
+typedef int64_t  i64;
+typedef float    f32;
+typedef double   f64;
 
 DefArrayTypes(char);
 DefArrayTypes(u8);
@@ -166,20 +166,23 @@ internal void panic_expr(char* msg) {
         }                                                                          \
     } while (0)
 
-#define PrintfBuf(out_ptr, out_start_ptr, buf_len, ...)                            \
-    do {                                                                           \
-        i32 remaining = (i32)(buf_len) - (i32)((out_ptr) - (out_start_ptr));       \
-        if (remaining > 0) {                                                       \
-            i32 written = snprintf((out_ptr), remaining, __VA_ARGS__);             \
-            (out_ptr) += written > 0 && written < remaining ? written : remaining; \
-        }                                                                          \
+#define PrintfBuf(out_ptr, out_start_ptr, buf_len, ...)                              \
+    do {                                                                             \
+        i32 remaining = (i32)(buf_len) - (i32)((out_ptr) - (out_start_ptr));         \
+        if (remaining > 0) {                                                         \
+            i32 written  = snprintf((out_ptr), remaining, __VA_ARGS__);              \
+            (out_ptr)   += written > 0 && written < remaining ? written : remaining; \
+        }                                                                            \
     } while (0)
 
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-#define VecAlloc(type, arena_ptr, capacity)                                    \
-    (Vec_##type) {                                                             \
-        {{arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
+#define VecAlloc(type, arena_ptr, capacity)                          \
+    (Vec_##type) {                                                   \
+        {                                                            \
+            {arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0} \
+},                                                           \
+            (capacity)                                               \
     }
 
 #define VecPush(vec) (                                                          \
@@ -197,7 +200,7 @@ internal void panic_expr(char* msg) {
 #define StaticVec(type, capacity) \
     struct {                      \
         size_t count;             \
-        type items[capacity];     \
+        type   items[capacity];   \
     }
 
 #define StaticVecPush(vec) (                                                         \
@@ -214,11 +217,11 @@ internal void panic_expr(char* msg) {
 #define SliceBinarySearch(i32_result_idx, slice, field_type, field, seeking) \
     do {                                                                     \
         (i32_result_idx) = -1;                                               \
-        i32 left = 0;                                                        \
-        i32 right = (slice).count - 1;                                       \
+        i32 left         = 0;                                                \
+        i32 right        = (slice).count - 1;                                \
                                                                              \
         while (left <= right) {                                              \
-            i32 mid = left + ((right - left) >> 1);                          \
+            i32        mid   = left + ((right - left) >> 1);                 \
             field_type found = (slice).items[mid] field;                     \
                                                                              \
             if (found == (seeking)) {                                        \
@@ -253,7 +256,7 @@ internal void panic_expr(char* msg) {
 
 #define SllStackPopInto(stack_head, node)  \
     do {                                   \
-        (node) = (stack_head);             \
+        (node)       = (stack_head);       \
         (stack_head) = (stack_head)->next; \
         (node)->next = NULL;               \
     } while (0)

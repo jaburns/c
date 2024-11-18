@@ -5,7 +5,7 @@ internal MemoryReservation memory_reserve(void) {
     if (ptr == MAP_FAILED) Panic("memory_reserve mmap failed");
 
     return (MemoryReservation){
-        .base = ptr,
+        .base             = ptr,
         .blocks_committed = 0,
     };
 }
@@ -14,8 +14,8 @@ internal void memory_commit_size(MemoryReservation* reservation, size_t total_si
     size_t total_blocks_required = 1 + total_size / MEMORY_COMMIT_BLOCK_SIZE;
 
     if (total_blocks_required > reservation->blocks_committed) {
-        size_t cur_size = MEMORY_COMMIT_BLOCK_SIZE * reservation->blocks_committed;
-        size_t add_size = total_blocks_required - reservation->blocks_committed;
+        size_t cur_size               = MEMORY_COMMIT_BLOCK_SIZE * reservation->blocks_committed;
+        size_t add_size               = total_blocks_required - reservation->blocks_committed;
         reservation->blocks_committed = total_blocks_required;
 
         i32 result = mprotect(
@@ -24,9 +24,9 @@ internal void memory_commit_size(MemoryReservation* reservation, size_t total_si
         if (result == -1) Panic("memory_commit_size mprotect failed");
 
     } else if (total_blocks_required < reservation->blocks_committed) {
-        size_t remove_size = reservation->blocks_committed - total_blocks_required;
+        size_t remove_size            = reservation->blocks_committed - total_blocks_required;
         reservation->blocks_committed = total_blocks_required;
-        size_t new_size = MEMORY_COMMIT_BLOCK_SIZE * reservation->blocks_committed;
+        size_t new_size               = MEMORY_COMMIT_BLOCK_SIZE * reservation->blocks_committed;
 
         i32 result = madvise(
             reservation->base + new_size, remove_size * MEMORY_COMMIT_BLOCK_SIZE, MADV_DONTNEED
@@ -50,9 +50,9 @@ internal void memory_heap_free(void* ptr) {
 }
 
 readonly_global MemoryAllocator GLOBAL_ALLOCATOR = (MemoryAllocator){
-    .memory_reserve = memory_reserve,
+    .memory_reserve     = memory_reserve,
     .memory_commit_size = memory_commit_size,
-    .memory_release = memory_release,
-    .memory_heap_alloc = memory_heap_alloc,
-    .memory_heap_free = memory_heap_free,
+    .memory_release     = memory_release,
+    .memory_heap_alloc  = memory_heap_alloc,
+    .memory_heap_free   = memory_heap_free,
 };

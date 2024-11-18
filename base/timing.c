@@ -3,7 +3,7 @@
 #ifdef __APPLE__
 
 global mach_timebase_info_data_t g_timing_timebase;
-global u64 g_timing_start_ticks;
+global u64                       g_timing_start_ticks;
 
 internal void timing_global_init(void) {
     mach_timebase_info(&g_timing_timebase);
@@ -11,7 +11,7 @@ internal void timing_global_init(void) {
 }
 
 internal u64 timing_get_nanos_since_start(void) {
-    u64 elapsed = mach_absolute_time() - g_timing_start_ticks;
+    u64 elapsed    = mach_absolute_time() - g_timing_start_ticks;
     u64 elapsed_ns = elapsed * g_timing_timebase.numer / g_timing_timebase.denom;
     return elapsed_ns;
 }
