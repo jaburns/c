@@ -8,7 +8,6 @@ SortIncludes: false
 PointerAlignment: Left
 AttributeMacros: [StaticVec]
 AlignAfterOpenBracket: BlockIndent
-AlignArrayOfStructures: Right
 AlignConsecutiveAssignments:
   Enabled: true
   AlignCompound: true
