@@ -5,16 +5,16 @@ global thread_local Arena g_arena_scratch[2];
 internal Arena arena_create(MemoryAllocator* allocator) {
     MemoryReservation reservation = allocator->memory_reserve();
     return (Arena){
-        .allocator = allocator,
-        .reservation = reservation,
-        .cur = reservation.base,
+        .allocator       = allocator,
+        .reservation     = reservation,
+        .cur             = reservation.base,
         .resources_stack = NULL,
     };
 }
 
 internal Arena* arena_fork(Arena* self) {
     Arena* child = arena_alloc_resource(self, sizeof(Arena), (ArenaDropFn)arena_destroy);
-    *child = arena_create(self->allocator);
+    *child       = arena_create(self->allocator);
     return child;
 }
 
@@ -53,9 +53,9 @@ internal void arena_align(Arena* arena) {
 internal ArenaArray arena_array_begin(Arena* arena, size_t elem_size) {
     arena_align(arena);
     return (ArenaArray){
-        .arena = arena,
+        .arena     = arena,
         .elem_size = elem_size,
-        .items = arena->cur,
+        .items     = arena->cur,
     };
 }
 
@@ -81,11 +81,11 @@ internal void* arena_alloc_not_zeroed(Arena* self, size_t size) {
 }
 
 internal void* arena_alloc_resource(Arena* self, size_t size, ArenaDropFn drop) {
-    void* result = arena_alloc(self, size);
-    ArenaResourceNode* node = arena_alloc(self, sizeof(ArenaResourceNode));
+    void*              result = arena_alloc(self, size);
+    ArenaResourceNode* node   = arena_alloc(self, sizeof(ArenaResourceNode));
 
     node->target = result;
-    node->drop = drop;
+    node->drop   = drop;
     SllStackPush(self->resources_stack, node);
 
     return result;
@@ -113,12 +113,12 @@ internal ArenaTemp scratch_acquire(Arena** conflicts, size_t conflict_count) {
         }
     }
 
-    Arena* arena = &g_arena_scratch[matched[0] ? 1 : 0];
-    ArenaMark mark = arena_mark(arena);
+    Arena*    arena = &g_arena_scratch[matched[0] ? 1 : 0];
+    ArenaMark mark  = arena_mark(arena);
 
     return (ArenaTemp){
         .arena = arena,
-        .mark = mark,
+        .mark  = mark,
     };
 err:
     Panic("Both scratch arenas passed as conflicts to scratch_acquire");

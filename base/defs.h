@@ -28,19 +28,58 @@
     }
 #endif
 
-#define Max(a, b)          ((a) > (b) ? (a) : (b))
-#define Min(a, b)          ((a) < (b) ? (a) : (b))
-#define Clamp(x, min, max) (Max((min), Min((max), (x))))
-#define Clamp01(x)         Clamp(x, 0, 1)
-#define Abs(a)             ((a) >= 0 ? (a) : -(a))
-#define Sign(a)            ((a) >= 0 ? 1 : -1)
-#define NextPowerOf2(x)    ((x) <= 1 ? 1 : 1U << (32 - __builtin_clz((x) - 1)))
-
 #define internal        static
 #define global          static
 #define local_persist   static
 #define readonly_global static  // could use attributes to put this data in read-only pages, but that causes problems with dylib load on macos
 #define thread_local    _Thread_local
+
+#define alignof(x) _Alignof(x)
+
+// Use underlying type syntax if available, otherwise ignore size in debug builds in favor
+// of getting errors for non-exhaustive switches, but use specified underlying type directly
+// in release builds.
+#if __STDC_VERSION__ >= 202311L
+#define enumdef(name, type) \
+    typedef enum name name; \
+    enum name : type
+#elif DEBUG
+#define enumdef(name, type) \
+    typedef enum name name; \
+    enum name
+#else
+#define enumdef(name, type) \
+    typedef type name;      \
+    enum name
+#endif
+
+#define DefArrayTypes(type)       \
+    typedef struct Slice_##type { \
+        type* items;              \
+        size_t count;             \
+    } Slice_##type;               \
+                                  \
+    typedef struct Vec_##type {   \
+        union {                   \
+            struct {              \
+                type* items;      \
+                size_t count;     \
+            };                    \
+            Slice_##type slice;   \
+        };                        \
+        size_t capacity;          \
+    } Vec_##type;
+
+#define structdef(name)       \
+    typedef struct name name; \
+    struct name
+
+#define uniondef(name)       \
+    typedef union name name; \
+    union name
+
+#define foreach(type, it, ...) \
+    for (type it = type##_new(__VA_ARGS__); !it.done; type##_next(&it))
 
 typedef uint8_t u8;
 typedef int8_t i8;
@@ -53,6 +92,20 @@ typedef int64_t i64;
 typedef float f32;
 typedef double f64;
 
+DefArrayTypes(char);
+DefArrayTypes(u8);
+DefArrayTypes(i8);
+DefArrayTypes(u16);
+DefArrayTypes(i16);
+DefArrayTypes(u32);
+DefArrayTypes(i32);
+DefArrayTypes(u64);
+DefArrayTypes(i64);
+DefArrayTypes(f32);
+DefArrayTypes(f64);
+DefArrayTypes(bool);
+DefArrayTypes(size_t);
+
 #define Kb(n) (((u64)(n)) << 10)
 #define Mb(n) (((u64)(n)) << 20)
 #define Gb(n) (((u64)(n)) << 30)
@@ -60,7 +113,13 @@ typedef double f64;
 #define Stringify(x)      #x
 #define Concatenate(x, y) x##y
 
-#define alignof(x) _Alignof(x)
+#define Max(a, b)          ((a) > (b) ? (a) : (b))
+#define Min(a, b)          ((a) < (b) ? (a) : (b))
+#define Clamp(x, min, max) (Max((min), Min((max), (x))))
+#define Clamp01(x)         Clamp(x, 0, 1)
+#define Abs(a)             ((a) >= 0 ? (a) : -(a))
+#define Sign(a)            ((a) >= 0 ? 1 : -1)
+#define NextPowerOf2(x)    ((x) <= 1 ? 1 : 1U << (32 - __builtin_clz((x) - 1)))
 
 #define ZeroStruct(struct_ptr) memset((struct_ptr), 0, sizeof(*(struct_ptr)))
 
@@ -115,65 +174,6 @@ internal void panic_expr(char* msg) {
             (out_ptr) += written > 0 && written < remaining ? written : remaining; \
         }                                                                          \
     } while (0)
-
-// Use underlying type syntax if available, otherwise ignore size in debug builds in favor
-// of getting errors for non-exhaustive switches, but use specified underlying type directly
-// in release builds.
-#if __STDC_VERSION__ >= 202311L
-#define enumdef(name, type) \
-    typedef enum name name; \
-    enum name : type
-#elif DEBUG
-#define enumdef(name, type) \
-    typedef enum name name; \
-    enum name
-#else
-#define enumdef(name, type) \
-    typedef type name;      \
-    enum name
-#endif
-
-#define DefArrayTypes(type)       \
-    typedef struct Slice_##type { \
-        type* items;              \
-        size_t count;             \
-    } Slice_##type;               \
-                                  \
-    typedef struct Vec_##type {   \
-        union {                   \
-            struct {              \
-                type* items;      \
-                size_t count;     \
-            };                    \
-            Slice_##type slice;   \
-        };                        \
-        size_t capacity;          \
-    } Vec_##type;
-
-#define structdef(name)       \
-    typedef struct name name; \
-    struct name
-
-#define uniondef(name)       \
-    typedef union name name; \
-    union name
-
-#define foreach(type, it, ...) \
-    for (type it = type##_new(__VA_ARGS__); !it.done; type##_next(&it))
-
-DefArrayTypes(char);
-DefArrayTypes(u8);
-DefArrayTypes(i8);
-DefArrayTypes(u16);
-DefArrayTypes(i16);
-DefArrayTypes(u32);
-DefArrayTypes(i32);
-DefArrayTypes(u64);
-DefArrayTypes(i64);
-DefArrayTypes(f32);
-DefArrayTypes(f64);
-DefArrayTypes(bool);
-DefArrayTypes(size_t);
 
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 

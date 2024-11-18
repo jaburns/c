@@ -8,4 +8,13 @@ SortIncludes: false
 PointerAlignment: Left
 AttributeMacros: [StaticVec]
 AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments:
+  Enabled: true
+  AlignCompound: true
+  PadOperators: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AlignFunctionDeclarations: true
+  AlignFunctionPointers: true
 AlignConsecutiveMacros: true
