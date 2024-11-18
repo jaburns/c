@@ -28,7 +28,7 @@ internal void channel_push(Channel* chan, void* item) {
     atomic_fetch_add_explicit(&chan->count_commit[buf], 1, memory_order_release);
 }
 
-internal ChannelIter channel_drain_iter(Channel* chan) {
+internal ChannelIter ChannelIter_new(Channel* chan) {
     u32 prev_peek = atomic_load_explicit(&chan->cur_buffer_reserve, memory_order_acquire);
     u32 new_value = prev_peek & 0x80000000 ? 0 : 0x80000000;
     u32 prev_buf_reserve = atomic_exchange_explicit(&chan->cur_buffer_reserve, new_value, memory_order_acq_rel);
@@ -50,12 +50,12 @@ internal ChannelIter channel_drain_iter(Channel* chan) {
         .buffer_ = chan->buffer[prev_buf],
     };
 
-    channel_drain_iter_next(&it);
+    ChannelIter_next(&it);
 
     return it;
 };
 
-internal void channel_drain_iter_next(ChannelIter* it) {
+internal void ChannelIter_next(ChannelIter* it) {
     ++it->idx_;
     if (it->idx_ >= it->count_) {
         it->done = true;

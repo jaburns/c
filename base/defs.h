@@ -158,6 +158,9 @@ internal void panic_expr(char* msg) {
     typedef union name name; \
     union name
 
+#define foreach(type, it, ...) \
+    for (type it = type##_new(__VA_ARGS__); !it.done; type##_next(&it))
+
 DefArrayTypes(char);
 DefArrayTypes(u8);
 DefArrayTypes(i8);

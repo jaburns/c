@@ -98,7 +98,7 @@ internal void hasharray_clear(HashArray* map) {
     memset(map->hashes, 0, map->capacity * sizeof(u32));
 }
 
-internal HashArrayIter hasharray_iter(HashArray* map) {
+internal HashArrayIter HashArrayIter_new(HashArray* map) {
     HashArrayIter it = {
         .idx_ = -1,
         .target = map,
@@ -106,11 +106,11 @@ internal HashArrayIter hasharray_iter(HashArray* map) {
         .value = NULL,
         .done = false,
     };
-    hasharray_iter_next(&it);
+    HashArrayIter_next(&it);
     return it;
 }
 
-internal void hasharray_iter_next(HashArrayIter* it) {
+internal void HashArrayIter_next(HashArrayIter* it) {
     ++it->idx_;
     for (;;) {
         if (it->idx_ >= it->target->capacity) {

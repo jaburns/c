@@ -46,10 +46,11 @@ internal Str str_before_first_index(char split, Str str);
 internal Str str_after_first_index(char split, Str str);
 internal Str str_after_last_index(char split, Str str);
 
-internal void str_split_iter_next(StrSplitIter* it);
-internal StrSplitIter str_split_iter(char split, Str str);
-internal void str_split_whitespace_iter_next(StrSplitWhitespaceIter* it);
-internal StrSplitWhitespaceIter str_split_whitespace_iter(Str str);
+internal StrSplitIter StrSplitIter_new(char split, Str str);
+internal void StrSplitIter_next(StrSplitIter* it);
+
+internal StrSplitWhitespaceIter StrSplitWhitespaceIter_new(Str str);
+internal void StrSplitWhitespaceIter_next(StrSplitWhitespaceIter* it);
 
 internal Str str_trim(Str str);
 internal bool str_eq(Str a, Str b);

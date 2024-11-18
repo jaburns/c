@@ -85,7 +85,20 @@ internal Str str_after_last_index(char split, Str str) {
     return ret;
 }
 
-internal void str_split_iter_next(StrSplitIter* it) {
+internal StrSplitIter StrSplitIter_new(char split, Str str) {
+    StrSplitIter it = (StrSplitIter){
+        .done = false,
+        .split = split,
+        .target = str,
+        .item = {NULL, 0},
+        .item_end_ = str.items - 1,
+        .target_end_ = str.items + str.count,
+    };
+    StrSplitIter_next(&it);
+    return it;
+}
+
+internal void StrSplitIter_next(StrSplitIter* it) {
     it->item_end_++;
     it->item.items = it->item_end_;
     if (it->item.items >= it->target_end_) {
@@ -98,20 +111,19 @@ internal void str_split_iter_next(StrSplitIter* it) {
     it->item.count = it->item_end_ - it->item.items;
 }
 
-internal StrSplitIter str_split_iter(char split, Str str) {
-    StrSplitIter it = (StrSplitIter){
+internal StrSplitWhitespaceIter StrSplitWhitespaceIter_new(Str str) {
+    StrSplitWhitespaceIter it = (StrSplitWhitespaceIter){
         .done = false,
-        .split = split,
         .target = str,
         .item = {NULL, 0},
-        .item_end_ = str.items - 1,
+        .item_end_ = str.items,
         .target_end_ = str.items + str.count,
     };
-    str_split_iter_next(&it);
+    StrSplitWhitespaceIter_next(&it);
     return it;
 }
 
-internal void str_split_whitespace_iter_next(StrSplitWhitespaceIter* it) {
+internal void StrSplitWhitespaceIter_next(StrSplitWhitespaceIter* it) {
     while (it->item_end_ < it->target_end_ && isspace(*it->item_end_)) {
         it->item_end_++;
     }
@@ -124,18 +136,6 @@ internal void str_split_whitespace_iter_next(StrSplitWhitespaceIter* it) {
         it->item_end_++;
     }
     it->item.count = it->item_end_ - it->item.items;
-}
-
-internal StrSplitWhitespaceIter str_split_whitespace_iter(Str str) {
-    StrSplitWhitespaceIter it = (StrSplitWhitespaceIter){
-        .done = false,
-        .target = str,
-        .item = {NULL, 0},
-        .item_end_ = str.items,
-        .target_end_ = str.items + str.count,
-    };
-    str_split_whitespace_iter_next(&it);
-    return it;
 }
 
 internal bool str_eq(Str a, Str b) {
