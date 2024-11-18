@@ -92,7 +92,7 @@ internal void* test_channel_drain_thread(void* arg) {
     bool should_finish = false;
 
     for (;;) {
-        for (ChannelIter it = channel_drain_iter(chan); !it.done; channel_drain_iter_next(&it)) {
+        foreach (ChannelIter, it, chan) {
             u64* item = (u64*)it.item;
             if (*item == 0) Panic("");
             sum += *item;

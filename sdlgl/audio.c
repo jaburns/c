@@ -90,7 +90,7 @@ internal AudioPlayer audio_player_alloc(Arena* arena) {
 #define AUDIO_MASTER_VOLUME 0  // .25
 
 internal void audio_player_stream_callback(AudioPlayer* player, u8* out_stream, i32 out_stream_byte_len) {
-    for (ChannelIter it = channel_drain_iter(&player->msg_chan); !it.done; channel_drain_iter_next(&it)) {
+    foreach (ChannelIter, it, &player->msg_chan) {
         AudioPlayerMsg* msg = it.item;
 
         switch (msg->kind) {

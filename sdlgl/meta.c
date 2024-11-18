@@ -11,7 +11,7 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
     char path_buf[256];
     i32 line = 1;
 
-    for (StrSplitIter lines_it = str_split_iter('\n', file); !lines_it.done; str_split_iter_next(&lines_it)) {
+    foreach (StrSplitIter, lines_it, '\n', file) {
         Str trim_line = str_trim(lines_it.item);
         if (str_starts_with_cstr("#include", trim_line)) {
             Str path = str_before_first_index('"', str_after_first_index('"', trim_line));

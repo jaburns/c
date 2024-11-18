@@ -12,13 +12,13 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
 #define Print(...) PrintfBuf(out_write, out, 2 * MAX_SHADER_ERROR_LEN, __VA_ARGS__)
 
     Str log = str_from_cstr(info_log);
-    for (StrSplitIter lines = str_split_iter('\n', log); !lines.done; str_split_iter_next(&lines)) {
+    foreach (StrSplitIter, lines, '\n', log) {
         Str trim_line = str_trim(lines.item);
         if (trim_line.count == 0)
             continue;
 
         i32 i = 0;
-        for (StrSplitIter it = str_split_iter(':', trim_line); !it.done; ++i, str_split_iter_next(&it)) {
+        foreach (StrSplitIter, it, ':', trim_line) {
             if (i == 2) {
                 i32 line = atoi(str_to_cstr(scratch.arena, it.item));
                 line -= line_offset;
