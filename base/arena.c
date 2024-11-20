@@ -68,11 +68,11 @@ internal void* arena_array_push(ArenaArray* array) {
 }
 
 internal void* arena_alloc(Arena* self, size_t size) {
-    void* ret = arena_alloc_not_zeroed(self, size);
+    void* ret = arena_alloc_nz(self, size);
     return memset(ret, 0, size);
 }
 
-internal void* arena_alloc_not_zeroed(Arena* self, size_t size) {
+internal void* arena_alloc_nz(Arena* self, size_t size) {
     arena_align(self);
     u8* ret = self->cur;
     self->allocator->memory_commit_size(&self->reservation, (self->cur - self->reservation.base) + size);

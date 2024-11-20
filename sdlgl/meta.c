@@ -32,7 +32,7 @@ internal void resolve_shader_inner(char** shader_sources, char** shader_log_line
 internal void resolve_shader(char* name, char** shader_sources, char** shader_log_lines, char* file_path) {
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
-    char* shader_log_temp   = arena_alloc_not_zeroed(scratch.arena, Mb(1));
+    char* shader_log_temp   = arena_alloc_nz(scratch.arena, Mb(1));
     char* shader_log_temp_0 = shader_log_temp;
 
     u32 total_lines  = 1;
@@ -124,8 +124,8 @@ internal i32 extract_uniforms_from_shader(char* file_path, char uniforms[MAX_UNI
 internal void sdlgl_meta_write_assets_header(char* path) {
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
-    char* shader_sources     = arena_alloc_not_zeroed(scratch.arena, Mb(1));
-    char* shader_log_lines   = arena_alloc_not_zeroed(scratch.arena, Mb(1));
+    char* shader_sources     = arena_alloc_nz(scratch.arena, Mb(1));
+    char* shader_log_lines   = arena_alloc_nz(scratch.arena, Mb(1));
     char* shader_sources_0   = shader_sources;
     char* shader_log_lines_0 = shader_log_lines;
 

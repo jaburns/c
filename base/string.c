@@ -235,7 +235,7 @@ internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
     size_t file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char* content = arena_alloc_not_zeroed(arena, file_size + 1);
+    char* content = arena_alloc_nz(arena, file_size + 1);
     if (fread(content, 1, file_size, file) != file_size && ferror(file)) {
         Panic("Failed to read file: %s", filename);
     }

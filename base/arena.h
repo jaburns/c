@@ -36,7 +36,7 @@ internal void      arena_clear(Arena* self);
 internal void      arena_destroy(Arena* self);
 
 internal void* arena_alloc(Arena* self, size_t size);
-internal void* arena_alloc_not_zeroed(Arena* self, size_t size);
+internal void* arena_alloc_nz(Arena* self, size_t size);
 internal void* arena_alloc_resource(Arena* self, size_t size, ArenaDropFn drop);
 
 internal ArenaArray arena_array_begin(Arena* self, size_t elem_size);

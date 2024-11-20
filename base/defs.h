@@ -83,8 +83,8 @@
 
 typedef uint8_t  u8;
 typedef int8_t   i8;
-typedef uint8_t  u16;
-typedef int8_t   i16;
+typedef uint16_t u16;
+typedef int16_t  i16;
 typedef uint32_t u32;
 typedef int32_t  i32;
 typedef uint64_t u64;
@@ -251,6 +251,11 @@ internal void panic_expr(char* msg) {
 #define VecAlloc(type, arena_ptr, capacity)                                    \
     (Vec_##type) {                                                             \
         {{arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
+    }
+
+#define VecAllocNZ(type, arena_ptr, capacity)                                     \
+    (Vec_##type) {                                                                \
+        {{arena_alloc_nz((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
     }
 
 #define VecPush(vec) (                                                        \
