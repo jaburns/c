@@ -36,7 +36,7 @@ internal Str32 str32_from_str(Str str);
 
 #define CstrLen(cstr_lit) (sizeof(cstr_lit) - 1)
 
-#define Str(cstr_lit) ((Str){(cstr_lit), CSTR_LEN(cstr_lit)})
+#define Str(cstr_lit) ((Str){(cstr_lit), CstrLen(cstr_lit)})
 
 internal Str   str_from_cstr(char* str);
 internal char* str_to_cstr(Arena* arena, Str str);
