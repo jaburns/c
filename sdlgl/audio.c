@@ -51,6 +51,17 @@ internal void audio_clip_load(Arena* arena, AudioClip* clip, char* path) {
         total_sample_count    = (i32)(og_sample_count * ratio);
         f32* resampled_buffer = arena_alloc(arena, total_sample_count * sizeof(f32));
 
+        // https://yehar.com/blog/wp-content/uploads/2009/08/deip.pdf
+        // TODO(jaburns) replace linear interpolation resampling with B-spline:
+        //
+        // // 4-point, 3rd-order B-spline (x-form)
+        // float ym1py1 = y[-1]+y[1];
+        // float c0 = 1/6.0*ym1py1 + 2/3.0*y[0];
+        // float c1 = 1/2.0*(y[1]-y[-1]);
+        // float c2 = 1/2.0*ym1py1 - y[0];
+        // float c3 = 1/2.0*(y[0]-y[1]) + 1/6.0*(y[2]-y[-1]);
+        // return ((c3*x+c2)*x+c1)*x+c0;
+
         for (i32 i = 0; i < total_sample_count; ++i) {
             f32 src_index       = i / ratio;
             i32 idx_floor       = (i32)src_index;
@@ -74,8 +85,8 @@ internal void audio_clip_play(AudioPlayer* player, AudioClip* clip) {
     AudioPlayerMsg msg = {
         .kind     = AUDIO_PLAYER_MSG_KIND_PLAY,
         .msg_play = (AudioPlayerMsgPlay){
-                                         .clip = clip,
-                                         },
+            .clip = clip,
+        },
     };
     channel_push(&player->msg_chan, &msg);
 }
