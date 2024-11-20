@@ -1,7 +1,10 @@
 #pragma once
 
-#define MEMORY_RESERVE_SIZE      Gb(32)
+#define MEMORY_RESERVE_SIZE Gb(32)
+
+#ifndef MEMORY_COMMIT_BLOCK_SIZE
 #define MEMORY_COMMIT_BLOCK_SIZE Mb(1)
+#endif
 
 structdef(MemoryReservation) {
     u8*    base;

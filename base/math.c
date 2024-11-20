@@ -175,6 +175,10 @@ internal ivec2 ivec2_sub(ivec2 a, ivec2 b) {
     };
 }
 
+internal i32 ivec2_manhattan(ivec2 a) {
+    return Abs(a.x) + Abs(a.y);
+}
+
 internal ivec2 ivec2_min(ivec2 a, ivec2 b) {
     return (ivec2){
         .x = Min(a.x, b.x),

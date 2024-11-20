@@ -58,10 +58,11 @@ internal vec2 vec2_reflect_and_scale(vec2 v, vec2 normal, f32 norm_scale, f32 ta
 #define IVEC2_LEFT  ((ivec2){-1, 0})
 #define IVEC2_DOWN  ((ivec2){0, -1})
 
-#define DBG_IVEC2(v) DBG_TYPED("(ivec2){ %i , %i }", (v), (v).x, (v).y)
+#define Dbg_ivec2(v) DbgTyped("(ivec2){ %i , %i }", (v), (v).x, (v).y)
 
 internal ivec2 ivec2_add(ivec2 a, ivec2 b);
 internal ivec2 ivec2_sub(ivec2 a, ivec2 b);
+internal i32   ivec2_manhattan(ivec2 a);
 internal ivec2 ivec2_min(ivec2 a, ivec2 b);
 internal ivec2 ivec2_max(ivec2 a, ivec2 b);
 internal ivec2 ivec2_negate(ivec2 a);

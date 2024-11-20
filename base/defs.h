@@ -177,25 +177,106 @@ internal void panic_expr(char* msg) {
 
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-#define VecAlloc(type, arena_ptr, capacity)                          \
-    (Vec_##type) {                                                   \
-        {                                                            \
-            {arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0} \
-},                                                           \
-            (capacity)                                               \
+#define Swap(type, a, b)  \
+    do {                  \
+        type temp = a;    \
+        a         = b;    \
+        b         = temp; \
+    } while (0)
+
+#define SliceCopy(dest, src, start_idx, end_idx) \
+    memcpy(&(dest)[start_idx], &(src)[start_idx], ((end_idx) - (start_idx)) * sizeof((dest)[0]))
+
+#define SliceBinarySearch(out_i32_result_idx, slice, field_type, field, seeking) \
+    do {                                                                         \
+        (out_i32_result_idx) = -1;                                               \
+        i32 left             = 0;                                                \
+        i32 right            = (slice).count - 1;                                \
+                                                                                 \
+        while (left <= right) {                                                  \
+            i32        mid   = left + ((right - left) >> 1);                     \
+            field_type found = (slice).items[mid] field;                         \
+                                                                                 \
+            if (found == (seeking)) {                                            \
+                (out_i32_result_idx) = mid;                                      \
+                break;                                                           \
+            } else if (found < (seeking)) {                                      \
+                left = mid + 1;                                                  \
+            } else {                                                             \
+                right = mid - 1;                                                 \
+            }                                                                    \
+        }                                                                        \
+    } while (0)
+
+#define SliceMinHeapPostPush(elem_type, vec, field)                                 \
+    do {                                                                            \
+        if ((vec).count > 1) {                                                      \
+            u32 idx    = (vec).count - 1;                                           \
+            u32 parent = (idx - 1) >> 1;                                            \
+            while (idx > 0 && (vec).items[parent] field > (vec).items[idx] field) { \
+                Swap(elem_type, (vec).items[idx], (vec).items[parent]);             \
+                idx = parent;                                                       \
+            }                                                                       \
+        }                                                                           \
+    } while (0)
+
+#define SliceMinHeapPrePop(elem_type, vec, field)                                                         \
+    do {                                                                                                  \
+        u32 size       = (vec).count - 1;                                                                 \
+        (vec).items[0] = (vec).items[size];                                                               \
+        u32 idx        = 0;                                                                               \
+                                                                                                          \
+        while (true) {                                                                                    \
+            u32 left     = (idx << 1) + 1;                                                                \
+            u32 right    = (idx << 1) + 2;                                                                \
+            u32 smallest = idx;                                                                           \
+                                                                                                          \
+            if (left < size && (vec).items[left] field < (vec).items[smallest] field) smallest = left;    \
+            if (right < size && (vec).items[right] field < (vec).items[smallest] field) smallest = right; \
+            if (smallest == idx) break;                                                                   \
+                                                                                                          \
+            Swap(elem_type, (vec).items[idx], (vec).items[smallest]);                                     \
+            idx = smallest;                                                                               \
+        }                                                                                                 \
+    } while (0)
+
+#define SliceSort(slice, comparator)                      \
+    qsort(                                                \
+        (slice).items,                                    \
+        (slice).count,                                    \
+        sizeof((slice).items[0]),                         \
+        (i32(*)(const void*, const void*))(&(comparator)) \
+    )
+
+#define VecAlloc(type, arena_ptr, capacity)                                    \
+    (Vec_##type) {                                                             \
+        {{arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
     }
 
-#define VecPush(vec) (                                                          \
-    (vec).count < (vec).capacity                                                \
-        ? &((vec).items[(vec).count++])                                         \
-        : (panic_expr("Attempted to push onto a full vecay!"), &(vec).items[0]) \
+#define VecPush(vec) (                                                        \
+    (vec).count < (vec).capacity                                              \
+        ? &((vec).items[(vec).count++])                                       \
+        : (panic_expr("Attempted to push onto a full vec!"), &(vec).items[0]) \
 )
 
-#define VecPop(vec) (                                                       \
-    (vec).count >= 1                                                        \
-        ? &((vec).items[--(vec).count])                                     \
-        : (panic_expr("Attempted to pop an empty vecay!"), &(vec).items[0]) \
+#define VecPop(vec) (                                                     \
+    (vec).count >= 1                                                      \
+        ? &((vec).items[--(vec).count])                                   \
+        : (panic_expr("Attempted to pop an empty vec!"), &(vec).items[0]) \
 )
+
+#define VecMinHeapPush(elem_type, vec, field, new_value) \
+    do {                                                 \
+        *VecPush(vec) = (new_value);                     \
+        SliceMinHeapPostPush(elem_type, (vec), field);   \
+    } while (0)
+
+#define VecMinHeapPopInto(elem_type, vec, field, out_var) \
+    do {                                                  \
+        (out_var) = (vec).items[0];                       \
+        SliceMinHeapPrePop(elem_type, (vec), field);      \
+        VecPop(vec);                                      \
+    } while (0)
 
 #define StaticVec(type, capacity) \
     struct {                      \
@@ -210,38 +291,6 @@ internal void panic_expr(char* msg) {
 )
 
 #define StaticVecPop VecPop
-
-#define SliceCopy(dest, src, start_idx, end_idx) \
-    memcpy(&(dest)[start_idx], &(src)[start_idx], ((end_idx) - (start_idx)) * sizeof((dest)[0]))
-
-#define SliceBinarySearch(i32_result_idx, slice, field_type, field, seeking) \
-    do {                                                                     \
-        (i32_result_idx) = -1;                                               \
-        i32 left         = 0;                                                \
-        i32 right        = (slice).count - 1;                                \
-                                                                             \
-        while (left <= right) {                                              \
-            i32        mid   = left + ((right - left) >> 1);                 \
-            field_type found = (slice).items[mid] field;                     \
-                                                                             \
-            if (found == (seeking)) {                                        \
-                (i32_result_idx) = mid;                                      \
-                break;                                                       \
-            } else if (found < (seeking)) {                                  \
-                left = mid + 1;                                              \
-            } else {                                                         \
-                right = mid - 1;                                             \
-            }                                                                \
-        }                                                                    \
-    } while (0)
-
-#define SliceSort(slice, comparator)                      \
-    qsort(                                                \
-        (slice).items,                                    \
-        (slice).count,                                    \
-        sizeof((slice).items[0]),                         \
-        (i32(*)(const void*, const void*))(&(comparator)) \
-    )
 
 #define SllStackPush(stack_head, node) \
     do {                               \
