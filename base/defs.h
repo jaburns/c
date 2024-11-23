@@ -33,6 +33,7 @@
 #define local_persist   static
 #define readonly_global static  // could use attributes to put this data in read-only pages, but that causes problems with dylib load on macos
 #define thread_local    _Thread_local
+#define no_inline       __attribute__((noinline))
 
 #define alignof(x) _Alignof(x)
 
