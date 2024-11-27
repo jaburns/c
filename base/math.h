@@ -48,7 +48,7 @@ structdef(mat4) { vec4 a, b, c, d; };
 
 #define sincosf(x, sinp, cosp) __sincosf(x, sinp, cosp)
 
-#define vec2(x_, y_)        ((vec2){.vector = (f32x2){(x_), (y_)}})
+#define vec2(x_, y_)        ((vec2){.vector = (f32x2){(f32)(x_), (f32)(y_)}})
 #define vec2_from_f32x2(v_) ((vec2){.vector = (v_)})
 #define Dbg_vec2(v)         DbgTyped("(vec2){ %f , %f }", (v), (v).x, (v).y)
 
@@ -87,7 +87,7 @@ internal vec2 vec2_normalize_or_zero(vec2 a);
 internal vec2 vec2_rotate(vec2 v, f32 radians);
 internal vec2 vec2_reflect_and_scale(vec2 v, vec2 normal, f32 norm_scale, f32 tan_scale);
 
-#define ivec2(x_, y_)        ((ivec2){.vector = (i32x2){(x_), (y_)}})
+#define ivec2(x_, y_)        ((ivec2){.vector = (i32x2){(i32)(x_), (i32)(y_)}})
 #define ivec2_from_i32x2(v_) ((ivec2){.vector = (v_)})
 #define Dbg_ivec2(v)         DbgTyped("(ivec2){ %i , %i }", (v), (v).x, (v).y)
 
@@ -111,7 +111,7 @@ internal ivec2 ivec2_from_vec2_ceil(vec2 a);
 internal ivec2 ivec2_from_vec2_round(vec2 a);
 internal ivec2 ivec2_clamp(ivec2 v, ivec2 min_inclusive, ivec2 max_exclusive);
 
-#define vec3a(x_, y_, z_)    ((vec3a){.vector = (f32x4){(x_), (y_), (z_), 0.f}})
+#define vec3a(x_, y_, z_)    ((vec3a){.vector = (f32x4){(f32)(x_), (f32)(y_), (f32)(z_), 0.f}})
 #define vec3a_from_f32x4(v_) ((vec3a){.vector = (v_)})
 #define Dbg_vec3a(v)         DbgTyped("(vec3a){ %f , %f , %f }", (v), (v).x, (v).y, (v).z)
 
@@ -129,7 +129,7 @@ internal f32   vec3a_dot(vec3a a, vec3a b);
 internal vec3a vec3a_scale(vec3a v, f32 scale);
 internal vec3a vec3a_normalize(vec3a v);
 
-#define vec4(x_, y_, z_, w_) ((vec4){.vector = (f32x4){(x_), (y_), (z_), (w_)}})
+#define vec4(x_, y_, z_, w_) ((vec4){.vector = (f32x4){(f32)(x_), (f32)(y_), (f32)(z_), (f32)(w_)}})
 #define vec4_from_f32x4(v_)  ((vec4){.vector = (v_)})
 #define Dbg_vec4(v)          DbgTyped("(vec4){ %f , %f , %f , %f }", (v), (v).x, (v).y, (v).z, (v).w)
 

@@ -67,11 +67,14 @@ typedef simde_float64x2_t f64x2;
 #define f32x2_less_than  simde_vclt_f32
 #define f32x2_select     simde_vbsl_f32
 #define f32x2_from_i32x2 simde_vcvt_f32_s32
+#define f32x2_combine    simde_vcombine_f32
 
 #define f32x4_splat      simde_vdupq_n_f32
 #define f32x4_load       simde_vld1q_f32
 #define f32x4_store      simde_vst1q_f32
 #define f32x4_get_lane   simde_vgetq_lane_f32
+#define f32x4_get_low    simde_vget_low_f32
+#define f32x4_get_high   simde_vget_high_f32
 #define f32x4_scale      simde_vmulq_n_f32
 #define f32x4_abs        simde_vabsq_f32
 #define f32x4_add        simde_vaddq_f32

@@ -202,88 +202,77 @@ internal vec4 vec4_from_vec3a(vec3a v, f32 w) {
 // --------------------------------------------------------------------------------------------------------------------
 
 internal void mat2_identity(mat2* dest) {
-    dest->a.x = 1.f;
-    dest->a.y = 0.f;
-    dest->b.x = 0.f;
-    dest->b.y = 1.f;
+    dest->a = vec2(1, 0);
+    dest->b = vec2(0, 1);
 }
 
 internal void mat2_make_rotation(mat2* dest, f32 radians) {
     f32 s, c;
     sincosf(radians, &s, &c);
-    dest->a.x = c;
-    dest->a.y = -s;
-    dest->b.x = s;
-    dest->b.y = c;
+    dest->a = vec2(c, -s);
+    dest->b = vec2(s, c);
 }
 
 internal void mat2_make_rotation_pi_over_2(mat2* dest) {
-    dest->a.x = 0.f;
-    dest->a.y = -1.f;
-    dest->b.x = 1.f;
-    dest->b.y = 0.f;
+    dest->a = vec2(0, -1);
+    dest->b = vec2(1, 0);
 }
 
 internal void mat2_make_rotation_pi(mat2* dest) {
-    dest->a.x = -1.f;
-    dest->a.y = 0.f;
-    dest->b.x = 0.f;
-    dest->b.y = -1.f;
+    dest->a = vec2(-1, 0);
+    dest->b = vec2(0, -1);
 }
 
 internal vec2 mat2_mul_vec2(mat2* m, vec2 v) {
-    return (vec2){
-        .x = v.x * m->a.x + v.y * m->a.y,
-        .y = v.x * m->b.x + v.y * m->b.y,
-    };
+    f32x4 v1   = f32x2_combine(v.vector, v.vector);
+    f32x4 m1   = f32x2_combine(m->a.vector, m->b.vector);
+    f32x4 prod = f32x4_mul(v1, m1);
+    return vec2_from_f32x2(f32x2_add_pairs(f32x4_get_low(prod), f32x4_get_high(prod)));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 internal void mat4_identity(mat4* dest) {
-    *dest     = (mat4){0};
-    dest->a.x = 1.0f;
-    dest->b.y = 1.0f;
-    dest->c.z = 1.0f;
-    dest->d.w = 1.0f;
+    dest->a = vec4(1, 0, 0, 0);
+    dest->b = vec4(0, 1, 0, 0);
+    dest->c = vec4(0, 0, 1, 0);
+    dest->d = vec4(0, 0, 0, 1);
 }
 
 internal void mat4_mul(mat4* dest, mat4* m1, mat4* m2) {
-    f32x4 l, r0, r1, r2, r3, v0, v1, v2, v3;
+    f32x4 r0 = m2->a.vector;
+    f32x4 r1 = m2->b.vector;
+    f32x4 r2 = m2->c.vector;
+    f32x4 r3 = m2->d.vector;
 
-    l  = f32x4_load((f32*)&m1->a);
-    r0 = f32x4_load((f32*)&m2->a);
-    r1 = f32x4_load((f32*)&m2->b);
-    r2 = f32x4_load((f32*)&m2->c);
-    r3 = f32x4_load((f32*)&m2->d);
+    f32x4 l  = m1->a.vector;
+    f32x4 v0 = f32x4_scale(l, f32x4_get_lane(r0, 0));
+    f32x4 v1 = f32x4_scale(l, f32x4_get_lane(r1, 0));
+    f32x4 v2 = f32x4_scale(l, f32x4_get_lane(r2, 0));
+    f32x4 v3 = f32x4_scale(l, f32x4_get_lane(r3, 0));
 
-    v0 = f32x4_scale(l, f32x4_get_lane(r0, 0));
-    v1 = f32x4_scale(l, f32x4_get_lane(r1, 0));
-    v2 = f32x4_scale(l, f32x4_get_lane(r2, 0));
-    v3 = f32x4_scale(l, f32x4_get_lane(r3, 0));
-
-    l  = f32x4_load((f32*)&m1->b);
+    l  = m1->b.vector;
     v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 1));
     v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 1));
     v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 1));
     v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 1));
 
-    l  = f32x4_load((f32*)&m1->c);
+    l  = m1->c.vector;
     v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 2));
     v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 2));
     v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 2));
     v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 2));
 
-    l  = f32x4_load((f32*)&m1->d);
+    l  = m1->d.vector;
     v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 3));
     v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 3));
     v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 3));
     v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 3));
 
-    f32x4_store((f32*)&dest->a, v0);
-    f32x4_store((f32*)&dest->b, v1);
-    f32x4_store((f32*)&dest->c, v2);
-    f32x4_store((f32*)&dest->d, v3);
+    dest->a.vector = v0;
+    dest->b.vector = v1;
+    dest->c.vector = v2;
+    dest->d.vector = v3;
 }
 
 internal void mat4_make_ortho(mat4* dest, f32 left, f32 right, f32 bottom, f32 top, f32 nearZ, f32 farZ) {
