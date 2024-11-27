@@ -360,3 +360,10 @@ typedef simde_float32x2_t f32x2;
 typedef simde_float32x4_t f32x4;
 typedef simde_float64x1_t f64x1;
 typedef simde_float64x2_t f64x2;
+
+#define u8x16_splat simde_vdupq_n_u8
+#define u8x16_equal simde_vceqq_u8
+#define u8x16_load  simde_vld1q_u8
+#define u8x16_and   simde_vandq_u8
+#define u8x16_sum   simde_vaddvq_u8
+#define u8x16_store simde_vst1q_u8
