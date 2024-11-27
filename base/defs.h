@@ -31,7 +31,7 @@
 #define internal        static
 #define global          static
 #define local_persist   static
-#define readonly_global static  // could use attributes to put this data in read-only pages, but that causes problems with dylib load on macos
+#define readonly_global static  // static __attribute__((section("__TEXT,__const")))  // this attribute causes problems with dylib load on macos
 #define thread_local    _Thread_local
 #define no_inline       __attribute__((noinline))
 
