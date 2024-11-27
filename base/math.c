@@ -3,259 +3,200 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 internal vec2 vec2_add(vec2 a, vec2 b) {
-    return (vec2){
-        .x = a.x + b.x,
-        .y = a.y + b.y,
-    };
-}
-
-internal void vec2_add_to(vec2* a, vec2 b) {
-    a->x += b.x;
-    a->y += b.y;
+    return vec2_from_f32x2(f32x2_add(a.vector, b.vector));
 }
 
 internal vec2 vec2_sub(vec2 a, vec2 b) {
-    return (vec2){
-        .x = a.x - b.x,
-        .y = a.y - b.y,
-    };
-}
-
-internal void vec2_sub_from(vec2* a, vec2 b) {
-    a->x -= b.x;
-    a->y -= b.y;
+    return vec2_from_f32x2(f32x2_sub(a.vector, b.vector));
 }
 
 internal vec2 vec2_min(vec2 a, vec2 b) {
-    return (vec2){
-        .x = Min(a.x, b.x),
-        .y = Min(a.y, b.y),
-    };
+    return vec2_from_f32x2(f32x2_min(a.vector, b.vector));
 }
 
 internal vec2 vec2_max(vec2 a, vec2 b) {
-    return (vec2){
-        .x = Max(a.x, b.x),
-        .y = Max(a.y, b.y),
-    };
+    return vec2_from_f32x2(f32x2_max(a.vector, b.vector));
 }
 
 internal vec2 vec2_negate(vec2 a) {
-    return (vec2){
-        .x = -a.x,
-        .y = -a.y,
-    };
+    return vec2_from_f32x2(f32x2_negate(a.vector));
 }
 
 internal vec2 vec2_splat(f32 v) {
-    return (vec2){v, v};
+    return vec2_from_f32x2(f32x2_splat(v));
 }
 
 internal vec2 vec2_scale(f32 s, vec2 v) {
-    return (vec2){s * v.x, s * v.y};
+    return vec2_from_f32x2(f32x2_scale(v.vector, s));
 }
 
 internal vec2 vec2_scale_add(vec2 a, f32 s, vec2 b) {
-    return (vec2){s * b.x + a.x, s * b.y + a.y};
+    return vec2_from_f32x2(f32x2_scale_add(a.vector, b.vector, s));
 }
 
 internal vec2 vec2_mul(vec2 a, vec2 b) {
-    return (vec2){a.x * b.x, a.y * b.y};
+    return vec2_from_f32x2(f32x2_mul(a.vector, b.vector));
 }
 
-internal vec2 vec2_div(vec2 v, f32 d) {
-    return (vec2){v.x / d, v.y / d};
+internal vec2 vec2_div_scale(vec2 v, f32 d) {
+    return vec2_from_f32x2(f32x2_div(v.vector, f32x2_splat(d)));
 }
 
 internal vec2 vec2_lerp(vec2 a, vec2 b, f32 t) {
-    return (vec2){
-        .x = a.x + t * (b.x - a.x),
-        .y = a.y + t * (b.y - a.y),
-    };
+    return vec2_from_f32x2(f32x2_scale_add(a.vector, f32x2_sub(b.vector, a.vector), t));
 }
 
 internal f32 vec2_dot(vec2 a, vec2 b) {
-    return a.x * b.x + a.y * b.y;
+    return f32x2_add_across(f32x2_mul(a.vector, b.vector));
 }
 
 internal f32 vec2_cross(vec2 a, vec2 b) {
-    return a.x * b.y - a.y * b.x;
+    u32x2 sign_bit = {0, 0x80000000};
+    f32x2 prod     = f32x2_mul(a.vector, f32x2_rotate(b.vector));
+    f32x2 flipped  = (f32x2)u32x2_xor((u32x2)prod, sign_bit);
+    return f32x2_add_across(flipped);
 }
 
 internal vec2 vec2_perp(vec2 a) {
-    return (vec2){-a.y, a.x};
+    u32x2 sign_bit   = {0x80000000, 0};
+    u32x2 bit_result = u32x2_xor((u32x2)f32x2_rotate(a.vector), sign_bit);
+    return vec2_from_f32x2((f32x2)bit_result);
 }
 
 internal vec2 vec2_fract(vec2 a) {
-    return (vec2){
-        .x = a.x - floorf(a.x),
-        .y = a.y - floorf(a.y),
-    };
+    return vec2_from_f32x2(f32x2_sub(a.vector, f32x2_floor(a.vector)));
 }
 
 internal vec2 vec2_from_ivec2(ivec2 a) {
-    return (vec2){a.x, a.y};
+    return vec2_from_f32x2(f32x2_from_i32x2(a.vector));
 }
 
 internal f32 vec2_length(vec2 a) {
-    return sqrtf(a.x * a.x + a.y * a.y);
+    return sqrtf(f32x2_add_across(f32x2_mul(a.vector, a.vector)));
 }
 
 internal f32 vec2_length_sqr(vec2 a) {
-    return a.x * a.x + a.y * a.y;
+    return f32x2_add_across(f32x2_mul(a.vector, a.vector));
 }
 
 internal f32 vec2_distance(vec2 a, vec2 b) {
-    f32 dx = a.x - b.x;
-    f32 dy = a.y - b.y;
-    return sqrtf(dx * dx + dy * dy);
+    f32x2 delta = f32x2_sub(a.vector, b.vector);
+    return sqrtf(f32x2_add_across(f32x2_mul(delta, delta)));
 }
 
 internal vec2 vec2_abs(vec2 a) {
-    return (vec2){fabsf(a.x), fabsf(a.y)};
+    return vec2_from_f32x2(f32x2_abs(a.vector));
 }
 
 internal vec2 vec2_sign(vec2 a) {
-    return (vec2){Sign(a.x), Sign(a.y)};
+    u32x2 neg_mask = f32x2_less_than(a.vector, f32x2_splat(0.f));
+    return vec2_from_f32x2(f32x2_select(neg_mask, f32x2_splat(-1.f), f32x2_splat(1.f)));
 }
 
 internal vec2 vec2_clamp(vec2 v, vec2 min, vec2 max) {
-    return (vec2){
-        Max(min.x, Min(max.x, v.x)),
-        Max(min.y, Min(max.y, v.y)),
-    };
+    return vec2_from_f32x2(f32x2_max(min.vector, f32x2_min(max.vector, v.vector)));
 }
 
 internal vec2 vec2_normalize(vec2 a) {
-    f32 inv_len = 1.f / sqrtf(a.x * a.x + a.y * a.y);
-    return (vec2){a.x * inv_len, a.y * inv_len};
+    f32 len = sqrtf(f32x2_add_across(f32x2_mul(a.vector, a.vector)));
+    return vec2_from_f32x2(f32x2_div(a.vector, f32x2_splat(len)));
 }
 
 internal vec2 vec2_normalize_or_zero(vec2 a) {
-    f32 len = sqrtf(a.x * a.x + a.y * a.y);
+    f32 len = sqrtf(f32x2_add_across(f32x2_mul(a.vector, a.vector)));
     if (len < .000001f) return VEC2_ZERO;
-    f32 inv_len = 1.f / len;
-    return (vec2){a.x * inv_len, a.y * inv_len};
+    return vec2_from_f32x2(f32x2_div(a.vector, f32x2_splat(len)));
 }
 
 internal vec2 vec2_rotate(vec2 v, f32 radians) {
     f32 s, c;
     sincosf(radians, &s, &c);
-    return (vec2){
-        v.x * c - v.y * s,
-        v.x * s + v.y * c,
-    };
-}
-
-internal vec2 vec2_reflect_and_scale(vec2 v, vec2 normal, f32 norm_scale, f32 tan_scale) {
-    f32 n = vec2_dot(v, normal);
-    if (n >= 0.f) return v;
-    vec2 tangent = vec2_perp(normal);
-    f32  t       = vec2_dot(v, tangent);
-
-    return vec2_add(
-        vec2_scale(tan_scale * t, tangent),
-        vec2_scale(-norm_scale * n, normal)
-    );
+    f32x2 rx = f32x2_mul(v.vector, (f32x2){c, -s});
+    f32x2 ry = f32x2_mul(v.vector, (f32x2){s, c});
+    return vec2_from_f32x2(f32x2_add_pairs(rx, ry));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 internal ivec2 ivec2_add(ivec2 a, ivec2 b) {
-    return (ivec2){
-        .x = a.x + b.x,
-        .y = a.y + b.y,
-    };
+    return ivec2_from_i32x2(i32x2_add(a.vector, b.vector));
 }
 
 internal ivec2 ivec2_sub(ivec2 a, ivec2 b) {
-    return (ivec2){
-        .x = a.x - b.x,
-        .y = a.y - b.y,
-    };
+    return ivec2_from_i32x2(i32x2_sub(a.vector, b.vector));
 }
 
 internal i32 ivec2_manhattan(ivec2 a) {
-    return Abs(a.x) + Abs(a.y);
+    return i32x2_add_across(i32x2_abs(a.vector));
 }
 
 internal ivec2 ivec2_min(ivec2 a, ivec2 b) {
-    return (ivec2){
-        .x = Min(a.x, b.x),
-        .y = Min(a.y, b.y),
-    };
+    return ivec2_from_i32x2(i32x2_min(a.vector, b.vector));
 }
 
 internal ivec2 ivec2_max(ivec2 a, ivec2 b) {
-    return (ivec2){
-        .x = Max(a.x, b.x),
-        .y = Max(a.y, b.y),
-    };
+    return ivec2_from_i32x2(i32x2_max(a.vector, b.vector));
 }
 
 internal ivec2 ivec2_negate(ivec2 a) {
-    return (ivec2){
-        .x = -a.x,
-        .y = -a.y,
-    };
+    return ivec2_from_i32x2(i32x2_negate(a.vector));
 }
 
 internal ivec2 ivec2_splat(i32 v) {
-    return (ivec2){v, v};
+    return ivec2_from_i32x2(i32x2_splat(v));
 }
 
 internal bool ivec2_eq(ivec2 a, ivec2 b) {
-    return a.x == b.x && a.y == b.y;
+    return u32x2_min_across((u32x2)i32x2_equal(a.vector, b.vector)) != 0;
 }
 
 internal ivec2 ivec2_from_vec2_floor(vec2 a) {
-    return (ivec2){floorf(a.x), floorf(a.y)};
+    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2_floor(a.vector)));
 }
 
 internal ivec2 ivec2_from_vec2_ceil(vec2 a) {
-    return (ivec2){ceilf(a.x), ceilf(a.y)};
+    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2_ceil(a.vector)));
 }
 
 internal ivec2 ivec2_from_vec2_round(vec2 a) {
-    return (ivec2){roundf(a.x), roundf(a.y)};
+    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2_round(a.vector)));
 }
 
 internal ivec2 ivec2_clamp(ivec2 v, ivec2 min_inclusive, ivec2 max_exclusive) {
-    return (ivec2){
-        .x = v.x < min_inclusive.x ? min_inclusive.x : v.x >= max_exclusive.x ? max_exclusive.x - 1
-                                                                              : v.x,
-        .y = v.y < min_inclusive.y ? min_inclusive.y : v.y >= max_exclusive.y ? max_exclusive.y - 1
-                                                                              : v.y,
-    };
+    i32x2 max = i32x2_sub(max_exclusive.vector, i32x2_splat(-1));
+    return ivec2_from_i32x2(i32x2_max(min_inclusive.vector, i32x2_min(max, v.vector)));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-internal vec3 vec3_from_vec2(vec2 v, f32 z) {
-    return (vec3){v.x, v.y, z};
+internal vec3a vec3a_from_vec2(vec2 v, f32 z) {
+    return vec3a(v.x, v.y, z);
 }
 
-internal f32 vec3_dot(vec3 a, vec3 b) {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
+internal f32 vec3a_dot(vec3a a, vec3a b) {
+    DebugAssert(a.zero == 0.f && b.zero == 0.f);
+    return f32x4_add_across(f32x4_mul(a.vector, b.vector));
 }
 
-internal vec3 vec3_scale(vec3 v, f32 scale) {
-    return (vec3){scale * v.x, scale * v.y, scale * v.z};
+internal vec3a vec3a_scale(vec3a v, f32 scale) {
+    return vec3a_from_f32x4(f32x4_scale(v.vector, scale));
 }
 
-internal vec3 vec3_normalize(vec3 a) {
-    f32 inv_len = 1.f / sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
-    return (vec3){a.x * inv_len, a.y * inv_len, a.z * inv_len};
+internal vec3a vec3a_normalize(vec3a a) {
+    DebugAssert(a.zero == 0.f);
+    f32 len = sqrtf(f32x4_add_across(f32x4_mul(a.vector, a.vector)));
+    return vec3a_from_f32x4(f32x4_div(a.vector, f32x4_splat(len)));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 internal vec4 vec4_scale(vec4 v, f32 scale) {
-    return (vec4){scale * v.x, scale * v.y, scale * v.z, scale * v.w};
+    return vec4_from_f32x4(f32x4_scale(v.vector, scale));
 }
 
-internal vec4 vec4_from_vec3(vec3 v, f32 w) {
-    return (vec4){v.x, v.y, v.z, w};
+internal vec4 vec4_from_vec3a(vec3a v, f32 w) {
+    v.zero = w;
+    return vec4_from_f32x4(v.vector);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -292,8 +233,8 @@ internal void mat2_make_rotation_pi(mat2* dest) {
 
 internal vec2 mat2_mul_vec2(mat2* m, vec2 v) {
     return (vec2){
-        v.x * m->a.x + v.y * m->a.y,
-        v.x * m->b.x + v.y * m->b.y,
+        .x = v.x * m->a.x + v.y * m->a.y,
+        .y = v.x * m->b.x + v.y * m->b.y,
     };
 }
 
@@ -308,41 +249,41 @@ internal void mat4_identity(mat4* dest) {
 }
 
 internal void mat4_mul(mat4* dest, mat4* m1, mat4* m2) {
-    simde_float32x4_t l, r0, r1, r2, r3, v0, v1, v2, v3;
+    f32x4 l, r0, r1, r2, r3, v0, v1, v2, v3;
 
-    l  = simde_vld1q_f32((simde_float32*)&m1->a);
-    r0 = simde_vld1q_f32((simde_float32*)&m2->a);
-    r1 = simde_vld1q_f32((simde_float32*)&m2->b);
-    r2 = simde_vld1q_f32((simde_float32*)&m2->c);
-    r3 = simde_vld1q_f32((simde_float32*)&m2->d);
+    l  = f32x4_load((f32*)&m1->a);
+    r0 = f32x4_load((f32*)&m2->a);
+    r1 = f32x4_load((f32*)&m2->b);
+    r2 = f32x4_load((f32*)&m2->c);
+    r3 = f32x4_load((f32*)&m2->d);
 
-    v0 = simde_vmulq_n_f32(l, simde_vgetq_lane_f32(r0, 0));
-    v1 = simde_vmulq_n_f32(l, simde_vgetq_lane_f32(r1, 0));
-    v2 = simde_vmulq_n_f32(l, simde_vgetq_lane_f32(r2, 0));
-    v3 = simde_vmulq_n_f32(l, simde_vgetq_lane_f32(r3, 0));
+    v0 = f32x4_scale(l, f32x4_get_lane(r0, 0));
+    v1 = f32x4_scale(l, f32x4_get_lane(r1, 0));
+    v2 = f32x4_scale(l, f32x4_get_lane(r2, 0));
+    v3 = f32x4_scale(l, f32x4_get_lane(r3, 0));
 
-    l  = simde_vld1q_f32((simde_float32*)&m1->b);
-    v0 = simde_vmlaq_n_f32(v0, l, simde_vgetq_lane_f32(r0, 1));
-    v1 = simde_vmlaq_n_f32(v1, l, simde_vgetq_lane_f32(r1, 1));
-    v2 = simde_vmlaq_n_f32(v2, l, simde_vgetq_lane_f32(r2, 1));
-    v3 = simde_vmlaq_n_f32(v3, l, simde_vgetq_lane_f32(r3, 1));
+    l  = f32x4_load((f32*)&m1->b);
+    v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 1));
+    v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 1));
+    v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 1));
+    v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 1));
 
-    l  = simde_vld1q_f32((simde_float32*)&m1->c);
-    v0 = simde_vmlaq_n_f32(v0, l, simde_vgetq_lane_f32(r0, 2));
-    v1 = simde_vmlaq_n_f32(v1, l, simde_vgetq_lane_f32(r1, 2));
-    v2 = simde_vmlaq_n_f32(v2, l, simde_vgetq_lane_f32(r2, 2));
-    v3 = simde_vmlaq_n_f32(v3, l, simde_vgetq_lane_f32(r3, 2));
+    l  = f32x4_load((f32*)&m1->c);
+    v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 2));
+    v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 2));
+    v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 2));
+    v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 2));
 
-    l  = simde_vld1q_f32((simde_float32*)&m1->d);
-    v0 = simde_vmlaq_n_f32(v0, l, simde_vgetq_lane_f32(r0, 3));
-    v1 = simde_vmlaq_n_f32(v1, l, simde_vgetq_lane_f32(r1, 3));
-    v2 = simde_vmlaq_n_f32(v2, l, simde_vgetq_lane_f32(r2, 3));
-    v3 = simde_vmlaq_n_f32(v3, l, simde_vgetq_lane_f32(r3, 3));
+    l  = f32x4_load((f32*)&m1->d);
+    v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 3));
+    v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 3));
+    v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 3));
+    v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 3));
 
-    simde_vst1q_f32((simde_float32*)&dest->a, v0);
-    simde_vst1q_f32((simde_float32*)&dest->b, v1);
-    simde_vst1q_f32((simde_float32*)&dest->c, v2);
-    simde_vst1q_f32((simde_float32*)&dest->d, v3);
+    f32x4_store((f32*)&dest->a, v0);
+    f32x4_store((f32*)&dest->b, v1);
+    f32x4_store((f32*)&dest->c, v2);
+    f32x4_store((f32*)&dest->d, v3);
 }
 
 internal void mat4_make_ortho(mat4* dest, f32 left, f32 right, f32 bottom, f32 top, f32 nearZ, f32 farZ) {
@@ -363,19 +304,19 @@ internal void mat4_make_ortho(mat4* dest, f32 left, f32 right, f32 bottom, f32 t
     dest->d.w = 1.0f;
 }
 
-internal void mat4_apply_scale(mat4* m, vec3 scale) {
+internal void mat4_apply_scale(mat4* m, vec3a scale) {
     m->a = vec4_scale(m->a, scale.x);
     m->b = vec4_scale(m->b, scale.y);
     m->c = vec4_scale(m->c, scale.z);
 }
 
-internal void mat4_make_rotation(mat4* m, f32 angle, vec3 normalized_axis) {
-    f32  c  = cosf(angle);
-    vec3 v  = vec3_scale(normalized_axis, 1.0f - c);
-    vec3 vs = vec3_scale(normalized_axis, sinf(angle));
-    m->a    = vec4_from_vec3(vec3_scale(normalized_axis, v.x), 0.0f);
-    m->b    = vec4_from_vec3(vec3_scale(normalized_axis, v.y), 0.0f);
-    m->c    = vec4_from_vec3(vec3_scale(normalized_axis, v.z), 0.0f);
+internal void mat4_make_rotation(mat4* m, f32 angle, vec3a normalized_axis) {
+    f32   c  = cosf(angle);
+    vec3a v  = vec3a_scale(normalized_axis, 1.0f - c);
+    vec3a vs = vec3a_scale(normalized_axis, sinf(angle));
+    m->a     = vec4_from_vec3a(vec3a_scale(normalized_axis, v.x), 0.0f);
+    m->b     = vec4_from_vec3a(vec3a_scale(normalized_axis, v.y), 0.0f);
+    m->c     = vec4_from_vec3a(vec3a_scale(normalized_axis, v.z), 0.0f);
 
     m->a.x += c;
     m->b.x -= vs.z;
@@ -452,7 +393,7 @@ internal f32 radians_mod_zero_to_2pi(f32 rads) {
     return rads;
 }
 
-// Given some sinusoidal function f with period 2pi, but with unknown phase/amplitude/dc, return the
+// given some sinusoidal function f with period 2pi, but with unknown phase/amplitude/dc, return the
 // input to that function in the range 0-2pi which corresponds to the minimum output value.
 internal f32 radians_minimize_unknown_sine(f32 (*f)(f32)) {
     f32 f0 = f(0);
@@ -513,7 +454,7 @@ internal LineSegIntersectResult geo_line_hit_oriented_line(vec2 a0, vec2 a1, vec
     vec2 ba  = vec2_sub(b0, a0);
     f32  rxs = vec2_cross(r, s);
 
-    // Only include hits of line A against the left side of line B
+    // only include hits of line A against the left side of line B
     if (rxs <= 0.f) return result;
 
     f32 t = vec2_cross(ba, s) / rxs;
@@ -524,7 +465,7 @@ internal LineSegIntersectResult geo_line_hit_oriented_line(vec2 a0, vec2 a1, vec
 
     result.hit    = true;
     result.point  = vec2_add(a0, vec2_scale(t, r));
-    result.normal = (vec2){-s.y, s.x};
+    result.normal = vec2(-s.y, s.x);
     result.t      = t;
     return result;
 }
@@ -567,13 +508,13 @@ internal LineSegIntersectResult geo_line_hit_rect(vec2 p0, vec2 p1, vec2 rect_mi
         result.t      = 0.f;
     }
 
-    result = geo_line_hit_oriented_line(p0, p1, rect_min, (vec2){rect_min.x, rect_max.y});
+    result = geo_line_hit_oriented_line(p0, p1, rect_min, vec2(rect_min.x, rect_max.y));
     if (result.hit) return result;
-    result = geo_line_hit_oriented_line(p0, p1, (vec2){rect_min.x, rect_max.y}, rect_max);
+    result = geo_line_hit_oriented_line(p0, p1, vec2(rect_min.x, rect_max.y), rect_max);
     if (result.hit) return result;
-    result = geo_line_hit_oriented_line(p0, p1, rect_max, (vec2){rect_max.x, rect_min.y});
+    result = geo_line_hit_oriented_line(p0, p1, rect_max, vec2(rect_max.x, rect_min.y));
     if (result.hit) return result;
-    result = geo_line_hit_oriented_line(p0, p1, (vec2){rect_max.x, rect_min.y}, rect_min);
+    result = geo_line_hit_oriented_line(p0, p1, vec2(rect_max.x, rect_min.y), rect_min);
     if (result.hit) return result;
 
     return (LineSegIntersectResult){0};

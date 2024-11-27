@@ -22,6 +22,7 @@
 #include "../vendor/simde/arm/neon.h"
 
 #include "defs.h"
+#include "simd.h"
 #include "timing.h"
 #include "memory.h"
 #include "arena.h"

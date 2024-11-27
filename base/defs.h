@@ -335,35 +335,3 @@ NO_SANITIZE_OVERFLOW internal u32 u32_wrapped_add(u32 a, u32 b) { return a + b; 
 NO_SANITIZE_OVERFLOW internal u32 u32_wrapped_mul(u32 a, u32 b) { return a * b; }
 NO_SANITIZE_OVERFLOW internal u64 u64_wrapped_add(u64 a, u64 b) { return a + b; }
 NO_SANITIZE_OVERFLOW internal u64 u64_wrapped_mul(u64 a, u64 b) { return a * b; }
-
-typedef simde_uint8x8_t  u8x8;
-typedef simde_uint8x16_t u8x16;
-typedef simde_uint16x4_t u16x4;
-typedef simde_uint16x8_t u16x8;
-typedef simde_uint32x2_t u32x2;
-typedef simde_uint32x4_t u32x4;
-typedef simde_uint64x1_t u64x1;
-typedef simde_uint64x2_t u64x2;
-
-typedef simde_int8x8_t  i8x8;
-typedef simde_int8x16_t i8x16;
-typedef simde_int16x4_t i16x4;
-typedef simde_int16x8_t i16x8;
-typedef simde_int32x2_t i32x2;
-typedef simde_int32x4_t i32x4;
-typedef simde_int64x1_t i64x1;
-typedef simde_int64x2_t i64x2;
-
-typedef simde_float16x4_t f16x4;
-typedef simde_float16x8_t f16x8;
-typedef simde_float32x2_t f32x2;
-typedef simde_float32x4_t f32x4;
-typedef simde_float64x1_t f64x1;
-typedef simde_float64x2_t f64x2;
-
-#define u8x16_splat simde_vdupq_n_u8
-#define u8x16_equal simde_vceqq_u8
-#define u8x16_load  simde_vld1q_u8
-#define u8x16_and   simde_vandq_u8
-#define u8x16_sum   simde_vaddvq_u8
-#define u8x16_store simde_vst1q_u8

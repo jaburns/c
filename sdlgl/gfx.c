@@ -172,8 +172,8 @@ internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, size_t 
 }
 
 internal void gfx_matrix_construct_model_2d(mat4* model, vec2 position, f32 rotation, vec2 scale) {
-    mat4_make_rotation(model, rotation, VEC3_BACK);
-    mat4_apply_scale(model, vec3_from_vec2(scale, 1.0f));
+    mat4_make_rotation(model, rotation, VEC3A_BACK);
+    mat4_apply_scale(model, vec3a_from_vec2(scale, 1.0f));
     model->d.x = position.x;
     model->d.y = position.y;
 }
@@ -282,22 +282,22 @@ internal void gfx_debug_line2d(vec2 a, vec2 b, vec4 color) {
 }
 
 internal void gfx_debug_circle(vec2 a, f32 radius, vec4 color) {
-    vec2 from = (vec2){a.x + radius, a.y};
+    vec2 from = vec2(a.x + radius, a.y);
     for (i32 i = 1; i <= 16; ++i) {
-        vec2 to = (vec2){
+        vec2 to = vec2(
             a.x + radius * cosf(2 * M_PI * i / 16.f),
-            a.y + radius * sinf(2 * M_PI * i / 16.f),
-        };
+            a.y + radius * sinf(2 * M_PI * i / 16.f)
+        );
         gfx_debug_line2d(from, to, color);
         from = to;
     }
 }
 
 internal void gfx_debug_rect(vec2 a, vec2 b, vec4 color) {
-    gfx_debug_line2d((vec2){a.x, a.y}, (vec2){a.x, b.y}, color);
-    gfx_debug_line2d((vec2){a.x, b.y}, (vec2){b.x, b.y}, color);
-    gfx_debug_line2d((vec2){b.x, b.y}, (vec2){b.x, a.y}, color);
-    gfx_debug_line2d((vec2){b.x, a.y}, (vec2){a.x, a.y}, color);
+    gfx_debug_line2d(vec2(a.x, a.y), vec2(a.x, b.y), color);
+    gfx_debug_line2d(vec2(a.x, b.y), vec2(b.x, b.y), color);
+    gfx_debug_line2d(vec2(b.x, b.y), vec2(b.x, a.y), color);
+    gfx_debug_line2d(vec2(b.x, a.y), vec2(a.x, a.y), color);
 }
 
 internal void gfx_debug_draw(mat4* vp, UniformNameId start_pos, UniformNameId end_pos, UniformNameId color, UniformNameId mvp) {

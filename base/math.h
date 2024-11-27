@@ -1,10 +1,45 @@
 #pragma once
 
-structdef(vec2) { f32 x, y; };
-structdef(vec3) { f32 x, y, z; };
-structdef(vec4) { f32 x, y, z, w; };
+structdef(vec2) {
+    union {
+        struct {
+            f32 x, y;
+        };
+        f32x2 vector;
+    };
+};
 
-structdef(ivec2) { i32 x, y; };
+structdef(vec3) {
+    f32 x, y, z;
+};
+
+structdef(vec3a) {
+    union {
+        struct {
+            f32 x, y, z, zero;
+        };
+        f32x4 vector;
+    };
+};
+
+structdef(vec4) {
+    union {
+        struct {
+            f32 x, y, z, w;
+        };
+        f32x4 vector;
+    };
+};
+
+structdef(ivec2) {
+    union {
+        struct {
+            i32 x, y;
+        };
+        i32x2 vector;
+    };
+};
+
 structdef(ivec3) { i32 x, y, z; };
 structdef(ivec4) { i32 x, y, z, w; };
 
@@ -13,19 +48,20 @@ structdef(mat4) { vec4 a, b, c, d; };
 
 #define sincosf(x, sinp, cosp) __sincosf(x, sinp, cosp)
 
-#define VEC2_ZERO  ((vec2){0})
-#define VEC2_ONE   ((vec2){1.0f, 1.0f})
-#define VEC2_RIGHT ((vec2){1.0f, 0.0f})
-#define VEC2_UP    ((vec2){0.0f, 1.0f})
-#define VEC2_LEFT  ((vec2){-1.0f, 0.0f})
-#define VEC2_DOWN  ((vec2){0.0f, -1.0f})
+#define vec2(x_, y_)        ((vec2){.vector = (f32x2){(x_), (y_)}})
+#define vec2_from_f32x2(v_) ((vec2){.vector = (v_)})
+#define Dbg_vec2(v)         DbgTyped("(vec2){ %f , %f }", (v), (v).x, (v).y)
 
-#define DBG_VEC2(v) DBG_TYPED("(vec2){ %f , %f }", (v), (v).x, (v).y)
+#define VEC2_ZERO  (vec2(0, 0))
+#define VEC2_ONE   (vec2(1, 1))
+#define VEC2_HALF  (vec2(.5, .5))
+#define VEC2_RIGHT (vec2(1, 0))
+#define VEC2_UP    (vec2(0, 1))
+#define VEC2_LEFT  (vec2(-1, 0))
+#define VEC2_DOWN  (vec2(0, -1))
 
 internal vec2 vec2_add(vec2 a, vec2 b);
-internal void vec2_add_to(vec2* a, vec2 b);
 internal vec2 vec2_sub(vec2 a, vec2 b);
-internal void vec2_sub_from(vec2* a, vec2 b);
 internal vec2 vec2_min(vec2 a, vec2 b);
 internal vec2 vec2_max(vec2 a, vec2 b);
 internal vec2 vec2_negate(vec2 a);
@@ -33,7 +69,7 @@ internal vec2 vec2_splat(f32 v);
 internal vec2 vec2_scale(f32 s, vec2 v);
 internal vec2 vec2_scale_add(vec2 a, f32 s, vec2 b);
 internal vec2 vec2_mul(vec2 a, vec2 b);
-internal vec2 vec2_div(vec2 v, f32 d);
+internal vec2 vec2_div_scale(vec2 v, f32 d);
 internal vec2 vec2_lerp(vec2 a, vec2 b, f32 t);
 internal f32  vec2_dot(vec2 a, vec2 b);
 internal f32  vec2_cross(vec2 a, vec2 b);
@@ -51,14 +87,16 @@ internal vec2 vec2_normalize_or_zero(vec2 a);
 internal vec2 vec2_rotate(vec2 v, f32 radians);
 internal vec2 vec2_reflect_and_scale(vec2 v, vec2 normal, f32 norm_scale, f32 tan_scale);
 
-#define IVEC2_ZERO  ((ivec2){0})
-#define IVEC2_ONE   ((ivec2){1, 1})
-#define IVEC2_RIGHT ((ivec2){1, 0})
-#define IVEC2_UP    ((ivec2){0, 1})
-#define IVEC2_LEFT  ((ivec2){-1, 0})
-#define IVEC2_DOWN  ((ivec2){0, -1})
+#define ivec2(x_, y_)        ((ivec2){.vector = (i32x2){(x_), (y_)}})
+#define ivec2_from_i32x2(v_) ((ivec2){.vector = (v_)})
+#define Dbg_ivec2(v)         DbgTyped("(ivec2){ %i , %i }", (v), (v).x, (v).y)
 
-#define Dbg_ivec2(v) DbgTyped("(ivec2){ %i , %i }", (v), (v).x, (v).y)
+#define IVEC2_ZERO  (ivec2(0, 0))
+#define IVEC2_ONE   (ivec2(1, 1))
+#define IVEC2_RIGHT (ivec2(1, 0))
+#define IVEC2_UP    (ivec2(0, 1))
+#define IVEC2_LEFT  (ivec2(-1, 0))
+#define IVEC2_DOWN  (ivec2(0, -1))
 
 internal ivec2 ivec2_add(ivec2 a, ivec2 b);
 internal ivec2 ivec2_sub(ivec2 a, ivec2 b);
@@ -73,35 +111,40 @@ internal ivec2 ivec2_from_vec2_ceil(vec2 a);
 internal ivec2 ivec2_from_vec2_round(vec2 a);
 internal ivec2 ivec2_clamp(ivec2 v, ivec2 min_inclusive, ivec2 max_exclusive);
 
-#define VEC3_ZERO    ((vec3){0})
-#define VEC3_ONE     ((vec3){1.0f, 1.0f, 1.0f})
-#define VEC3_RIGHT   ((vec3){1.0f, 0.0f, 0.0f})
-#define VEC3_UP      ((vec3){0.0f, 1.0f, 0.0f})
-#define VEC3_BACK    ((vec3){0.0f, 0.0f, 1.0f})
-#define VEC3_LEFT    ((vec3){-1.0f, 0.0f, 0.0f})
-#define VEC3_DOWN    ((vec3){0.0f, -1.0f, 0.0f})
-#define VEC3_FORWARD ((vec3){0.0f, 0.0f, -1.0f})
+#define vec3a(x_, y_, z_)    ((vec3a){.vector = (f32x4){(x_), (y_), (z_), 0.f}})
+#define vec3a_from_f32x4(v_) ((vec3a){.vector = (v_)})
+#define Dbg_vec3a(v)         DbgTyped("(vec3a){ %f , %f , %f }", (v), (v).x, (v).y, (v).z)
 
-#define DBG_VEC3(v) DBG_TYPED("(vec3){ %f , %f , %f }", (v), (v).x, (v).y, (v).z)
+#define VEC3A_ZERO    (vec3a(0, 0, 0))
+#define VEC3A_ONE     (vec3a(1, 1, 1))
+#define VEC3A_RIGHT   (vec3a(1, 0, 0))
+#define VEC3A_UP      (vec3a(0, 1, 0))
+#define VEC3A_BACK    (vec3a(0, 0, 1))
+#define VEC3A_LEFT    (vec3a(-1, 0, 0))
+#define VEC3A_DOWN    (vec3a(0, -1, 0))
+#define VEC3A_FORWARD (vec3a(0, 0, -1))
 
-internal vec3 vec3_from_vec2(vec2 v, f32 z);
-internal f32  vec3_dot(vec3 a, vec3 b);
-internal vec3 vec3_scale(vec3 v, f32 scale);
-internal vec3 vec3_normalize(vec3 v);
+internal vec3a vec3a_from_vec2(vec2 v, f32 z);
+internal f32   vec3a_dot(vec3a a, vec3a b);
+internal vec3a vec3a_scale(vec3a v, f32 scale);
+internal vec3a vec3a_normalize(vec3a v);
 
-#define VEC4_BLACK   ((vec4){0.0f, 0.0f, 0.0f, 1.0f})
-#define VEC4_RED     ((vec4){1.0f, 0.0f, 0.0f, 1.0f})
-#define VEC4_GREEN   ((vec4){0.0f, 1.0f, 0.0f, 1.0f})
-#define VEC4_BLUE    ((vec4){0.0f, 0.0f, 1.0f, 1.0f})
-#define VEC4_CYAN    ((vec4){0.0f, 1.0f, 1.0f, 1.0f})
-#define VEC4_MAGENTA ((vec4){1.0f, 0.0f, 1.0f, 1.0f})
-#define VEC4_YELLOW  ((vec4){1.0f, 1.0f, 0.0f, 1.0f})
-#define VEC4_WHITE   ((vec4){1.0f, 1.0f, 1.0f, 1.0f})
+#define vec4(x_, y_, z_, w_) ((vec4){.vector = (f32x4){(x_), (y_), (z_), (w_)}})
+#define vec4_from_f32x4(v_)  ((vec4){.vector = (v_)})
+#define Dbg_vec4(v)          DbgTyped("(vec4){ %f , %f , %f , %f }", (v), (v).x, (v).y, (v).z, (v).w)
 
-#define DBG_VEC4(v) DBG_TYPED("(vec4){ %f , %f , %f , %f }", (v), (v).x, (v).y, (v).z, (v).w)
+#define VEC4_ZERO    (vec4(0, 0, 0, 0))
+#define VEC4_BLACK   (vec4(0, 0, 0, 1))
+#define VEC4_RED     (vec4(1, 0, 0, 1))
+#define VEC4_GREEN   (vec4(0, 1, 0, 1))
+#define VEC4_BLUE    (vec4(0, 0, 1, 1))
+#define VEC4_CYAN    (vec4(0, 1, 1, 1))
+#define VEC4_MAGENTA (vec4(1, 0, 1, 1))
+#define VEC4_YELLOW  (vec4(1, 1, 0, 1))
+#define VEC4_WHITE   (vec4(1, 1, 1, 1))
 
 internal vec4 vec4_scale(vec4 v, f32 scale);
-internal vec4 vec4_from_vec3(vec3 v, f32 w);
+internal vec4 vec4_from_vec3a(vec3a v, f32 w);
 
 internal void mat2_identity(mat2* dest);
 internal void mat2_make_rotation(mat2* dest, f32 radians);
@@ -112,8 +155,8 @@ internal vec2 mat2_mul_vec2(mat2* m, vec2 v);
 internal void mat4_identity(mat4* dest);
 internal void mat4_mul(mat4* dest, mat4* m1, mat4* m2);
 internal void mat4_make_ortho(mat4* dest, f32 left, f32 right, f32 bottom, f32 top, f32 nearZ, f32 farZ);
-internal void mat4_apply_scale(mat4* m, vec3 scale);
-internal void mat4_make_rotation(mat4* m, f32 angle, vec3 normalized_axis);
+internal void mat4_apply_scale(mat4* m, vec3a scale);
+internal void mat4_make_rotation(mat4* m, f32 angle, vec3a normalized_axis);
 
 internal f32 f32_lerp(f32 a, f32 b, f32 t);
 internal f32 f32_fract(f32 a);
