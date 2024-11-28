@@ -176,6 +176,10 @@ internal void panic_expr(char* msg) {
         }                                                                            \
     } while (0)
 
+// use vla pointer casting combined with ub sanitization to get a bounds-checked array
+#define DeclCheckedArray(type, n, name, init_expr) \
+    type(*name)[n] = (type(*)[n])(init_expr)
+
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #define Swap(type, a, b)  \
