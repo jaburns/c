@@ -28,8 +28,9 @@ internal HashArray* hasharray_alloc(Arena* arena, size_t key_size, size_t value_
 internal u32 hasharray_djb2_hash(void* data, size_t len) {
     u32 hash = 5381;
     u8* str  = data;
-    while (len-- > 0) {
-        hash = ((hash << 5) + hash) + *str++;
+    while (len > 0) {
+        len--;
+        hash = u32_wrapped_add(u32_wrapped_mul(33, hash), *str++);
     }
     return hash;
 }
@@ -111,7 +112,7 @@ internal HashArrayIter HashArrayIter_new(HashArray* map) {
 }
 
 internal void HashArrayIter_next(HashArrayIter* it) {
-    ++it->idx_;
+    it->idx_ = u32_wrapped_add(it->idx_, 1);
     for (;;) {
         if (it->idx_ >= it->target->capacity) {
             it->done = true;

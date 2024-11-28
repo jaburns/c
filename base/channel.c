@@ -56,7 +56,7 @@ internal ChannelIter ChannelIter_new(Channel* chan) {
 };
 
 internal void ChannelIter_next(ChannelIter* it) {
-    ++it->idx_;
+    it->idx_ = u32_wrapped_add(it->idx_, 1);
     if (it->idx_ >= it->count_) {
         it->done = true;
     } else {
