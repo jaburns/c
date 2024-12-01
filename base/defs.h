@@ -183,6 +183,14 @@ internal void panic_expr(char* msg) {
 
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+#define ArraySort(array, count, comparator)               \
+    qsort(                                                \
+        (array),                                          \
+        (count),                                          \
+        sizeof((array)[0]),                               \
+        (i32(*)(const void*, const void*))(&(comparator)) \
+    )
+
 #define Swap(type, a, b)  \
     do {                  \
         type temp = a;    \
@@ -246,13 +254,8 @@ internal void panic_expr(char* msg) {
         }                                                                                                 \
     } while (0)
 
-#define SliceSort(slice, comparator)                      \
-    qsort(                                                \
-        (slice).items,                                    \
-        (slice).count,                                    \
-        sizeof((slice).items[0]),                         \
-        (i32(*)(const void*, const void*))(&(comparator)) \
-    )
+#define SliceSort(slice, comparator) \
+    ArraySort((slice).items, (slice).count, comparator)
 
 #define VecAlloc(type, arena_ptr, capacity)                                    \
     (Vec_##type) {                                                             \
