@@ -25,12 +25,30 @@ typedef simde_float32x4_t f32x4;
 typedef simde_float64x1_t f64x1;
 typedef simde_float64x2_t f64x2;
 
+#define u8x8_load simde_vld1_u8
+
+#define u8x8_splat    simde_vdup_n_u8
+#define u8x8_load     simde_vld1_u8
+#define u8x8_store    simde_vst1_u8
+#define u8x8_equal    simde_vceq_u8
+#define u8x8_and      simde_vand_u8
+#define u8x8_sum      simde_vaddv_u8
+#define u8x8_widen    simde_vmovl_u8
+#define u8x8_get_lane simde_vget_lane_u8
+
 #define u8x16_splat simde_vdupq_n_u8
 #define u8x16_load  simde_vld1q_u8
 #define u8x16_store simde_vst1q_u8
 #define u8x16_equal simde_vceqq_u8
 #define u8x16_and   simde_vandq_u8
 #define u8x16_sum   simde_vaddvq_u8
+
+#define u16x4_widen      simde_vmovl_u16
+#define u16x4_mul        simde_vmul_u16
+#define u16x4_add_across simde_vaddv_u16
+
+#define u16x8_get_low  simde_vget_low_u16
+#define u16x8_get_high simde_vget_high_u16
 
 #define i32x2_splat      simde_vdup_n_s32
 #define i32x2_equal      simde_vceq_s32
@@ -46,6 +64,14 @@ typedef simde_float64x2_t f64x2;
 
 #define u32x2_xor        simde_veor_u32
 #define u32x2_min_across simde_vminv_u32
+
+#define i32x4_load       simde_vld1q_s32
+#define i32x4_sub        simde_vsubq_s32
+#define i32x4_abs        simde_vabsq_s32
+#define i32x4_add_across simde_vaddvq_s32
+
+#define u32x4_mul        simde_vmulq_u32
+#define u32x4_add_across simde_vaddvq_u32
 
 #define f32x2_splat      simde_vdup_n_f32
 #define f32x2_scale      simde_vmul_n_f32

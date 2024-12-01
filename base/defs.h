@@ -122,7 +122,8 @@ DefArrayTypes(size_t);
 #define Sign(a)            ((a) >= 0 ? 1 : -1)
 #define NextPowerOf2(x)    ((x) <= 1 ? 1 : 1U << (32 - __builtin_clz((x) - 1)))
 
-#define ZeroStruct(struct_ptr) memset((struct_ptr), 0, sizeof(*(struct_ptr)))
+#define ZeroStruct(struct_ptr)      memset((struct_ptr), 0, sizeof(*(struct_ptr)))
+#define ZeroArray(array_ptr, count) memset((array_ptr), 0, (count) * sizeof((array_ptr)[0]))
 
 #define Panic(...)                    \
     do {                              \
