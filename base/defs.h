@@ -122,6 +122,15 @@ DefArrayTypes(size_t);
 #define Sign(a)            ((a) >= 0 ? 1 : -1)
 #define NextPowerOf2(x)    ((x) <= 1 ? 1 : 1U << (32 - __builtin_clz((x) - 1)))
 
+#define u64_count_leading_zeroes __builtin_clzll
+#define u32_count_leading_zeroes __builtin_clz
+
+#ifdef __aarch64__
+#define u64_bit_reverse __builtin_arm_rbit64
+#else
+#error lol
+#endif
+
 #define ZeroStruct(struct_ptr)      memset((struct_ptr), 0, sizeof(*(struct_ptr)))
 #define ZeroArray(array_ptr, count) memset((array_ptr), 0, (count) * sizeof((array_ptr)[0]))
 
