@@ -1,6 +1,25 @@
 #include "inc.h"
 
 #ifdef __APPLE__
+#ifdef __aarch64__
+
+global mach_timebase_info_data_t g_timing_timebase;
+
+internal void timing_global_init(void) {
+    mach_timebase_info(&g_timing_timebase);
+}
+
+internal u64 timing_get_ticks(void) {
+    u64 ret;
+    __asm__ volatile("mrs %0, cntvct_el0" : "=r"(ret));
+    return ret;
+}
+
+internal u64 timing_ticks_to_nanos(u64 ticks) {
+    return ticks * g_timing_timebase.numer / g_timing_timebase.denom;
+}
+
+#else
 
 global mach_timebase_info_data_t g_timing_timebase;
 global u64                       g_timing_start_ticks;
@@ -16,6 +35,7 @@ internal u64 timing_get_nanos_since_start(void) {
     return elapsed_ns;
 }
 
+#endif
 #else
 
 global u64 g_timing_start_secs;
