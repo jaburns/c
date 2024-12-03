@@ -25,7 +25,6 @@ typedef simde_float32x4_t f32x4;
 typedef simde_float64x1_t f64x1;
 typedef simde_float64x2_t f64x2;
 
-#define u8x8_from_bits    simde_vcreate_u8
 #define u8x8_load         simde_vld1_u8
 #define u8x8_splat        simde_vdup_n_u8
 #define u8x8_store        simde_vst1_u8
@@ -43,6 +42,8 @@ typedef simde_float64x2_t f64x2;
 #define u8x8_min_across   simde_vminv_u8
 #define u8x8_less_than    simde_vclt_u8
 #define u8x8_greater_than simde_vcgt_u8
+
+#define u64_from_u8x8(x) (*(u64*)&(x))
 
 #define i8x8_load         simde_vld1_s8
 #define i8x8_splat        simde_vdup_n_s8
@@ -76,12 +77,18 @@ typedef simde_float64x2_t f64x2;
 #define u8x16_extract    simde_vextq_u8
 #define u8x16_get_lane   simde_vgetq_lane_u8
 
+#define u8x16_dup  simde_vdupq_n_u8
+#define u8x16_ceq  simde_vceqq_u8
+#define u8x16_maxv simde_vmaxvq_u8
+
 #define u16x4_widen      simde_vmovl_u16
 #define u16x4_mul        simde_vmul_u16
 #define u16x4_add_across simde_vaddv_u16
 
-#define u16x8_get_low  simde_vget_low_u16
-#define u16x8_get_high simde_vget_high_u16
+#define u16x8_from_u8x16 simde_vreinterpretq_u16_u8
+#define u16x8_get_low    simde_vget_low_u16
+#define u16x8_get_high   simde_vget_high_u16
+#define u16x8_shrn       simde_vshrn_n_u16
 
 #define i32x2_splat      simde_vdup_n_s32
 #define i32x2_equal      simde_vceq_s32
