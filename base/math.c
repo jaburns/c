@@ -3,68 +3,68 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 internal vec2 vec2_add(vec2 a, vec2 b) {
-    return vec2_from_f32x2(f32x2(add, a.vector, b.vector));
+    return vec2_from_f32x2(f32x2_add(a.vector, b.vector));
 }
 
 internal vec2 vec2_sub(vec2 a, vec2 b) {
-    return vec2_from_f32x2(f32x2(sub, a.vector, b.vector));
+    return vec2_from_f32x2(f32x2_sub(a.vector, b.vector));
 }
 
 internal vec2 vec2_min(vec2 a, vec2 b) {
-    return vec2_from_f32x2(f32x2(min, a.vector, b.vector));
+    return vec2_from_f32x2(f32x2_min(a.vector, b.vector));
 }
 
 internal vec2 vec2_max(vec2 a, vec2 b) {
-    return vec2_from_f32x2(f32x2(max, a.vector, b.vector));
+    return vec2_from_f32x2(f32x2_max(a.vector, b.vector));
 }
 
 internal vec2 vec2_negate(vec2 a) {
-    return vec2_from_f32x2(f32x2(neg, a.vector));
+    return vec2_from_f32x2(f32x2_negate(a.vector));
 }
 
 internal vec2 vec2_splat(f32 v) {
-    return vec2_from_f32x2(f32x2x(dup, n, v));
+    return vec2_from_f32x2(f32x2_splat(v));
 }
 
 internal vec2 vec2_scale(f32 s, vec2 v) {
-    return vec2_from_f32x2(f32x2x(mul, n, v.vector, s));
+    return vec2_from_f32x2(f32x2_scale(v.vector, s));
 }
 
 internal vec2 vec2_scale_add(vec2 a, f32 s, vec2 b) {
-    return vec2_from_f32x2(f32x2x(mla, n, a.vector, b.vector, s));
+    return vec2_from_f32x2(f32x2_scale_add(a.vector, b.vector, s));
 }
 
 internal vec2 vec2_mul(vec2 a, vec2 b) {
-    return vec2_from_f32x2(f32x2(mul, a.vector, b.vector));
+    return vec2_from_f32x2(f32x2_mul(a.vector, b.vector));
 }
 
 internal vec2 vec2_div_scale(vec2 v, f32 d) {
-    return vec2_from_f32x2(f32x2(div, v.vector, f32x2x(dup, n, d)));
+    return vec2_from_f32x2(f32x2_div(v.vector, f32x2_splat(d)));
 }
 
 internal vec2 vec2_lerp(vec2 a, vec2 b, f32 t) {
-    return vec2_from_f32x2(f32x2x(mla, n, a.vector, f32x2(sub, b.vector, a.vector), t));
+    return vec2_from_f32x2(f32x2_scale_add(a.vector, f32x2_sub(b.vector, a.vector), t));
 }
 
 internal f32 vec2_dot(vec2 a, vec2 b) {
-    return f32x2(addv, f32x2(mul, a.vector, b.vector));
+    return f32x2_add_across(f32x2_mul(a.vector, b.vector));
 }
 
 internal f32 vec2_cross(vec2 a, vec2 b) {
     u32x2 sign_bit = {0, 0x80000000};
-    f32x2 prod     = f32x2(mul, a.vector, f32x2(rev64, b.vector));
-    f32x2 flipped  = u32x2x(cvt, f32, u32x2(eor, f32x2x(cvt, u32, prod), sign_bit));
-    return f32x2(addv, flipped);
+    f32x2 prod     = f32x2_mul(a.vector, f32x2_rotate(b.vector));
+    f32x2 flipped  = (f32x2)u32x2_xor((u32x2)prod, sign_bit);
+    return f32x2_add_across(flipped);
 }
 
 internal vec2 vec2_perp(vec2 a) {
     u32x2 sign_bit   = {0x80000000, 0};
-    u32x2 bit_result = u32x2(eor, f32x2x(cvt, u32, f32x2(rev64, a.vector)), sign_bit);
-    return vec2_from_f32x2(u32x2x(cvt, f32, bit_result));
+    u32x2 bit_result = u32x2_xor((u32x2)f32x2_rotate(a.vector), sign_bit);
+    return vec2_from_f32x2((f32x2)bit_result);
 }
 
 internal vec2 vec2_fract(vec2 a) {
-    return vec2_from_f32x2(f32x2(sub, a.vector, f32x2(rndm, a.vector)));
+    return vec2_from_f32x2(f32x2_sub(a.vector, f32x2_floor(a.vector)));
 }
 
 internal vec2 vec2_from_ivec2(ivec2 a) {
@@ -72,99 +72,99 @@ internal vec2 vec2_from_ivec2(ivec2 a) {
 }
 
 internal f32 vec2_length(vec2 a) {
-    return sqrtf(f32x2(addv, f32x2(mul, a.vector, a.vector)));
+    return sqrtf(f32x2_add_across(f32x2_mul(a.vector, a.vector)));
 }
 
 internal f32 vec2_length_sqr(vec2 a) {
-    return f32x2(addv, f32x2(mul, a.vector, a.vector));
+    return f32x2_add_across(f32x2_mul(a.vector, a.vector));
 }
 
 internal f32 vec2_distance(vec2 a, vec2 b) {
-    f32x2 delta = f32x2(sub, a.vector, b.vector);
-    return sqrtf(f32x2(addv, f32x2(mul, delta, delta)));
+    f32x2 delta = f32x2_sub(a.vector, b.vector);
+    return sqrtf(f32x2_add_across(f32x2_mul(delta, delta)));
 }
 
 internal vec2 vec2_abs(vec2 a) {
-    return vec2_from_f32x2(f32x2(abs, a.vector));
+    return vec2_from_f32x2(f32x2_abs(a.vector));
 }
 
 internal vec2 vec2_sign(vec2 a) {
-    u32x2 neg_mask = f32x2(clt, a.vector, f32x2x(dup, n, 0.f));
-    return vec2_from_f32x2(f32x2(bsl, neg_mask, f32x2x(dup, n, -1.f), f32x2x(dup, n, 1.f)));
+    u32x2 neg_mask = f32x2_less_than(a.vector, f32x2_splat(0.f));
+    return vec2_from_f32x2(f32x2_select(neg_mask, f32x2_splat(-1.f), f32x2_splat(1.f)));
 }
 
 internal vec2 vec2_clamp(vec2 v, vec2 min, vec2 max) {
-    return vec2_from_f32x2(f32x2(max, min.vector, f32x2(min, max.vector, v.vector)));
+    return vec2_from_f32x2(f32x2_max(min.vector, f32x2_min(max.vector, v.vector)));
 }
 
 internal vec2 vec2_normalize(vec2 a) {
-    f32 len = sqrtf(f32x2(addv, f32x2(mul, a.vector, a.vector)));
-    return vec2_from_f32x2(f32x2(div, a.vector, f32x2x(dup, n, len)));
+    f32 len = sqrtf(f32x2_add_across(f32x2_mul(a.vector, a.vector)));
+    return vec2_from_f32x2(f32x2_div(a.vector, f32x2_splat(len)));
 }
 
 internal vec2 vec2_normalize_or_zero(vec2 a) {
-    f32 len = sqrtf(f32x2(addv, f32x2(mul, a.vector, a.vector)));
+    f32 len = sqrtf(f32x2_add_across(f32x2_mul(a.vector, a.vector)));
     if (len < .000001f) return VEC2_ZERO;
-    return vec2_from_f32x2(f32x2(div, a.vector, f32x2x(dup, n, len)));
+    return vec2_from_f32x2(f32x2_div(a.vector, f32x2_splat(len)));
 }
 
 internal vec2 vec2_rotate(vec2 v, f32 radians) {
     f32 s, c;
     sincosf(radians, &s, &c);
-    f32x2 rx = f32x2(mul, v.vector, (f32x2){c, -s});
-    f32x2 ry = f32x2(mul, v.vector, (f32x2){s, c});
-    return vec2_from_f32x2(f32x2(padd, rx, ry));
+    f32x2 rx = f32x2_mul(v.vector, (f32x2){c, -s});
+    f32x2 ry = f32x2_mul(v.vector, (f32x2){s, c});
+    return vec2_from_f32x2(f32x2_add_pairs(rx, ry));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 internal ivec2 ivec2_add(ivec2 a, ivec2 b) {
-    return ivec2_from_i32x2(i32x2(add, a.vector, b.vector));
+    return ivec2_from_i32x2(i32x2_add(a.vector, b.vector));
 }
 
 internal ivec2 ivec2_sub(ivec2 a, ivec2 b) {
-    return ivec2_from_i32x2(i32x2(sub, a.vector, b.vector));
+    return ivec2_from_i32x2(i32x2_sub(a.vector, b.vector));
 }
 
 internal i32 ivec2_manhattan(ivec2 a) {
-    return i32x2(addv, i32x2(abs, a.vector));
+    return i32x2_add_across(i32x2_abs(a.vector));
 }
 
 internal ivec2 ivec2_min(ivec2 a, ivec2 b) {
-    return ivec2_from_i32x2(i32x2(min, a.vector, b.vector));
+    return ivec2_from_i32x2(i32x2_min(a.vector, b.vector));
 }
 
 internal ivec2 ivec2_max(ivec2 a, ivec2 b) {
-    return ivec2_from_i32x2(i32x2(max, a.vector, b.vector));
+    return ivec2_from_i32x2(i32x2_max(a.vector, b.vector));
 }
 
 internal ivec2 ivec2_negate(ivec2 a) {
-    return ivec2_from_i32x2(i32x2(neg, a.vector));
+    return ivec2_from_i32x2(i32x2_negate(a.vector));
 }
 
 internal ivec2 ivec2_splat(i32 v) {
-    return ivec2_from_i32x2(i32x2x(dup, n, v));
+    return ivec2_from_i32x2(i32x2_splat(v));
 }
 
 internal bool ivec2_eq(ivec2 a, ivec2 b) {
-    return u32x2(minv, i32x2x(reinterpret, u32, i32x2(ceq, a.vector, b.vector))) != 0;
+    return u32x2_min_across((u32x2)i32x2_equal(a.vector, b.vector)) != 0;
 }
 
 internal ivec2 ivec2_from_vec2_floor(vec2 a) {
-    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2(rndm, a.vector)));
+    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2_floor(a.vector)));
 }
 
 internal ivec2 ivec2_from_vec2_ceil(vec2 a) {
-    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2(rndp, a.vector)));
+    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2_ceil(a.vector)));
 }
 
 internal ivec2 ivec2_from_vec2_round(vec2 a) {
-    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2(rndn, a.vector)));
+    return ivec2_from_i32x2(i32x2_from_f32x2(f32x2_round(a.vector)));
 }
 
 internal ivec2 ivec2_clamp(ivec2 v, ivec2 min_inclusive, ivec2 max_exclusive) {
-    i32x2 max = i32x2(sub, max_exclusive.vector, i32x2x(dup, n, -1));
-    return ivec2_from_i32x2(i32x2(max, min_inclusive.vector, i32x2(min, max, v.vector)));
+    i32x2 max = i32x2_sub(max_exclusive.vector, i32x2_splat(-1));
+    return ivec2_from_i32x2(i32x2_max(min_inclusive.vector, i32x2_min(max, v.vector)));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -175,23 +175,23 @@ internal vec3a vec3a_from_vec2(vec2 v, f32 z) {
 
 internal f32 vec3a_dot(vec3a a, vec3a b) {
     DebugAssert(a.zero == 0.f && b.zero == 0.f);
-    return f32x4(addv, f32x4(mul, a.vector, b.vector));
+    return f32x4_add_across(f32x4_mul(a.vector, b.vector));
 }
 
 internal vec3a vec3a_scale(vec3a v, f32 scale) {
-    return vec3a_from_f32x4(f32x4x(mul, n, v.vector, scale));
+    return vec3a_from_f32x4(f32x4_scale(v.vector, scale));
 }
 
 internal vec3a vec3a_normalize(vec3a a) {
     DebugAssert(a.zero == 0.f);
-    f32 len = sqrtf(f32x4(addv, f32x4(mul, a.vector, a.vector)));
-    return vec3a_from_f32x4(f32x4(div, a.vector, f32x4x(dup, n, len)));
+    f32 len = sqrtf(f32x4_add_across(f32x4_mul(a.vector, a.vector)));
+    return vec3a_from_f32x4(f32x4_div(a.vector, f32x4_splat(len)));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 internal vec4 vec4_scale(vec4 v, f32 scale) {
-    return vec4_from_f32x4(f32x4x(mul, n, v.vector, scale));
+    return vec4_from_f32x4(f32x4_scale(v.vector, scale));
 }
 
 internal vec4 vec4_from_vec3a(vec3a v, f32 w) {
@@ -224,10 +224,10 @@ internal void mat2_make_rotation_pi(mat2* dest) {
 }
 
 internal vec2 mat2_mul_vec2(mat2* m, vec2 v) {
-    f32x4 v1   = f32x2(combine, v.vector, v.vector);
-    f32x4 m1   = f32x2(combine, m->a.vector, m->b.vector);
-    f32x4 prod = f32x4(mul, v1, m1);
-    return vec2_from_f32x2(f32x2(padd, f32x4y(get_low, prod), f32x4y(get_high, prod)));
+    f32x4 v1   = f32x2_combine(v.vector, v.vector);
+    f32x4 m1   = f32x2_combine(m->a.vector, m->b.vector);
+    f32x4 prod = f32x4_mul(v1, m1);
+    return vec2_from_f32x2(f32x2_add_pairs(f32x4_get_low(prod), f32x4_get_high(prod)));
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -246,28 +246,28 @@ internal void mat4_mul(mat4* dest, mat4* m1, mat4* m2) {
     f32x4 r3 = m2->d.vector;
 
     f32x4 l  = m1->a.vector;
-    f32x4 v0 = f32x4x(mul, n, l, f32x4x(get, lane, r0, 0));
-    f32x4 v1 = f32x4x(mul, n, l, f32x4x(get, lane, r1, 0));
-    f32x4 v2 = f32x4x(mul, n, l, f32x4x(get, lane, r2, 0));
-    f32x4 v3 = f32x4x(mul, n, l, f32x4x(get, lane, r3, 0));
+    f32x4 v0 = f32x4_scale(l, f32x4_get_lane(r0, 0));
+    f32x4 v1 = f32x4_scale(l, f32x4_get_lane(r1, 0));
+    f32x4 v2 = f32x4_scale(l, f32x4_get_lane(r2, 0));
+    f32x4 v3 = f32x4_scale(l, f32x4_get_lane(r3, 0));
 
     l  = m1->b.vector;
-    v0 = f32x4x(mla, n, v0, l, f32x4x(get, lane, r0, 1));
-    v1 = f32x4x(mla, n, v1, l, f32x4x(get, lane, r0, 1));
-    v2 = f32x4x(mla, n, v2, l, f32x4x(get, lane, r0, 1));
-    v3 = f32x4x(mla, n, v3, l, f32x4x(get, lane, r0, 1));
+    v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 1));
+    v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 1));
+    v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 1));
+    v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 1));
 
     l  = m1->c.vector;
-    v0 = f32x4x(mla, n, v0, l, f32x4x(get, lane, r0, 2));
-    v1 = f32x4x(mla, n, v1, l, f32x4x(get, lane, r0, 2));
-    v2 = f32x4x(mla, n, v2, l, f32x4x(get, lane, r0, 2));
-    v3 = f32x4x(mla, n, v3, l, f32x4x(get, lane, r0, 2));
+    v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 2));
+    v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 2));
+    v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 2));
+    v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 2));
 
     l  = m1->d.vector;
-    v0 = f32x4x(mla, n, v0, l, f32x4x(get, lane, r0, 3));
-    v1 = f32x4x(mla, n, v1, l, f32x4x(get, lane, r0, 3));
-    v2 = f32x4x(mla, n, v2, l, f32x4x(get, lane, r0, 3));
-    v3 = f32x4x(mla, n, v3, l, f32x4x(get, lane, r0, 3));
+    v0 = f32x4_scale_add(v0, l, f32x4_get_lane(r0, 3));
+    v1 = f32x4_scale_add(v1, l, f32x4_get_lane(r1, 3));
+    v2 = f32x4_scale_add(v2, l, f32x4_get_lane(r2, 3));
+    v3 = f32x4_scale_add(v3, l, f32x4_get_lane(r3, 3));
 
     dest->a.vector = v0;
     dest->b.vector = v1;
