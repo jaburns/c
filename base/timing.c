@@ -9,7 +9,7 @@ internal void timing_global_init(void) {
 }
 
 internal u64 timing_get_ticks(void) {
-#if 0  // def __aarch64__
+#ifdef __aarch64__
     u64 ret;
     __asm__ volatile("mrs %0, cntvct_el0" : "=r"(ret));
     return ret;
