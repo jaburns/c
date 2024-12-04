@@ -18,136 +18,66 @@ typedef simde_int32x4_t i32x4;
 typedef simde_int64x1_t i64x1;
 typedef simde_int64x2_t i64x2;
 
-typedef simde_float16x4_t f16x4;
-typedef simde_float16x8_t f16x8;
 typedef simde_float32x2_t f32x2;
 typedef simde_float32x4_t f32x4;
 typedef simde_float64x1_t f64x1;
 typedef simde_float64x2_t f64x2;
 
-#define u8x8_load         simde_vld1_u8
-#define u8x8_splat        simde_vdup_n_u8
-#define u8x8_store        simde_vst1_u8
-#define u8x8_equal        simde_vceq_u8
-#define u8x8_and          simde_vand_u8
-#define u8x8_or           simde_vorr_u8
-#define u8x8_xor          simde_veor_u8
-#define u8x8_sub          simde_vsub_u8
-#define u8x8_sum          simde_vaddv_u8
-#define u8x8_widen        simde_vmovl_u8
-#define u8x8_get_lane     simde_vget_lane_u8
-#define u8x8_extract      simde_vext_u8
-#define u8x8_select       simde_vbsl_u8
-#define u8x8_max_across   simde_vmaxv_u8
-#define u8x8_min_across   simde_vminv_u8
-#define u8x8_less_than    simde_vclt_u8
-#define u8x8_greater_than simde_vcgt_u8
-
-#define u64_from_u8x8(x) (*(u64*)&(x))
-
-#define i8x8_load         simde_vld1_s8
-#define i8x8_splat        simde_vdup_n_s8
-#define i8x8_store        simde_vst1_s8
-#define i8x8_equal        simde_vceq_s8
-#define i8x8_and          simde_vand_s8
-#define i8x8_or           simde_vorr_s8
-#define i8x8_xor          simde_veor_s8
-#define i8x8_sub          simde_vsub_s8
-#define i8x8_sum          simde_vaddv_s8
-#define i8x8_widen        simde_vmovl_s8
-#define i8x8_get_lane     simde_vget_lane_s8
-#define i8x8_extract      simde_vext_s8
-#define i8x8_select       simde_vbsl_s8
-#define i8x8_max_across   simde_vmaxv_s8
-#define i8x8_min_across   simde_vminv_s8
-#define i8x8_less_than    simde_vclt_s8
-#define i8x8_greater_than simde_vcgt_s8
-#define i8x8_abs          simde_vabs_s8
-
-#define u8x16_splat      simde_vdupq_n_u8
-#define u8x16_load       simde_vld1q_u8
-#define u8x16_store      simde_vst1q_u8
-#define u8x16_equal      simde_vceqq_u8
-#define u8x16_and        simde_vandq_u8
-#define u8x16_add        simde_vaddq_u8
-#define u8x16_sub        simde_vsubq_u8
-#define u8x16_mul        simde_vmulq_u8
-#define u8x16_sum        simde_vaddvq_u8
-#define u8x16_max_across simde_vmaxvq_u8
-#define u8x16_extract    simde_vextq_u8
-#define u8x16_get_lane   simde_vgetq_lane_u8
-
-#define u8x16_dup  simde_vdupq_n_u8
-#define u8x16_ceq  simde_vceqq_u8
-#define u8x16_maxv simde_vmaxvq_u8
-
-#define u16x4_widen      simde_vmovl_u16
-#define u16x4_mul        simde_vmul_u16
-#define u16x4_add_across simde_vaddv_u16
-
+#define u64_from_u8x8(x) ((u64)simde_vreinterpret_u64_u8(x))
 #define u16x8_from_u8x16 simde_vreinterpretq_u16_u8
-#define u16x8_get_low    simde_vget_low_u16
-#define u16x8_get_high   simde_vget_high_u16
-#define u16x8_shrn       simde_vshrn_n_u16
-
-#define i32x2_splat      simde_vdup_n_s32
-#define i32x2_equal      simde_vceq_s32
-#define i32x2_get_lane   simde_vget_lane_s32
-#define i32x2_abs        simde_vabs_s32
-#define i32x2_add        simde_vadd_s32
-#define i32x2_sub        simde_vsub_s32
-#define i32x2_min        simde_vmin_s32
-#define i32x2_max        simde_vmax_s32
-#define i32x2_negate     simde_vneg_s32
-#define i32x2_add_across simde_vaddv_s32
 #define i32x2_from_f32x2 simde_vcvt_s32_f32
-
-#define u32x2_xor        simde_veor_u32
-#define u32x2_min_across simde_vminv_u32
-
-#define i32x4_load       simde_vld1q_s32
-#define i32x4_sub        simde_vsubq_s32
-#define i32x4_abs        simde_vabsq_s32
-#define i32x4_add_across simde_vaddvq_s32
-
-#define u32x4_load       simde_vld1q_u32
-#define u32x4_mul        simde_vmulq_u32
-#define u32x4_add_across simde_vaddvq_u32
-#define u32x4_max_across simde_vmaxvq_u32
-
-#define f32x2_splat      simde_vdup_n_f32
-#define f32x2_scale      simde_vmul_n_f32
-#define f32x2_abs        simde_vabs_f32
-#define f32x2_add        simde_vadd_f32
-#define f32x2_sub        simde_vsub_f32
-#define f32x2_mul        simde_vmul_f32
-#define f32x2_div        simde_vdiv_f32
-#define f32x2_min        simde_vmin_f32
-#define f32x2_max        simde_vmax_f32
-#define f32x2_negate     simde_vneg_f32
-#define f32x2_add_across simde_vaddv_f32
-#define f32x2_floor      simde_vrndm_f32
-#define f32x2_ceil       simde_vrndp_f32
-#define f32x2_round      simde_vrndn_f32
-#define f32x2_add_pairs  simde_vpadd_f32
-#define f32x2_scale_add  simde_vmla_n_f32
-#define f32x2_rotate     simde_vrev64_f32
-#define f32x2_less_than  simde_vclt_f32
-#define f32x2_select     simde_vbsl_f32
 #define f32x2_from_i32x2 simde_vcvt_f32_s32
-#define f32x2_combine    simde_vcombine_f32
 
-#define f32x4_splat      simde_vdupq_n_f32
-#define f32x4_load       simde_vld1q_f32
-#define f32x4_store      simde_vst1q_f32
-#define f32x4_get_lane   simde_vgetq_lane_f32
-#define f32x4_get_low    simde_vget_low_f32
-#define f32x4_get_high   simde_vget_high_f32
-#define f32x4_scale      simde_vmulq_n_f32
-#define f32x4_abs        simde_vabsq_f32
-#define f32x4_add        simde_vaddq_f32
-#define f32x4_sub        simde_vsubq_f32
-#define f32x4_mul        simde_vmulq_f32
-#define f32x4_div        simde_vdivq_f32
-#define f32x4_add_across simde_vaddvq_f32
-#define f32x4_scale_add  simde_vmlaq_n_f32
+#define SimdMacro(t, q, x)     simde_v##x##q##t
+#define SimdMacroX(t, q, x, y) simde_v##x##q##_##y##t
+
+#define u8x8(x, ...)      SimdMacro(_u8, , x)(__VA_ARGS__)
+#define u8x8x(x, y, ...)  SimdMacroX(_u8, , x, y)(__VA_ARGS__)
+#define u8x16(x, ...)     SimdMacro(_u8, q, x)(__VA_ARGS__)
+#define u8x16x(x, y, ...) SimdMacroX(_u8, q, x, y)(__VA_ARGS__)
+
+#define u16x4(x, ...)     SimdMacro(_u16, , x)(__VA_ARGS__)
+#define u16x4x(x, y, ...) SimdMacroX(_u16, , x, y)(__VA_ARGS__)
+#define u16x8(x, ...)     SimdMacro(_u16, q, x)(__VA_ARGS__)
+#define u16x8x(x, y, ...) SimdMacroX(_u16, q, x, y)(__VA_ARGS__)
+
+#define u32x2(x, ...)     SimdMacro(_u32, , x)(__VA_ARGS__)
+#define u32x2x(x, y, ...) SimdMacroX(_u32, , x, y)(__VA_ARGS__)
+#define u32x4(x, ...)     SimdMacro(_u32, q, x)(__VA_ARGS__)
+#define u32x4x(x, y, ...) SimdMacroX(_u32, q, x, y)(__VA_ARGS__)
+
+#define u64x1(x, ...)     SimdMacro(_u64, , x)(__VA_ARGS__)
+#define u64x1x(x, y, ...) SimdMacroX(_u64, , x, y)(__VA_ARGS__)
+#define u64x2(x, ...)     SimdMacro(_u64, q, x)(__VA_ARGS__)
+#define u64x2x(x, y, ...) SimdMacroX(_u64, q, x, y)(__VA_ARGS__)
+
+#define i8x8(x, ...)      SimdMacro(_s8, , x)(__VA_ARGS__)
+#define i8x8x(x, y, ...)  SimdMacroX(_s8, , x, y)(__VA_ARGS__)
+#define i8x16(x, ...)     SimdMacro(_s8, q, x)(__VA_ARGS__)
+#define i8x16x(x, y, ...) SimdMacroX(_s8, q, x, y)(__VA_ARGS__)
+
+#define i16x4(x, ...)     SimdMacro(_s16, , x)(__VA_ARGS__)
+#define i16x4x(x, y, ...) SimdMacroX(_s16, , x, y)(__VA_ARGS__)
+#define i16x8(x, ...)     SimdMacro(_s16, q, x)(__VA_ARGS__)
+#define i16x8x(x, y, ...) SimdMacroX(_s16, q, x, y)(__VA_ARGS__)
+
+#define i32x2(x, ...)     SimdMacro(_s32, , x)(__VA_ARGS__)
+#define i32x2x(x, y, ...) SimdMacroX(_s32, , x, y)(__VA_ARGS__)
+#define i32x4(x, ...)     SimdMacro(_s32, q, x)(__VA_ARGS__)
+#define i32x4x(x, y, ...) SimdMacroX(_s32, q, x, y)(__VA_ARGS__)
+
+#define i64x1(x, ...)     SimdMacro(_s64, , x)(__VA_ARGS__)
+#define i64x1x(x, y, ...) SimdMacroX(_s64, , x, y)(__VA_ARGS__)
+#define i64x2(x, ...)     SimdMacro(_s64, q, x)(__VA_ARGS__)
+#define i64x2x(x, y, ...) SimdMacroX(_s64, q, x, y)(__VA_ARGS__)
+
+#define f32x2(x, ...)     SimdMacro(_f32, , x)(__VA_ARGS__)
+#define f32x2x(x, y, ...) SimdMacroX(_f32, , x, y)(__VA_ARGS__)
+#define f32x4(x, ...)     SimdMacro(_f32, q, x)(__VA_ARGS__)
+#define f32x4x(x, y, ...) SimdMacroX(_f32, q, x, y)(__VA_ARGS__)
+#define f32x4y(x, ...)    SimdMacro(_f32, , x)(__VA_ARGS__)
+
+#define f64x1(x, ...)     SimdMacro(_f64, , x)(__VA_ARGS__)
+#define f64x1x(x, y, ...) SimdMacroX(_f64, , x, y)(__VA_ARGS__)
+#define f64x2(x, ...)     SimdMacro(_f64, q, x)(__VA_ARGS__)
+#define f64x2x(x, y, ...) SimdMacroX(_f64, q, x, y)(__VA_ARGS__)
