@@ -186,10 +186,6 @@ internal void panic_expr(char* msg) {
         }                                                                            \
     } while (0)
 
-// use vla pointer casting combined with ub sanitization to get a bounds-checked array
-#define DeclCheckedArray(type, n, name, init_expr) \
-    type(*name)[n] = (type(*)[n])(init_expr)
-
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #define ArraySort(array, count, comparator)               \
@@ -200,15 +196,19 @@ internal void panic_expr(char* msg) {
         (i32(*)(const void*, const void*))(&(comparator)) \
     )
 
+#define ArrayCopy(dest, src, start_idx, end_idx) \
+    memcpy(&(dest)[start_idx], &(src)[start_idx], ((end_idx) - (start_idx)) * sizeof((dest)[0]))
+
+// use vla pointer casting combined with ub sanitization to get a bounds-checked array
+#define DeclCheckedArrayPtr(name, type, count, items) \
+    type(*name)[(count)] = (type(*)[(count)])(items)
+
 #define Swap(type, a, b)  \
     do {                  \
         type temp = a;    \
         a         = b;    \
         b         = temp; \
     } while (0)
-
-#define SliceCopy(dest, src, start_idx, end_idx) \
-    memcpy(&(dest)[start_idx], &(src)[start_idx], ((end_idx) - (start_idx)) * sizeof((dest)[0]))
 
 #define SliceBinarySearch(out_i32_result_idx, slice, field_type, field, seeking) \
     do {                                                                         \
