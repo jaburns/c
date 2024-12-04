@@ -28,7 +28,7 @@ structdef(ArenaArray) {
     void*  items;
 };
 
-internal Arena     arena_create(MemoryAllocator* allocator);
+internal Arena     arena_create(MemoryAllocator* allocator, size_t block_size);
 internal Arena*    arena_fork(Arena* self);
 internal ArenaMark arena_mark(Arena* self);
 internal void      arena_restore(Arena* self, ArenaMark saved);

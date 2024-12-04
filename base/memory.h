@@ -1,20 +1,16 @@
 #pragma once
 
-#define MEMORY_RESERVE_SIZE Gb(32)
-
-#ifdef JBC_MEMORY_COMMIT_BLOCK_SIZE
-#define MEMORY_COMMIT_BLOCK_SIZE JBC_MEMORY_COMMIT_BLOCK_SIZE
-#else
-#define MEMORY_COMMIT_BLOCK_SIZE Mb(1)
-#endif
+#define MEMORY_RESERVE_SIZE       Gb(32)
+#define MEMORY_DEFAULT_BLOCK_SIZE Mb(1)
 
 structdef(MemoryReservation) {
     u8*    base;
+    size_t block_size;
     size_t blocks_committed;
 };
 
 structdef(MemoryAllocator) {
-    MemoryReservation (*memory_reserve)(void);
+    MemoryReservation (*memory_reserve)(size_t block_size);
     void              (*memory_commit_size)(MemoryReservation* reservation, size_t total_size);
     void              (*memory_release)(MemoryReservation* reservation);
     void*             (*memory_heap_alloc)(size_t size);

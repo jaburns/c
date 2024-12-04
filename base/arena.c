@@ -2,8 +2,8 @@
 
 global thread_local Arena g_arena_scratch[2];
 
-internal Arena arena_create(MemoryAllocator* allocator) {
-    MemoryReservation reservation = allocator->memory_reserve();
+internal Arena arena_create(MemoryAllocator* allocator, size_t block_size) {
+    MemoryReservation reservation = allocator->memory_reserve(block_size);
     return (Arena){
         .allocator       = allocator,
         .reservation     = reservation,
@@ -14,7 +14,7 @@ internal Arena arena_create(MemoryAllocator* allocator) {
 
 internal Arena* arena_fork(Arena* self) {
     Arena* child = arena_alloc_resource(self, sizeof(Arena), (ArenaDropFn)arena_destroy);
-    *child       = arena_create(self->allocator);
+    *child       = arena_create(self->allocator, self->reservation.block_size);
     return child;
 }
 
@@ -92,8 +92,8 @@ internal void* arena_alloc_resource(Arena* self, size_t size, ArenaDropFn drop) 
 }
 
 internal void scratch_thread_local_create(MemoryAllocator* allocator) {
-    g_arena_scratch[0] = arena_create(allocator);
-    g_arena_scratch[1] = arena_create(allocator);
+    g_arena_scratch[0] = arena_create(allocator, 0);
+    g_arena_scratch[1] = arena_create(allocator, 0);
 }
 
 internal void scratch_thread_local_destroy(void) {
