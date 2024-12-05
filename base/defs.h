@@ -188,12 +188,21 @@ internal void panic_expr(char* msg) {
 
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-#define ArraySort(array, count, comparator)               \
+#define ArrayQuickSort(array, count, comparator)          \
     qsort(                                                \
         (array),                                          \
         (count),                                          \
         sizeof((array)[0]),                               \
         (i32(*)(const void*, const void*))(&(comparator)) \
+    )
+
+#define ArrayQuickSortCtx(array, count, ctx, comparator)         \
+    qsort_r(                                                     \
+        (array),                                                 \
+        (count),                                                 \
+        sizeof((array)[0]),                                      \
+        (ctx),                                                   \
+        (i32(*)(void*, const void*, const void*))(&(comparator)) \
     )
 
 #define ArrayCopy(dest, src, start_idx, end_idx) \
