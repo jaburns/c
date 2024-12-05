@@ -52,14 +52,14 @@ internal f32 vec2_dot(vec2 a, vec2 b) {
 
 internal f32 vec2_cross(vec2 a, vec2 b) {
     u32x2 sign_bit = {0, 0x80000000};
-    f32x2 prod     = f32x2_mul(a.vector, f32x2_rotate(b.vector));
+    f32x2 prod     = f32x2_mul(a.vector, f32x2_reverse64(b.vector));
     f32x2 flipped  = (f32x2)u32x2_xor((u32x2)prod, sign_bit);
     return f32x2_add_across(flipped);
 }
 
 internal vec2 vec2_perp(vec2 a) {
     u32x2 sign_bit   = {0x80000000, 0};
-    u32x2 bit_result = u32x2_xor((u32x2)f32x2_rotate(a.vector), sign_bit);
+    u32x2 bit_result = u32x2_xor((u32x2)f32x2_reverse64(a.vector), sign_bit);
     return vec2_from_f32x2((f32x2)bit_result);
 }
 
