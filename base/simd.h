@@ -28,6 +28,7 @@ typedef simde_float64x2_t f64x2;
 // --- convert / reinterpret ---
 
 #define u64_from_u8x8(x) ((u64)simde_vreinterpret_u64_u8(x))
+#define u16x8_from_u8x16 simde_vreinterpretq_u16_u8
 #define i32x2_from_f32x2 simde_vcvt_s32_f32
 #define f32x2_from_i32x2 simde_vcvt_f32_s32
 

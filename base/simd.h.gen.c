@@ -95,6 +95,7 @@ int main(void) {
     out += sprintf(out, "// --- convert / reinterpret ---\n");
     out += sprintf(out, "\n");
     out += sprintf(out, "#define u64_from_u8x8(x) ((u64)simde_vreinterpret_u64_u8(x))\n");
+    out += sprintf(out, "#define u16x8_from_u8x16 simde_vreinterpretq_u16_u8\n");
     out += sprintf(out, "#define i32x2_from_f32x2 simde_vcvt_s32_f32\n");
     out += sprintf(out, "#define f32x2_from_i32x2 simde_vcvt_f32_s32\n");
     out += sprintf(out, "\n");
