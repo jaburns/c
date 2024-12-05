@@ -29,8 +29,11 @@ typedef simde_float64x2_t f64x2;
 
 #define u64_from_u8x8(x) ((u64)simde_vreinterpret_u64_u8(x))
 #define u16x8_from_u8x16 simde_vreinterpretq_u16_u8
+#define u8x16_from_u16x8 simde_vreinterpretq_u8_u16
 #define i32x2_from_f32x2 simde_vcvt_s32_f32
 #define f32x2_from_i32x2 simde_vcvt_f32_s32
+#define i32x4_from_f32x4 simde_vcvtq_s32_f32
+#define f32x4_from_i32x4 simde_vcvtq_f32_s32
 
 // --- 8-bit ---
 
@@ -55,6 +58,7 @@ typedef simde_float64x2_t f64x2;
 #define u8x8_less_than        simde_vclt_u8
 #define u8x8_greater_than     simde_vcgt_u8
 #define u8x8_widen            simde_vmovl_u8
+#define u8x8_combine          simde_vcombine_u8
 
 #define u8x16_load             simde_vld1q_u8
 #define u8x16_store            simde_vst1q_u8
@@ -99,7 +103,7 @@ typedef simde_float64x2_t f64x2;
 #define i8x8_equal            simde_vceq_s8
 #define i8x8_less_than        simde_vclt_s8
 #define i8x8_greater_than     simde_vcgt_s8
-#define i8x8_widen            simde_vmovl_s8
+#define i8x8_combine          simde_vcombine_s8
 #define i8x8_abs              simde_vabs_s8
 #define i8x8_negate           simde_vneg_s8
 
@@ -151,6 +155,7 @@ typedef simde_float64x2_t f64x2;
 #define u16x4_less_than        simde_vclt_u16
 #define u16x4_greater_than     simde_vcgt_u16
 #define u16x4_widen            simde_vmovl_u16
+#define u16x4_combine          simde_vcombine_u16
 
 #define u16x8_load             simde_vld1q_u16
 #define u16x8_store            simde_vst1q_u16
@@ -196,7 +201,7 @@ typedef simde_float64x2_t f64x2;
 #define i16x4_equal            simde_vceq_s16
 #define i16x4_less_than        simde_vclt_s16
 #define i16x4_greater_than     simde_vcgt_s16
-#define i16x4_widen            simde_vmovl_s16
+#define i16x4_combine          simde_vcombine_s16
 #define i16x4_abs              simde_vabs_s16
 #define i16x4_negate           simde_vneg_s16
 
@@ -249,6 +254,7 @@ typedef simde_float64x2_t f64x2;
 #define u32x2_less_than        simde_vclt_u32
 #define u32x2_greater_than     simde_vcgt_u32
 #define u32x2_widen            simde_vmovl_u32
+#define u32x2_combine          simde_vcombine_u32
 
 #define u32x4_load             simde_vld1q_u32
 #define u32x4_store            simde_vst1q_u32
@@ -294,7 +300,7 @@ typedef simde_float64x2_t f64x2;
 #define i32x2_equal            simde_vceq_s32
 #define i32x2_less_than        simde_vclt_s32
 #define i32x2_greater_than     simde_vcgt_s32
-#define i32x2_widen            simde_vmovl_s32
+#define i32x2_combine          simde_vcombine_s32
 #define i32x2_abs              simde_vabs_s32
 #define i32x2_negate           simde_vneg_s32
 
@@ -326,38 +332,61 @@ typedef simde_float64x2_t f64x2;
 
 // --- float 32 ---
 
-#define f32x2_splat      simde_vdup_n_f32
-#define f32x2_scale      simde_vmul_n_f32
-#define f32x2_abs        simde_vabs_f32
-#define f32x2_add        simde_vadd_f32
-#define f32x2_sub        simde_vsub_f32
-#define f32x2_mul        simde_vmul_f32
-#define f32x2_div        simde_vdiv_f32
-#define f32x2_min        simde_vmin_f32
-#define f32x2_max        simde_vmax_f32
-#define f32x2_negate     simde_vneg_f32
-#define f32x2_add_across simde_vaddv_f32
-#define f32x2_floor      simde_vrndm_f32
-#define f32x2_ceil       simde_vrndp_f32
-#define f32x2_round      simde_vrndn_f32
-#define f32x2_add_pairs  simde_vpadd_f32
-#define f32x2_scale_add  simde_vmla_n_f32
-#define f32x2_rotate     simde_vrev64_f32
-#define f32x2_less_than  simde_vclt_f32
-#define f32x2_select     simde_vbsl_f32
-#define f32x2_combine    simde_vcombine_f32
+#define f32x2_load             simde_vld1_f32
+#define f32x2_store            simde_vst1_f32
+#define f32x2_splat            simde_vdup_n_f32
+#define f32x2_add              simde_vadd_f32
+#define f32x2_sub              simde_vsub_f32
+#define f32x2_mul              simde_vmul_f32
+#define f32x2_min              simde_vmin_f32
+#define f32x2_max              simde_vmax_f32
+#define f32x2_div              simde_vdiv_f32
+#define f32x2_scale            simde_vmul_n_f32
+#define f32x2_floor            simde_vrndm_f32
+#define f32x2_ceil             simde_vrndp_f32
+#define f32x2_round            simde_vrndn_f32
+#define f32x2_add_pairs        simde_vpadd_f32
+#define f32x2_scale_add        simde_vmla_n_f32
+#define f32x2_reverse64        simde_vrev64_f32
+#define f32x2_get_lane         simde_vget_lane_f32
+#define f32x2_extract          simde_vext_f32
+#define f32x2_select           simde_vbsl_f32
+#define f32x2_add_across       simde_vaddv_f32
+#define f32x2_max_across       simde_vmaxv_f32
+#define f32x2_min_across       simde_vminv_f32
+#define f32x2_equal            simde_vceq_f32
+#define f32x2_less_than        simde_vclt_f32
+#define f32x2_greater_than     simde_vcgt_f32
+#define f32x2_combine          simde_vcombine_f32
+#define f32x2_abs              simde_vabs_f32
+#define f32x2_negate           simde_vneg_f32
 
-#define f32x4_splat      simde_vdupq_n_f32
-#define f32x4_load       simde_vld1q_f32
-#define f32x4_store      simde_vst1q_f32
-#define f32x4_get_lane   simde_vgetq_lane_f32
-#define f32x4_get_low    simde_vget_low_f32
-#define f32x4_get_high   simde_vget_high_f32
-#define f32x4_scale      simde_vmulq_n_f32
-#define f32x4_abs        simde_vabsq_f32
-#define f32x4_add        simde_vaddq_f32
-#define f32x4_sub        simde_vsubq_f32
-#define f32x4_mul        simde_vmulq_f32
-#define f32x4_div        simde_vdivq_f32
-#define f32x4_add_across simde_vaddvq_f32
-#define f32x4_scale_add  simde_vmlaq_n_f32
+#define f32x4_load             simde_vld1q_f32
+#define f32x4_store            simde_vst1q_f32
+#define f32x4_splat            simde_vdupq_n_f32
+#define f32x4_add              simde_vaddq_f32
+#define f32x4_sub              simde_vsubq_f32
+#define f32x4_mul              simde_vmulq_f32
+#define f32x4_min              simde_vminq_f32
+#define f32x4_max              simde_vmaxq_f32
+#define f32x4_div              simde_vdivq_f32
+#define f32x4_scale            simde_vmulq_n_f32
+#define f32x4_floor            simde_vrndmq_f32
+#define f32x4_ceil             simde_vrndpq_f32
+#define f32x4_round            simde_vrndnq_f32
+#define f32x4_add_pairs        simde_vpaddq_f32
+#define f32x4_scale_add        simde_vmlaq_n_f32
+#define f32x4_reverse64        simde_vrev64q_f32
+#define f32x4_get_lane         simde_vgetq_lane_f32
+#define f32x4_extract          simde_vextq_f32
+#define f32x4_select           simde_vbslq_f32
+#define f32x4_add_across       simde_vaddvq_f32
+#define f32x4_max_across       simde_vmaxvq_f32
+#define f32x4_min_across       simde_vminvq_f32
+#define f32x4_equal            simde_vceqq_f32
+#define f32x4_less_than        simde_vcltq_f32
+#define f32x4_greater_than     simde_vcgtq_f32
+#define f32x4_get_low          simde_vget_low_f32
+#define f32x4_get_high         simde_vget_high_f32
+#define f32x4_abs              simde_vabsq_f32
+#define f32x4_negate           simde_vnegq_f32

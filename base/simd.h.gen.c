@@ -9,13 +9,14 @@ typedef enum {
     SMALL  = 1,
     SIGNED = 2,
     BYTES  = 4,
+    FLOAT  = 8,
 } Flags;
 
 void render(char** out, char* jbtype, char* jbname, char* armname0, char* armname1, char* q, char* suffix) {
     *out += sprintf(*out, "#define %s_%-16s simde_v%s%s_%s%s\n", jbtype, jbname, armname0, q, armname1, suffix);
 }
 
-void gen_ints(char** out, char* type, char* suffix, Flags flags) {
+void generate(char** out, char* type, char* suffix, Flags flags) {
     char* q = flags & SMALL ? "" : "q";
 
     render(out, type, "load", "ld1", "", q, suffix);
@@ -28,9 +29,21 @@ void gen_ints(char** out, char* type, char* suffix, Flags flags) {
     render(out, type, "min", "min", "", q, suffix);
     render(out, type, "max", "max", "", q, suffix);
 
-    render(out, type, "and", "and", "", q, suffix);
-    render(out, type, "or", "orr", "", q, suffix);
-    render(out, type, "xor", "eor", "", q, suffix);
+    if (flags & FLOAT) {
+        render(out, type, "div", "div", "", q, suffix);
+        render(out, type, "scale", "mul", "n_", q, suffix);
+        render(out, type, "floor", "rndm", "", q, suffix);
+        render(out, type, "ceil", "rndp", "", q, suffix);
+        render(out, type, "round", "rndn", "", q, suffix);
+
+        render(out, type, "add_pairs", "padd", "", q, suffix);
+        render(out, type, "scale_add", "mla", "n_", q, suffix);
+        render(out, type, "reverse64", "rev64", "", q, suffix);
+    } else {
+        render(out, type, "and", "and", "", q, suffix);
+        render(out, type, "or", "orr", "", q, suffix);
+        render(out, type, "xor", "eor", "", q, suffix);
+    }
 
     render(out, type, "get_lane", "get", "lane_", q, suffix);
     render(out, type, "extract", "ext", "", q, suffix);
@@ -45,12 +58,15 @@ void gen_ints(char** out, char* type, char* suffix, Flags flags) {
     render(out, type, "greater_than", "cgt", "", q, suffix);
 
     if (flags & SMALL) {
-        render(out, type, "widen", "movl", "", q, suffix);
+        if ((flags & SIGNED) == 0) {
+            render(out, type, "widen", "movl", "", q, suffix);
+        }
+        render(out, type, "combine", "combine", "", q, suffix);
     } else {
         render(out, type, "get_low", "get_low", "", "", suffix);
         render(out, type, "get_high", "get_high", "", "", suffix);
 
-        if ((flags & BYTES) == 0) {
+        if ((flags & BYTES) == 0 && (flags & FLOAT) == 0) {
             render(out, type, "shrn", "shrn", "n_", "", suffix);
         }
     }
@@ -96,74 +112,44 @@ int main(void) {
     out += sprintf(out, "\n");
     out += sprintf(out, "#define u64_from_u8x8(x) ((u64)simde_vreinterpret_u64_u8(x))\n");
     out += sprintf(out, "#define u16x8_from_u8x16 simde_vreinterpretq_u16_u8\n");
+    out += sprintf(out, "#define u8x16_from_u16x8 simde_vreinterpretq_u8_u16\n");
     out += sprintf(out, "#define i32x2_from_f32x2 simde_vcvt_s32_f32\n");
     out += sprintf(out, "#define f32x2_from_i32x2 simde_vcvt_f32_s32\n");
+    out += sprintf(out, "#define i32x4_from_f32x4 simde_vcvtq_s32_f32\n");
+    out += sprintf(out, "#define f32x4_from_i32x4 simde_vcvtq_f32_s32\n");
     out += sprintf(out, "\n");
 
     out += sprintf(out, "// --- 8-bit ---\n\n");
-    gen_ints(&out, "u8x8", "u8", BYTES | SMALL);
+    generate(&out, "u8x8", "u8", BYTES | SMALL);
     out += sprintf(out, "\n");
-    gen_ints(&out, "u8x16", "u8", BYTES);
+    generate(&out, "u8x16", "u8", BYTES);
     out += sprintf(out, "\n");
-    gen_ints(&out, "i8x8", "s8", BYTES | SMALL | SIGNED);
+    generate(&out, "i8x8", "s8", BYTES | SMALL | SIGNED);
     out += sprintf(out, "\n");
-    gen_ints(&out, "i8x16", "s8", BYTES | SIGNED);
+    generate(&out, "i8x16", "s8", BYTES | SIGNED);
 
     out += sprintf(out, "\n// --- 16-bit ---\n\n");
-    gen_ints(&out, "u16x4", "u16", SMALL);
+    generate(&out, "u16x4", "u16", SMALL);
     out += sprintf(out, "\n");
-    gen_ints(&out, "u16x8", "u16", NONE);
+    generate(&out, "u16x8", "u16", NONE);
     out += sprintf(out, "\n");
-    gen_ints(&out, "i16x4", "s16", SMALL | SIGNED);
+    generate(&out, "i16x4", "s16", SMALL | SIGNED);
     out += sprintf(out, "\n");
-    gen_ints(&out, "i16x8", "s16", SIGNED);
+    generate(&out, "i16x8", "s16", SIGNED);
 
     out += sprintf(out, "\n// --- 32-bit ---\n\n");
-    gen_ints(&out, "u32x2", "u32", SMALL);
+    generate(&out, "u32x2", "u32", SMALL);
     out += sprintf(out, "\n");
-    gen_ints(&out, "u32x4", "u32", NONE);
+    generate(&out, "u32x4", "u32", NONE);
     out += sprintf(out, "\n");
-    gen_ints(&out, "i32x2", "s32", SMALL | SIGNED);
+    generate(&out, "i32x2", "s32", SMALL | SIGNED);
     out += sprintf(out, "\n");
-    gen_ints(&out, "i32x4", "s32", SIGNED);
+    generate(&out, "i32x4", "s32", SIGNED);
 
     out += sprintf(out, "\n// --- float 32 ---\n\n");
-
-    out += sprintf(out, "#define f32x2_splat      simde_vdup_n_f32\n");
-    out += sprintf(out, "#define f32x2_scale      simde_vmul_n_f32\n");
-    out += sprintf(out, "#define f32x2_abs        simde_vabs_f32\n");
-    out += sprintf(out, "#define f32x2_add        simde_vadd_f32\n");
-    out += sprintf(out, "#define f32x2_sub        simde_vsub_f32\n");
-    out += sprintf(out, "#define f32x2_mul        simde_vmul_f32\n");
-    out += sprintf(out, "#define f32x2_div        simde_vdiv_f32\n");
-    out += sprintf(out, "#define f32x2_min        simde_vmin_f32\n");
-    out += sprintf(out, "#define f32x2_max        simde_vmax_f32\n");
-    out += sprintf(out, "#define f32x2_negate     simde_vneg_f32\n");
-    out += sprintf(out, "#define f32x2_add_across simde_vaddv_f32\n");
-    out += sprintf(out, "#define f32x2_floor      simde_vrndm_f32\n");
-    out += sprintf(out, "#define f32x2_ceil       simde_vrndp_f32\n");
-    out += sprintf(out, "#define f32x2_round      simde_vrndn_f32\n");
-    out += sprintf(out, "#define f32x2_add_pairs  simde_vpadd_f32\n");
-    out += sprintf(out, "#define f32x2_scale_add  simde_vmla_n_f32\n");
-    out += sprintf(out, "#define f32x2_rotate     simde_vrev64_f32\n");
-    out += sprintf(out, "#define f32x2_less_than  simde_vclt_f32\n");
-    out += sprintf(out, "#define f32x2_select     simde_vbsl_f32\n");
-    out += sprintf(out, "#define f32x2_combine    simde_vcombine_f32\n");
+    generate(&out, "f32x2", "f32", SMALL | SIGNED | FLOAT);
     out += sprintf(out, "\n");
-    out += sprintf(out, "#define f32x4_splat      simde_vdupq_n_f32\n");
-    out += sprintf(out, "#define f32x4_load       simde_vld1q_f32\n");
-    out += sprintf(out, "#define f32x4_store      simde_vst1q_f32\n");
-    out += sprintf(out, "#define f32x4_get_lane   simde_vgetq_lane_f32\n");
-    out += sprintf(out, "#define f32x4_get_low    simde_vget_low_f32\n");
-    out += sprintf(out, "#define f32x4_get_high   simde_vget_high_f32\n");
-    out += sprintf(out, "#define f32x4_scale      simde_vmulq_n_f32\n");
-    out += sprintf(out, "#define f32x4_abs        simde_vabsq_f32\n");
-    out += sprintf(out, "#define f32x4_add        simde_vaddq_f32\n");
-    out += sprintf(out, "#define f32x4_sub        simde_vsubq_f32\n");
-    out += sprintf(out, "#define f32x4_mul        simde_vmulq_f32\n");
-    out += sprintf(out, "#define f32x4_div        simde_vdivq_f32\n");
-    out += sprintf(out, "#define f32x4_add_across simde_vaddvq_f32\n");
-    out += sprintf(out, "#define f32x4_scale_add  simde_vmlaq_n_f32\n");
+    generate(&out, "f32x4", "f32", SIGNED | FLOAT);
 
     printf("%s", out0);
 
