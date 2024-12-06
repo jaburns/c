@@ -297,6 +297,9 @@ internal void panic_expr(char* msg) {
         : (panic_expr("Attempted to pop an empty vec!"), &(vec).items[0]) \
 )
 
+#define VecPushUnchecked(vec) (&(vec).items[(vec).count++])
+#define VecPopUnchecked(vec)  (&(vec).items[--(vec).count])
+
 #define VecMinHeapPush(elem_type, vec, field, new_value) \
     do {                                                 \
         *VecPush(vec) = (new_value);                     \
