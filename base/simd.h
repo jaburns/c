@@ -132,7 +132,8 @@ typedef simde_float64x2_t f64x2;
 #define i8x16_abs              simde_vabsq_s8
 #define i8x16_negate           simde_vnegq_s8
 
-#define u8x16_nonzero_lane(x) (u64_count_leading_zeroes(u64_bit_reverse(u64_from_u8x8(u16x8_shrn(u16x8_from_u8x16(x), 4)))) / 4)
+#define u8x16_nonzero_lane(x)   (u64_count_leading_zeroes(u64_bit_reverse(u64_from_u8x8(u16x8_shrn(u16x8_from_u8x16(x), 4)))) / 4)
+#define u8x16_shift_lanes(x, n) (u8x16_extract((x), u8x16_splat(0), (n)))
 
 // --- 16-bit ---
 

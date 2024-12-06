@@ -133,7 +133,9 @@ int main(void) {
     out += sprintf(out, "\n");
     generate(&out, "i8x16", "s8", BYTES | SIGNED);
 
-    out += sprintf(out, "\n#define u8x16_nonzero_lane(x) (u64_count_leading_zeroes(u64_bit_reverse(u64_from_u8x8(u16x8_shrn(u16x8_from_u8x16(x), 4)))) / 4)\n");
+    out += sprintf(out, "\n");
+    out += sprintf(out, "#define u8x16_nonzero_lane(x)   (u64_count_leading_zeroes(u64_bit_reverse(u64_from_u8x8(u16x8_shrn(u16x8_from_u8x16(x), 4)))) / 4)\n");
+    out += sprintf(out, "#define u8x16_shift_lanes(x, n) (u8x16_extract((x), u8x16_splat(0), (n)))\n");
 
     out += sprintf(out, "\n// --- 16-bit ---\n\n");
     generate(&out, "u16x4", "u16", SMALL);
