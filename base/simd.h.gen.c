@@ -34,6 +34,8 @@ void generate(char** out, char* type, char* suffix, Flags flags) {
     render(out, type, "min", "min", "", q, suffix);
     render(out, type, "max", "max", "", q, suffix);
 
+    render(out, type, "add_pairs", "padd", "", q, suffix);
+
     if (flags & FLOAT) {
         render(out, type, "div", "div", "", q, suffix);
         render(out, type, "scale", "mul", "n_", q, suffix);
@@ -41,13 +43,16 @@ void generate(char** out, char* type, char* suffix, Flags flags) {
         render(out, type, "ceil", "rndp", "", q, suffix);
         render(out, type, "round", "rndn", "", q, suffix);
 
-        render(out, type, "add_pairs", "padd", "", q, suffix);
         render(out, type, "scale_add", "mla", "n_", q, suffix);
         render(out, type, "reverse64", "rev64", "", q, suffix);
     } else {
         render(out, type, "and", "and", "", q, suffix);
         render(out, type, "or", "orr", "", q, suffix);
         render(out, type, "xor", "eor", "", q, suffix);
+    }
+
+    if (flags & BYTES) {
+        render(out, type, "swizzle", "qtbl1", "", q, suffix);
     }
 
     render(out, type, "get_lane", "get", "lane_", q, suffix);
