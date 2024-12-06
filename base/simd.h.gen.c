@@ -1,4 +1,9 @@
-//! clang -o /tmp/simd_h_gen simd.h.gen.c && /tmp/simd_h_gen > simd.h
+#if 0
+clang -o /tmp/jbcbin simd.h.gen.c && /tmp/jbcbin > simd.h
+exit 0
+#endif
+//
+// This file is directly executable by bash
 //
 #include <string.h>
 #include <stdio.h>
@@ -127,6 +132,8 @@ int main(void) {
     generate(&out, "i8x8", "s8", BYTES | SMALL | SIGNED);
     out += sprintf(out, "\n");
     generate(&out, "i8x16", "s8", BYTES | SIGNED);
+
+    out += sprintf(out, "\n#define u8x16_nonzero_lane(x) (u64_count_leading_zeroes(u64_bit_reverse(u64_from_u8x8(u16x8_shrn(u16x8_from_u8x16(x), 4)))) / 4)\n");
 
     out += sprintf(out, "\n// --- 16-bit ---\n\n");
     generate(&out, "u16x4", "u16", SMALL);
