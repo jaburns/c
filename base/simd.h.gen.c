@@ -35,6 +35,7 @@ void generate(char** out, char* type, char* suffix, Flags flags) {
     render(out, type, "max", "max", "", q, suffix);
 
     render(out, type, "add_pairs", "padd", "", q, suffix);
+    render(out, type, "reverse64", "rev64", "", q, suffix);
 
     if (flags & FLOAT) {
         render(out, type, "div", "div", "", q, suffix);
@@ -44,7 +45,6 @@ void generate(char** out, char* type, char* suffix, Flags flags) {
         render(out, type, "round", "rndn", "", q, suffix);
 
         render(out, type, "scale_add", "mla", "n_", q, suffix);
-        render(out, type, "reverse64", "rev64", "", q, suffix);
     } else {
         render(out, type, "and", "and", "", q, suffix);
         render(out, type, "or", "orr", "", q, suffix);
@@ -139,6 +139,7 @@ int main(void) {
     generate(&out, "i8x16", "s8", BYTES | SIGNED);
 
     out += sprintf(out, "\n");
+    out += sprintf(out, "#define u8x8_nonzero_lane(x)    (u64_count_leading_zeroes(u64_from_u8x8(u8x8_reverse64(x))) / 8)\n");
     out += sprintf(out, "#define u8x16_nonzero_lane(x)   (u64_count_leading_zeroes(u64_bit_reverse(u64_from_u8x8(u16x8_shrn(u16x8_from_u8x16(x), 4)))) / 4)\n");
     out += sprintf(out, "#define u8x16_shift_lanes(x, n) (u8x16_extract((x), u8x16_splat(0), (n)))\n");
 
