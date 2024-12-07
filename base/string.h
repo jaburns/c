@@ -55,7 +55,9 @@ internal void                   StrSplitWhitespaceIter_next(StrSplitWhitespaceIt
 internal Str  str_trim(Str str);
 internal bool str_eq(Str a, Str b);
 internal Str  str_copy(Arena* arena, Str src);
-internal i32  str_atoi(Str str);
+internal u64  str_parse_u64(Str str, i32 base);
+internal i32  str_parse_u32(Str str, i32 base);
+internal i32  str_parse_i32(Str str, i32 base);
 internal bool str_starts_with_cstr(char* cstr, Str str);
 internal Str  str_substr_from(Str str, size_t idx);
 

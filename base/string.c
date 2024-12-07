@@ -165,24 +165,25 @@ internal Str str_copy(Arena* arena, Str src) {
     return (Str){.items = new_start, .count = src.count};
 }
 
-internal i32 str_atoi(Str str) {
-    i32 result = 0, sign = 1, i = 0;
-    while (i < str.count && isspace(str.items[i])) {
-        i++;
-    }
-    if (i < str.count) {
-        if (str.items[i] == '-') {
-            sign = -1;
-            i++;
-        } else if (str.items[i] == '+') {
-            i++;
-        }
-    }
-    for (; i < str.count && isdigit(str.items[i]); ++i) {
-        result *= 10;
-        result += str.items[i] - '0';
-    }
-    return sign * result;
+internal u64 str_parse_u64(Str str, i32 base) {
+    char buffer[22];
+    memcpy(buffer, str.items, Min(21, str.count));
+    buffer[str.count] = 0;
+    return strtoull(buffer, NULL, base);
+}
+
+internal i32 str_parse_u32(Str str, i32 base) {
+    char buffer[12];
+    memcpy(buffer, str.items, Min(11, str.count));
+    buffer[str.count] = 0;
+    return strtoul(buffer, NULL, base);
+}
+
+internal i32 str_parse_i32(Str str, i32 base) {
+    char buffer[12];
+    memcpy(buffer, str.items, Min(11, str.count));
+    buffer[str.count] = 0;
+    return strtol(buffer, NULL, base);
 }
 
 internal bool str_starts_with_cstr(char* cstr, Str str) {

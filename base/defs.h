@@ -275,12 +275,7 @@ internal void panic_expr(char* msg) {
 #define SliceSort(slice, comparator) \
     ArraySort((slice).items, (slice).count, comparator)
 
-#define VecAlloc(type, arena_ptr, capacity)                                    \
-    (Vec_##type) {                                                             \
-        {{arena_alloc((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
-    }
-
-#define VecAllocNZ(type, arena_ptr, capacity)                                     \
+#define VecAlloc(type, arena_ptr, capacity)                                       \
     (Vec_##type) {                                                                \
         {{arena_alloc_nz((arena_ptr), (capacity) * sizeof(type)), 0}}, (capacity) \
     }
