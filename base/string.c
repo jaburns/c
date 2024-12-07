@@ -172,6 +172,13 @@ internal u64 str_parse_u64(Str str, i32 base) {
     return strtoull(buffer, NULL, base);
 }
 
+internal i64 str_parse_i64(Str str, i32 base) {
+    char buffer[22];
+    memcpy(buffer, str.items, Min(21, str.count));
+    buffer[str.count] = 0;
+    return strtoll(buffer, NULL, base);
+}
+
 internal i32 str_parse_u32(Str str, i32 base) {
     char buffer[12];
     memcpy(buffer, str.items, Min(11, str.count));

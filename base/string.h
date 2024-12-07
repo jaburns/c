@@ -56,6 +56,7 @@ internal Str  str_trim(Str str);
 internal bool str_eq(Str a, Str b);
 internal Str  str_copy(Arena* arena, Str src);
 internal u64  str_parse_u64(Str str, i32 base);
+internal i64  str_parse_i64(Str str, i32 base);
 internal i32  str_parse_u32(Str str, i32 base);
 internal i32  str_parse_i32(Str str, i32 base);
 internal bool str_starts_with_cstr(char* cstr, Str str);
