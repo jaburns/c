@@ -46,3 +46,9 @@ internal void      scratch_thread_local_create(MemoryAllocator* allocator);
 internal void      scratch_thread_local_destroy(void);
 internal ArenaTemp scratch_acquire(Arena** conflicts, size_t conflict_count);
 internal void      scratch_release(ArenaTemp scratch);
+
+#define ArenaAlloc(type, arena_ptr, elem_count) \
+    (type*)(arena_alloc((arena_ptr), (elem_count) * sizeof(type)))
+
+#define ArenaAllocNZ(type, arena_ptr, elem_count) \
+    (type*)(arena_alloc_nz((arena_ptr), (elem_count) * sizeof(type)))

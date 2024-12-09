@@ -46,6 +46,16 @@ structdef(ivec4) { i32 x, y, z, w; };
 structdef(mat2) { vec2 a, b; };
 structdef(mat4) { vec4 a, b, c, d; };
 
+DefArrayTypes(vec2);
+DefArrayTypes(vec3);
+DefArrayTypes(vec3a);
+DefArrayTypes(vec4);
+DefArrayTypes(ivec2);
+DefArrayTypes(ivec3);
+DefArrayTypes(ivec4);
+DefArrayTypes(mat2);
+DefArrayTypes(mat4);
+
 #define sincosf(x, sinp, cosp) __sincosf(x, sinp, cosp)
 
 #define vec2(x_, y_)        ((vec2){.vector = (f32x2){(f32)(x_), (f32)(y_)}})
