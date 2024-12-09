@@ -92,6 +92,7 @@ typedef uint64_t u64;
 typedef int64_t  i64;
 typedef float    f32;
 typedef double   f64;
+typedef size_t   usize;
 
 DefArrayTypes(char);
 DefArrayTypes(u8);
@@ -105,7 +106,7 @@ DefArrayTypes(i64);
 DefArrayTypes(f32);
 DefArrayTypes(f64);
 DefArrayTypes(bool);
-DefArrayTypes(size_t);
+DefArrayTypes(usize);
 
 #define Kb(n) (((u64)(n)) << 10)
 #define Mb(n) (((u64)(n)) << 20)
