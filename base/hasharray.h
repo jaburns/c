@@ -26,6 +26,7 @@ structdef(HashArrayIter) {
 internal HashArray* hasharray_alloc(Arena* arena, size_t key_size, size_t value_size, size_t capacity);
 internal void*      hasharray_insert(HashArray* map, void* key);
 internal void*      hasharray_get(HashArray* map, void* key);
+internal void*      hasharray_entry(HashArray* map, void* key);
 internal bool       hasharray_remove(HashArray* map, void* key);
 internal void       hasharray_clear(HashArray* map);
 

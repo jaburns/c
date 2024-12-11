@@ -35,7 +35,7 @@ internal u32 hasharray_djb2_hash(void* data, size_t len) {
     return hash;
 }
 
-internal u32 hasharray_get_idx(HashArray* map, void* key) {
+internal i64 hasharray_get_idx(HashArray* map, void* key) {
     u32 hash = hasharray_djb2_hash(key, map->key_size);
     if (hash < 2) hash += 2;
     u32 start_idx = hash & (map->capacity - 1);
@@ -81,12 +81,17 @@ internal void* hasharray_insert(HashArray* map, void* key) {
 }
 
 internal void* hasharray_get(HashArray* map, void* key) {
-    u32 i = hasharray_get_idx(map, key);
+    i64 i = hasharray_get_idx(map, key);
     return i < 0 ? map->value_stub : (u8*)map->values + map->value_size * i;
 }
 
+internal void* hasharray_entry(HashArray* map, void* key) {
+    i64 i = hasharray_get_idx(map, key);
+    return i < 0 ? hasharray_insert(map, key) : (u8*)map->values + map->value_size * i;
+}
+
 internal bool hasharray_remove(HashArray* map, void* key) {
-    u32 i = hasharray_get_idx(map, key);
+    i64 i = hasharray_get_idx(map, key);
     if (i < 0) return false;
 
     map->count--;
