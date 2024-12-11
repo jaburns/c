@@ -81,14 +81,19 @@ internal u32 hasharray_find_idx(HashArray* map, void* key) {
     if (hash < 2) hash += 2;
     u32 start_idx = hash & (map->capacity - 1);
     u32 i;
-    for (i = start_idx; i < map->capacity; ++i) {
-        if (map->hashes[i] == 0) return UINT32_MAX;
-        if (map->hashes[i] > 1 && memcmp(key, (u8*)map->keys + map->key_size * i, map->key_size) == 0) return i;
+
+#define X()                                                                                                   \
+    {                                                                                                         \
+        u32 stored_hash = map->hashes[i];                                                                     \
+        if (stored_hash == 0) return UINT32_MAX;                                                              \
+        if (stored_hash > 1 && memcmp(key, (u8*)map->keys + map->key_size * i, map->key_size) == 0) return i; \
     }
-    for (i = 0; i < start_idx; ++i) {
-        if (map->hashes[i] == 0) return UINT32_MAX;
-        if (map->hashes[i] > 1 && memcmp(key, (u8*)map->keys + map->key_size * i, map->key_size) == 0) return i;
-    }
+
+    for (i = start_idx; i < map->capacity; ++i) X();
+    for (i = 0; i < start_idx; ++i) X();
+
+#undef X
+
     return UINT32_MAX;
 }
 
@@ -135,26 +140,24 @@ internal void* hasharray_entry(HashArray* map, void* key) {
     u32 tombstone_idx = UINT32_MAX;
     u32 i;
 
-    for (i = start_idx; i < map->capacity; ++i) {
-        u32 stored_hash = map->hashes[i];
-        if (stored_hash > 1) {
-            if (memcmp(key, (u8*)map->keys + map->key_size * i, map->key_size) == 0) return (u8*)map->values + map->value_size * i;
-        } else if (stored_hash == 1) {
-            tombstone_idx = tombstone_idx == UINT32_MAX ? i : tombstone_idx;
-        } else {
-            goto not_found;
-        }
+#define X()                                                                            \
+    {                                                                                  \
+        u32 stored_hash = map->hashes[i];                                              \
+        if (stored_hash > 1) {                                                         \
+            if (memcmp(key, (u8*)map->keys + map->key_size * i, map->key_size) == 0) { \
+                return (u8*)map->values + map->value_size * i;                         \
+            }                                                                          \
+        } else if (stored_hash == 1) {                                                 \
+            if (tombstone_idx == UINT32_MAX) tombstone_idx = i;                        \
+        } else {                                                                       \
+            goto not_found;                                                            \
+        }                                                                              \
     }
-    for (i = 0; i < start_idx; ++i) {
-        u32 stored_hash = map->hashes[i];
-        if (stored_hash > 1) {
-            if (memcmp(key, (u8*)map->keys + map->key_size * i, map->key_size) == 0) return (u8*)map->values + map->value_size * i;
-        } else if (stored_hash == 1) {
-            tombstone_idx = tombstone_idx == UINT32_MAX ? i : tombstone_idx;
-        } else {
-            goto not_found;
-        }
-    }
+
+    for (i = start_idx; i < map->capacity; ++i) X();
+    for (i = 0; i < start_idx; ++i) X();
+
+#undef X
 
     unreachable();
 
@@ -184,7 +187,7 @@ internal bool hasharray_remove(HashArray* map, void* key) {
 
 internal void hasharray_clear(HashArray* map) {
     map->count = 0;
-    memset(map->hashes, 0, map->capacity * sizeof(u32));
+    ZeroArray(map->hashes, map->capacity);
 }
 
 internal HashArrayIter HashArrayIter_new(HashArray* map) {
