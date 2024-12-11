@@ -35,6 +35,8 @@
 #define thread_local    _Thread_local
 #define no_inline       __attribute__((noinline))
 
+#define unreachable() (__builtin_unreachable())
+
 #define alignof(x) _Alignof(x)
 
 // Use underlying type syntax if available, otherwise ignore size in debug builds in favor
