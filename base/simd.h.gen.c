@@ -34,12 +34,15 @@ void generate(char** out, char* type, char* suffix, Flags flags) {
     render(out, type, "min", "min", "", q, suffix);
     render(out, type, "max", "max", "", q, suffix);
 
+    if (!(flags & BYTES)) {
+        render(out, type, "scale", "mul", "n_", q, suffix);
+    }
+
     render(out, type, "add_pairs", "padd", "", q, suffix);
     render(out, type, "reverse64", "rev64", "", q, suffix);
 
     if (flags & FLOAT) {
         render(out, type, "div", "div", "", q, suffix);
-        render(out, type, "scale", "mul", "n_", q, suffix);
         render(out, type, "floor", "rndm", "", q, suffix);
         render(out, type, "ceil", "rndp", "", q, suffix);
         render(out, type, "round", "rndn", "", q, suffix);

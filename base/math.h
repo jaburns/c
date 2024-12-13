@@ -115,6 +115,7 @@ internal ivec2 ivec2_min(ivec2 a, ivec2 b);
 internal ivec2 ivec2_max(ivec2 a, ivec2 b);
 internal ivec2 ivec2_negate(ivec2 a);
 internal ivec2 ivec2_splat(i32 v);
+internal ivec2 ivec2_scale(i32 s, ivec2 v);
 internal bool  ivec2_eq(ivec2 a, ivec2 b);
 internal ivec2 ivec2_from_vec2_floor(vec2 a);
 internal ivec2 ivec2_from_vec2_ceil(vec2 a);

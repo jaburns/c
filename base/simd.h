@@ -158,6 +158,7 @@ typedef simde_float64x2_t f64x2;
 #define u16x4_mul              simde_vmul_u16
 #define u16x4_min              simde_vmin_u16
 #define u16x4_max              simde_vmax_u16
+#define u16x4_scale            simde_vmul_n_u16
 #define u16x4_add_pairs        simde_vpadd_u16
 #define u16x4_reverse64        simde_vrev64_u16
 #define u16x4_and              simde_vand_u16
@@ -183,6 +184,7 @@ typedef simde_float64x2_t f64x2;
 #define u16x8_mul              simde_vmulq_u16
 #define u16x8_min              simde_vminq_u16
 #define u16x8_max              simde_vmaxq_u16
+#define u16x8_scale            simde_vmulq_n_u16
 #define u16x8_add_pairs        simde_vpaddq_u16
 #define u16x8_reverse64        simde_vrev64q_u16
 #define u16x8_and              simde_vandq_u16
@@ -209,6 +211,7 @@ typedef simde_float64x2_t f64x2;
 #define i16x4_mul              simde_vmul_s16
 #define i16x4_min              simde_vmin_s16
 #define i16x4_max              simde_vmax_s16
+#define i16x4_scale            simde_vmul_n_s16
 #define i16x4_add_pairs        simde_vpadd_s16
 #define i16x4_reverse64        simde_vrev64_s16
 #define i16x4_and              simde_vand_s16
@@ -235,6 +238,7 @@ typedef simde_float64x2_t f64x2;
 #define i16x8_mul              simde_vmulq_s16
 #define i16x8_min              simde_vminq_s16
 #define i16x8_max              simde_vmaxq_s16
+#define i16x8_scale            simde_vmulq_n_s16
 #define i16x8_add_pairs        simde_vpaddq_s16
 #define i16x8_reverse64        simde_vrev64q_s16
 #define i16x8_and              simde_vandq_s16
@@ -265,6 +269,7 @@ typedef simde_float64x2_t f64x2;
 #define u32x2_mul              simde_vmul_u32
 #define u32x2_min              simde_vmin_u32
 #define u32x2_max              simde_vmax_u32
+#define u32x2_scale            simde_vmul_n_u32
 #define u32x2_add_pairs        simde_vpadd_u32
 #define u32x2_reverse64        simde_vrev64_u32
 #define u32x2_and              simde_vand_u32
@@ -290,6 +295,7 @@ typedef simde_float64x2_t f64x2;
 #define u32x4_mul              simde_vmulq_u32
 #define u32x4_min              simde_vminq_u32
 #define u32x4_max              simde_vmaxq_u32
+#define u32x4_scale            simde_vmulq_n_u32
 #define u32x4_add_pairs        simde_vpaddq_u32
 #define u32x4_reverse64        simde_vrev64q_u32
 #define u32x4_and              simde_vandq_u32
@@ -316,6 +322,7 @@ typedef simde_float64x2_t f64x2;
 #define i32x2_mul              simde_vmul_s32
 #define i32x2_min              simde_vmin_s32
 #define i32x2_max              simde_vmax_s32
+#define i32x2_scale            simde_vmul_n_s32
 #define i32x2_add_pairs        simde_vpadd_s32
 #define i32x2_reverse64        simde_vrev64_s32
 #define i32x2_and              simde_vand_s32
@@ -342,6 +349,7 @@ typedef simde_float64x2_t f64x2;
 #define i32x4_mul              simde_vmulq_s32
 #define i32x4_min              simde_vminq_s32
 #define i32x4_max              simde_vmaxq_s32
+#define i32x4_scale            simde_vmulq_n_s32
 #define i32x4_add_pairs        simde_vpaddq_s32
 #define i32x4_reverse64        simde_vrev64q_s32
 #define i32x4_and              simde_vandq_s32
@@ -372,10 +380,10 @@ typedef simde_float64x2_t f64x2;
 #define f32x2_mul              simde_vmul_f32
 #define f32x2_min              simde_vmin_f32
 #define f32x2_max              simde_vmax_f32
+#define f32x2_scale            simde_vmul_n_f32
 #define f32x2_add_pairs        simde_vpadd_f32
 #define f32x2_reverse64        simde_vrev64_f32
 #define f32x2_div              simde_vdiv_f32
-#define f32x2_scale            simde_vmul_n_f32
 #define f32x2_floor            simde_vrndm_f32
 #define f32x2_ceil             simde_vrndp_f32
 #define f32x2_round            simde_vrndn_f32
@@ -401,10 +409,10 @@ typedef simde_float64x2_t f64x2;
 #define f32x4_mul              simde_vmulq_f32
 #define f32x4_min              simde_vminq_f32
 #define f32x4_max              simde_vmaxq_f32
+#define f32x4_scale            simde_vmulq_n_f32
 #define f32x4_add_pairs        simde_vpaddq_f32
 #define f32x4_reverse64        simde_vrev64q_f32
 #define f32x4_div              simde_vdivq_f32
-#define f32x4_scale            simde_vmulq_n_f32
 #define f32x4_floor            simde_vrndmq_f32
 #define f32x4_ceil             simde_vrndpq_f32
 #define f32x4_round            simde_vrndnq_f32

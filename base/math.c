@@ -146,6 +146,10 @@ internal ivec2 ivec2_splat(i32 v) {
     return ivec2_from_i32x2(i32x2_splat(v));
 }
 
+internal ivec2 ivec2_scale(i32 s, ivec2 v) {
+    return ivec2_from_i32x2(i32x2_scale(v.vector, s));
+}
+
 internal bool ivec2_eq(ivec2 a, ivec2 b) {
     return u32x2_min_across((u32x2)i32x2_equal(a.vector, b.vector)) != 0;
 }
