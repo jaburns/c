@@ -335,6 +335,14 @@ internal f32 f32_fract(f32 a) {
     return a - floorf(a);
 }
 
+internal i64 i64_mod(i64 a, i64 b) {
+    i64 ret = a % b;
+    if (ret < 0) ret += b;
+    return ret;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 internal f32 ease_out_back(f32 x) {
     f32 c1 = 1.70158f;
     f32 c3 = c1 + 1.f;

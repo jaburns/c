@@ -171,6 +171,7 @@ internal void mat4_make_rotation(mat4* m, f32 angle, vec3a normalized_axis);
 
 internal f32 f32_lerp(f32 a, f32 b, f32 t);
 internal f32 f32_fract(f32 a);
+internal i64 i64_mod(i64 a, i64 b);
 
 internal f32 ease_out_back(f32 x);
 internal f32 ease_out_quad(f32 x);
