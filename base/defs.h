@@ -279,9 +279,6 @@ internal void panic_expr(char* msg) {
         }                                                                                                 \
     } while (0)
 
-#define SliceSort(slice, comparator) \
-    ArraySort((slice).items, (slice).count, comparator)
-
 #define SliceAlloc(type, arena_ptr, count)                        \
     ((Slice_##type){                                              \
         arena_alloc((arena_ptr), (count) * sizeof(type)), (count) \
