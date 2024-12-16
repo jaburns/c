@@ -25,19 +25,19 @@ structdef(Mesh) {
 };
 
 structdef(LineRendererBuffers) {
-    size_t vert_count;
-    vec2*  pos;
-    vec2*  uv;
+    usize vert_count;
+    vec2* pos;
+    vec2* uv;
 };
 
 internal void gfx_shader_create_or_update(
     Shader* out_shader, char* shader_source, char** opt_shader_linenos,
-    char** uniform_names, bool* shader_has_uniform_name, size_t uniform_total_names
+    char** uniform_names, bool* shader_has_uniform_name, usize uniform_total_names
 );
 internal void gfx_shader_destroy(Shader* shader);
 internal u32  gfx_shader_uniform(Shader* program, UniformNameId uniform);
 
-internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, size_t vert_count, u32* indices, size_t index_count);
+internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, usize vert_count, u32* indices, usize index_count);
 internal void gfx_mesh_destroy(Mesh* mesh);
 internal void gfx_mesh_draw(Mesh* mesh);
 
@@ -46,7 +46,7 @@ internal void gfx_matrix_construct_model_2d(mat4* model, vec2 position, f32 rota
 internal void gfx_texture_create(Texture* texture, char* path);
 internal void gfx_texture_destroy(Texture* texture);
 
-internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* positions, size_t position_count, f32 half_width);
+internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* positions, usize position_count, f32 half_width);
 
 #if DEBUG
 

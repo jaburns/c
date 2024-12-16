@@ -5,11 +5,11 @@
 internal void resolve_shader_inner(char** shader_sources, char** shader_log_lines, char* file_path, u32* total_lines) {
     ArenaTemp scratch = scratch_acquire(NULL, 0);
 
-    size_t read_len;
-    char*  cfile = read_file(scratch.arena, file_path, &read_len);
-    Str    file  = (Str){.items = cfile, .count = read_len};
-    char   path_buf[256];
-    i32    line = 1;
+    usize read_len;
+    char* cfile = read_file(scratch.arena, file_path, &read_len);
+    Str   file  = (Str){.items = cfile, .count = read_len};
+    char  path_buf[256];
+    i32   line = 1;
 
     foreach (StrSplitIter, lines_it, '\n', file) {
         Str trim_line = str_trim(lines_it.item);

@@ -58,19 +58,19 @@
 
 #define DefArrayTypes(type)       \
     typedef struct Slice_##type { \
-        type*  items;             \
-        size_t count;             \
+        type* items;              \
+        usize count;              \
     } Slice_##type;               \
                                   \
     typedef struct Vec_##type {   \
         union {                   \
             struct {              \
-                type*  items;     \
-                size_t count;     \
+                type* items;      \
+                usize count;      \
             };                    \
             Slice_##type slice;   \
         };                        \
-        size_t capacity;          \
+        usize capacity;           \
     } Vec_##type;
 
 #define structdef(name)       \
@@ -319,8 +319,8 @@ internal void panic_expr(char* msg) {
 
 #define StaticVec(type, capacity) \
     struct {                      \
-        size_t count;             \
-        type   items[capacity];   \
+        usize count;              \
+        type  items[capacity];    \
     }
 
 #define StaticVecPush(vec) (                                                         \

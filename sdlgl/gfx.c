@@ -45,7 +45,7 @@ internal void gfx_shader_error(char* title, char* info_log, i32 line_offset, cha
 
 internal void gfx_shader_create_or_update(
     Shader* out_shader, char* shader_source, char** opt_shader_linenos,
-    char** uniform_names, bool* shader_has_uniform_name, size_t uniform_total_names
+    char** uniform_names, bool* shader_has_uniform_name, usize uniform_total_names
 ) {
     bool panic_on_error = !DEBUG || !out_shader->glid;
 
@@ -141,7 +141,7 @@ internal u32 gfx_shader_uniform(Shader* program, UniformNameId uniform) {
     return program->uniforms.items[found_idx].location;
 }
 
-internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, size_t vert_count, u32* indices, size_t index_count) {
+internal void gfx_mesh_create_2d(Mesh* mesh, vec2* positions, vec2* uvs, usize vert_count, u32* indices, usize index_count) {
     ZeroStruct(mesh);
 
     u32 vbo_position, vbo_uv, vao, ebo;
@@ -225,8 +225,8 @@ internal void gfx_texture_destroy(Texture* texture) {
     ZeroStruct(texture);
 }
 
-internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* positions, size_t position_count, f32 half_width) {
-    size_t vert_count = 2 * position_count;
+internal LineRendererBuffers gfx_make_line_renderer_buffers(Arena* arena, vec2* positions, usize position_count, f32 half_width) {
+    usize vert_count = 2 * position_count;
 
     LineRendererBuffers result = {
         .vert_count = vert_count,
@@ -265,10 +265,11 @@ global DebugGeometry* g_debug_geometry;
 
 internal DebugGeometry* gfx_debug_geometry_alloc(Arena* arena, Shader* shader, Mesh* line_mesh) {
     DebugGeometry* geo = arena_alloc(arena, sizeof(DebugGeometry));
-    *geo               = (DebugGeometry){
-                      .lines     = VecAlloc(DebugLine, arena, Kb(32)),
-                      .shader    = shader,
-                      .line_mesh = line_mesh,
+    Dbg((usize)geo);
+    *geo = (DebugGeometry){
+        .lines     = VecAlloc(DebugLine, arena, Kb(32)),
+        .shader    = shader,
+        .line_mesh = line_mesh,
     };
     return geo;
 }

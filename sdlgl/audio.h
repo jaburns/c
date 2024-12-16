@@ -3,8 +3,8 @@
 #define AUDIO_SAMPLE_RATE 44100
 
 structdef(AudioClip) {
-    f32*   samples;
-    size_t num_samples;  // total for both channels, aka length of samples array
+    f32*  samples;
+    usize num_samples;  // total for both channels, aka length of samples array
 };
 
 enumdef(AudioPlayerMsgKind, u8){
@@ -26,7 +26,7 @@ structdef(AudioPlayerMsg) {
 structdef(AudioPlayer) {
     Channel    msg_chan;  // of AudioPlayerMsg
     AudioClip* clip;
-    size_t     idx;
+    usize      idx;
 };
 
 typedef void (*AudioCallbackFn)(AudioPlayer* player, u8* out_stream, i32 out_stream_byte_len);

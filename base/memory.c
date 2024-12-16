@@ -1,6 +1,6 @@
 #include "inc.h"
 
-internal MemoryReservation memory_reserve(size_t block_size) {
+internal MemoryReservation memory_reserve(usize block_size) {
     void* ptr = mmap(NULL, MEMORY_RESERVE_SIZE, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (ptr == MAP_FAILED) Panic("memory_reserve mmap failed");
 
@@ -11,12 +11,12 @@ internal MemoryReservation memory_reserve(size_t block_size) {
     };
 }
 
-internal void memory_commit_size(MemoryReservation* reservation, size_t total_size) {
-    size_t total_blocks_required = 1 + total_size / reservation->block_size;
+internal void memory_commit_size(MemoryReservation* reservation, usize total_size) {
+    usize total_blocks_required = 1 + total_size / reservation->block_size;
 
     if (total_blocks_required > reservation->blocks_committed) {
-        size_t cur_size               = reservation->block_size * reservation->blocks_committed;
-        size_t add_size               = total_blocks_required - reservation->blocks_committed;
+        usize cur_size                = reservation->block_size * reservation->blocks_committed;
+        usize add_size                = total_blocks_required - reservation->blocks_committed;
         reservation->blocks_committed = total_blocks_required;
 
         i32 result = mprotect(
@@ -25,9 +25,9 @@ internal void memory_commit_size(MemoryReservation* reservation, size_t total_si
         if (result == -1) Panic("memory_commit_size mprotect failed");
 
     } else if (total_blocks_required < reservation->blocks_committed) {
-        size_t remove_size            = reservation->blocks_committed - total_blocks_required;
+        usize remove_size             = reservation->blocks_committed - total_blocks_required;
         reservation->blocks_committed = total_blocks_required;
-        size_t new_size               = reservation->block_size * reservation->blocks_committed;
+        usize new_size                = reservation->block_size * reservation->blocks_committed;
 
         i32 result = madvise(
             reservation->base + new_size, remove_size * reservation->block_size, MADV_DONTNEED
@@ -42,7 +42,7 @@ internal void memory_release(MemoryReservation* reservation) {
     ZeroStruct(reservation);
 }
 
-internal void* memory_heap_alloc(size_t size) {
+internal void* memory_heap_alloc(usize size) {
     return calloc(1, size);
 }
 

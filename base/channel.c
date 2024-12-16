@@ -2,9 +2,9 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 
-internal Channel channel_alloc(Arena* arena, size_t item_size, size_t capacity) {
-    size_t buffer_size = capacity * item_size;
-    u8*    buffers     = arena_alloc(arena, 2 * buffer_size);
+internal Channel channel_alloc(Arena* arena, usize item_size, usize capacity) {
+    usize buffer_size = capacity * item_size;
+    u8*   buffers     = arena_alloc(arena, 2 * buffer_size);
 
     return (Channel){
         .capacity  = capacity,

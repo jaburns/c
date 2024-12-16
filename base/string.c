@@ -59,7 +59,7 @@ internal Str str_before_first_index(char split, Str str) {
 internal Str str_after_first_index(char split, Str str) {
     char* end = memchr(str.items, split, str.count);
     if (end != NULL) {
-        size_t fwd = end - str.items + 1;
+        usize fwd = end - str.items + 1;
         return (Str){
             .items = str.items + fwd,
             .count = str.count - fwd,
@@ -201,7 +201,7 @@ internal bool str_starts_with_cstr(char* cstr, Str str) {
     return !cstr[i];
 }
 
-internal Str str_substr_from(Str str, size_t idx) {
+internal Str str_substr_from(Str str, usize idx) {
     if (idx >= str.count) return (Str){0};
     str.items += idx;
     str.count -= idx;
@@ -240,7 +240,7 @@ internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
     }
 
     fseek(file, 0, SEEK_END);
-    size_t file_size = ftell(file);
+    usize file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
     char* content = arena_alloc_nz(arena, file_size + 1);
@@ -258,8 +258,8 @@ internal char* read_file(Arena* arena, char* filename, size_t* out_length) {
 }
 
 internal Str str_read_file(Arena* arena, char* filename) {
-    size_t size;
-    char*  data = read_file(arena, filename, &size);
+    usize size;
+    char* data = read_file(arena, filename, &size);
     return (Str){.count = size, .items = data};
 }
 

@@ -2,7 +2,7 @@
 
 global thread_local Arena g_arena_scratch[2];
 
-internal Arena arena_create(MemoryAllocator* allocator, size_t block_size) {
+internal Arena arena_create(MemoryAllocator* allocator, usize block_size) {
     MemoryReservation reservation = allocator->memory_reserve(block_size);
     return (Arena){
         .allocator       = allocator,
@@ -47,10 +47,10 @@ internal void arena_destroy(Arena* self) {
 }
 
 internal void arena_align(Arena* arena) {
-    arena->cur = (void*)(((uintptr_t)arena->cur + (alignof(max_align_t) - 1)) & ~(alignof(max_align_t) - 1));
+    arena->cur = (void*)(((uintptr_t)arena->cur + (ARENA_MIN_ALIGNMENT - 1)) & ~(ARENA_MIN_ALIGNMENT - 1));
 }
 
-internal ArenaArray arena_array_begin(Arena* arena, size_t elem_size) {
+internal ArenaArray arena_array_begin(Arena* arena, usize elem_size) {
     arena_align(arena);
     return (ArenaArray){
         .arena     = arena,
@@ -67,12 +67,12 @@ internal void* arena_array_push(ArenaArray* array) {
     return memset(ret, 0, array->elem_size);
 }
 
-internal void* arena_alloc(Arena* self, size_t size) {
+internal void* arena_alloc(Arena* self, usize size) {
     void* ret = arena_alloc_nz(self, size);
     return memset(ret, 0, size);
 }
 
-internal void* arena_alloc_nz(Arena* self, size_t size) {
+internal void* arena_alloc_nz(Arena* self, usize size) {
     arena_align(self);
     u8* ret = self->cur;
     self->allocator->memory_commit_size(&self->reservation, (self->cur - self->reservation.base) + size);
@@ -80,7 +80,7 @@ internal void* arena_alloc_nz(Arena* self, size_t size) {
     return ret;
 }
 
-internal void* arena_alloc_resource(Arena* self, size_t size, ArenaDropFn drop) {
+internal void* arena_alloc_resource(Arena* self, usize size, ArenaDropFn drop) {
     void*              result = arena_alloc(self, size);
     ArenaResourceNode* node   = arena_alloc(self, sizeof(ArenaResourceNode));
 
@@ -101,7 +101,7 @@ internal void scratch_thread_local_destroy(void) {
     arena_destroy(&g_arena_scratch[1]);
 }
 
-internal ArenaTemp scratch_acquire(Arena** conflicts, size_t conflict_count) {
+internal ArenaTemp scratch_acquire(Arena** conflicts, usize conflict_count) {
     bool matched[2] = {0};
     for (u32 i = 0; i < conflict_count; ++i) {
         if (&g_arena_scratch[0] == conflicts[i]) {
