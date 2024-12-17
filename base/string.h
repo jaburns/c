@@ -32,7 +32,7 @@ internal Str32 str32_from_str(Str str);
 // usage: printf(" %.*s ", STR_PRINTF_ARGS(some_str));
 #define StrPrintfArgs(str) (i32)(str).count, (str).items
 
-#define DbgStr(v) DBG_TYPED("\"%.*s\"", (v), STR_PRINTF_ARGS(v))
+#define Dbg_Str(v) DbgTyped("\"%.*s\"", (v), StrPrintfArgs(v))
 
 #define CstrLen(cstr_lit) (sizeof(cstr_lit) - 1)
 
