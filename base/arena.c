@@ -91,9 +91,9 @@ internal void* arena_alloc_resource(Arena* self, usize size, ArenaDropFn drop) {
     return result;
 }
 
-internal void scratch_thread_local_create(MemoryAllocator* allocator) {
-    g_arena_scratch[0] = arena_create(allocator, 0);
-    g_arena_scratch[1] = arena_create(allocator, 0);
+internal void scratch_thread_local_create(MemoryAllocator* allocator, usize block_size) {
+    g_arena_scratch[0] = arena_create(allocator, block_size);
+    g_arena_scratch[1] = arena_create(allocator, block_size);
 }
 
 internal void scratch_thread_local_destroy(void) {

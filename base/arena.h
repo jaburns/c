@@ -44,7 +44,7 @@ internal void* arena_alloc_resource(Arena* self, usize size, ArenaDropFn drop);
 internal ArenaArray arena_array_begin(Arena* self, usize elem_size);
 internal void*      arena_array_push(ArenaArray* array);
 
-internal void      scratch_thread_local_create(MemoryAllocator* allocator);
+internal void      scratch_thread_local_create(MemoryAllocator* allocator, usize block_size);
 internal void      scratch_thread_local_destroy(void);
 internal ArenaTemp scratch_acquire(Arena** conflicts, usize conflict_count);
 internal void      scratch_release(ArenaTemp scratch);
