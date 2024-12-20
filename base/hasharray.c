@@ -102,6 +102,10 @@ internal void* hasharray_get(HashArray* map, void* key) {
     return i == UINT32_MAX ? map->value_stub : (u8*)map->values + map->value_size * i;
 }
 
+internal bool hasharray_has(HashArray* map, void* key) {
+    return hasharray_find_idx(map, key) != UINT32_MAX;
+}
+
 internal void* hasharray_insert(HashArray* map, void* key) {
     if (map->count >= map->max_elems) {
         Panic("Fixed-size hasharray is full and cannot be resized");
