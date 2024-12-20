@@ -34,10 +34,7 @@
 #define readonly_global static  // static __attribute__((section("__TEXT,__const")))  // this attribute causes problems with dylib load on macos
 #define thread_local    _Thread_local
 #define no_inline       __attribute__((noinline))
-
-#define unreachable() (__builtin_unreachable())
-
-#define alignof(x) _Alignof(x)
+#define alignof(x)      _Alignof(x)
 
 // Use underlying type syntax if available, otherwise ignore size in debug builds in favor
 // of getting errors for non-exhaustive switches, but use specified underlying type directly
@@ -152,7 +149,11 @@ internal void panic_expr(char* msg) {
     Panic("%s", msg);
 }
 
+#if DEBUG
 #define AssertUnreachable() Panic("Unreachable")
+#else
+#define AssertUnreachable() __builtin_unreachable()
+#endif
 
 #define Log(...)                      \
     do {                              \

@@ -125,7 +125,7 @@ internal void* hasharray_insert(HashArray* map, void* key) {
         if (map->hashes[i] < 2) goto found;
     }
 
-    unreachable();
+    AssertUnreachable();
 
 found:
     map->count++;
@@ -164,7 +164,7 @@ internal void* hasharray_entry(HashArray* map, void* key) {
 
 #undef X
 
-    unreachable();
+    AssertUnreachable();
 
 not_found:
     if (map->count >= map->max_elems) {
