@@ -102,8 +102,9 @@ internal void* hasharray_get(HashArray* map, void* key) {
     return i == UINT32_MAX ? map->value_stub : (u8*)map->values + map->value_size * i;
 }
 
-internal bool hasharray_has(HashArray* map, void* key) {
-    return hasharray_find_idx(map, key) != UINT32_MAX;
+internal void* hasharray_maybe_get(HashArray* map, void* key) {
+    u32 i = hasharray_find_idx(map, key);
+    return i == UINT32_MAX ? NULL : (u8*)map->values + map->value_size * i;
 }
 
 internal void* hasharray_insert(HashArray* map, void* key) {

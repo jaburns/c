@@ -27,7 +27,7 @@ internal HashArray* hasharray_alloc_with_cap(Arena* arena, usize key_size, usize
 internal HashArray* hasharray_alloc_with_elems(Arena* arena, usize key_size, usize value_size, usize max_elems);
 
 internal void* hasharray_insert(HashArray* map, void* key);
-internal bool  hasharray_has(HashArray* map, void* key);
+internal void* hasharray_maybe_get(HashArray* map, void* key);
 internal void* hasharray_get(HashArray* map, void* key);
 internal void* hasharray_entry(HashArray* map, void* key);
 internal bool  hasharray_remove(HashArray* map, void* key);
