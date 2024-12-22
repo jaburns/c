@@ -162,11 +162,11 @@ internal void panic_expr(char* msg) {
         fprintf(stderr, "\n");        \
     } while (0)
 
-#define Dbg(x) (                                                                                                                                                                            \
-    printf(">> %s:%i : %s = ", __FILE__, __LINE__, #x),                                                                                                                                     \
-    printf((_Generic((x), u16: "%u", i16: "%i", u32: "%u", i32: "%i", u64: "%llu", i64: "%lli", size_t: "%lu", f32: "%f", f64: "%f", char*: "%s", char: "%c", u8: "%u", bool: "%i")), (x)), \
-    printf("\n"),                                                                                                                                                                           \
-    (x)                                                                                                                                                                                     \
+#define Dbg(x) (                                                                                                                                                                                      \
+    printf(">> %s:%i : %s = ", __FILE__, __LINE__, #x),                                                                                                                                               \
+    printf((_Generic((x), u16: "%u", i16: "%i", u32: "%u", i32: "%i", u64: "%llu", i64: "%lli", size_t: "%lu", f32: "%f", f64: "%f", char*: "%s", char: "%c", i8: "%i", u8: "%u", bool: "%i")), (x)), \
+    printf("\n"),                                                                                                                                                                                     \
+    (x)                                                                                                                                                                                               \
 )
 
 #define DbgTyped(fmtstring, x, ...) (                   \
