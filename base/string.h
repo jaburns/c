@@ -1,9 +1,10 @@
 #pragma once
 
 structdef(Str32) {
-    char value[31];
-    char zero;
+    u8   count;
+    char items[31];
 };
+DefArrayTypes(Str32);
 
 typedef Slice_char Str;
 
@@ -24,10 +25,12 @@ structdef(StrSplitWhitespaceIter) {
     char* item_end_;
 };
 
-internal Str32 str32_from_cstr(char* str);
-internal bool  str32_eq(Str32* a, Str32* b);
-internal bool  str32_eq_cstr(char* cstr, Str32* a);
-internal Str32 str32_from_str(Str str);
+internal void str32_push(Str32* str, char c);
+internal void str32_push_repeat(Str32* str, char c, u32 num);
+// internal Str32 str32_from_cstr(char* str);
+// internal bool  str32_eq(Str32* a, Str32* b);
+// internal bool  str32_eq_cstr(char* cstr, Str32* a);
+// internal Str32 str32_from_str(Str str);
 
 // usage: printf(" %.*s ", STR_PRINTF_ARGS(some_str));
 #define StrPrintfArgs(str) (i32)(str).count, (str).items

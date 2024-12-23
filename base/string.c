@@ -2,27 +2,39 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 
-internal Str32 str32_from_cstr(char* str) {
-    Str32 ret = {0};
-    strncpy(ret.value, str, 31);
-    return ret;
+internal void str32_push(Str32* str, char c) {
+    DebugAssert(str->count < 31);
+    str->items[str->count++] = c;
 }
 
-internal bool str32_eq(Str32* a, Str32* b) {
-    return memcmp(a->value, b->value, sizeof(a->value)) == 0;
-}
-
-internal bool str32_eq_cstr(char* cstr, Str32* a) {
-    return strcmp((char*)a, cstr) == 0;
-}
-
-internal Str32 str32_from_str(Str str) {
-    Str32 ret = {0};
-    for (u32 i = 0; i < 31 && i < str.count; ++i) {
-        ret.value[i] = str.items[i];
+internal void str32_push_repeat(Str32* str, char c, u32 num) {
+    DebugAssert(num < 32 && str->count < 32 - num);
+    for (u32 i = 0; i < num; ++i) {
+        str->items[str->count++] = c;
     }
-    return ret;
 }
+
+// internal Str32 str32_from_cstr(char* str) {
+//     Str32 ret = {0};
+//     strncpy(ret.value, str, 31);
+//     return ret;
+// }
+//
+// internal bool str32_eq(Str32* a, Str32* b) {
+//     return memcmp(a->value, b->value, sizeof(a->value)) == 0;
+// }
+//
+// internal bool str32_eq_cstr(char* cstr, Str32* a) {
+//     return strcmp((char*)a, cstr) == 0;
+// }
+//
+// internal Str32 str32_from_str(Str str) {
+//     Str32 ret = {0};
+//     for (u32 i = 0; i < 31 && i < str.count; ++i) {
+//         ret.value[i] = str.items[i];
+//     }
+//     return ret;
+// }
 
 // --------------------------------------------------------------------------------------------------------------------
 

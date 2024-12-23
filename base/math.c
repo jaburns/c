@@ -130,6 +130,10 @@ internal i32 ivec2_manhattan(ivec2 a) {
     return i32x2_add_across(i32x2_abs(a.vector));
 }
 
+internal ivec2 ivec2_abs(ivec2 a) {
+    return ivec2_from_i32x2(i32x2_abs(a.vector));
+}
+
 internal ivec2 ivec2_min(ivec2 a, ivec2 b) {
     return ivec2_from_i32x2(i32x2_min(a.vector, b.vector));
 }

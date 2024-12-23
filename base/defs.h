@@ -33,6 +33,7 @@
 #define local_persist   static
 #define readonly_global static  // static __attribute__((section("__TEXT,__const")))  // this attribute causes problems with dylib load on macos
 #define thread_local    _Thread_local
+#define no_return       _Noreturn
 #define no_inline       __attribute__((noinline))
 #define alignof(x)      _Alignof(x)
 
@@ -145,12 +146,14 @@ DefArrayTypes(usize);
         exit(EXIT_FAILURE);           \
     } while (0)
 
-internal void panic_expr(char* msg) {
+internal no_return void panic_expr(char* msg) {
     Panic("%s", msg);
 }
 
+#define Unimplemented() panic_expr("Unimplemented!")
+
 #if DEBUG
-#define AssertUnreachable() Panic("Unreachable")
+#define AssertUnreachable() panic_expr("Unreachable!")
 #else
 #define AssertUnreachable() __builtin_unreachable()
 #endif
