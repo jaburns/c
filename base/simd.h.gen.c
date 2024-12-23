@@ -59,6 +59,7 @@ void generate(char** out, char* type, char* suffix, Flags flags) {
     }
 
     render(out, type, "get_lane", "get", "lane_", q, suffix);
+    render(out, type, "set_lane", "set", "lane_", q, suffix);
     render(out, type, "extract", "ext", "", q, suffix);
     render(out, type, "select", "bsl", "", q, suffix);
 

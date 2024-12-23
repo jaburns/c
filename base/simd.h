@@ -52,6 +52,7 @@ typedef simde_float64x2_t f64x2;
 #define u8x8_xor              simde_veor_u8
 #define u8x8_swizzle          simde_vqtbl1_u8
 #define u8x8_get_lane         simde_vget_lane_u8
+#define u8x8_set_lane         simde_vset_lane_u8
 #define u8x8_extract          simde_vext_u8
 #define u8x8_select           simde_vbsl_u8
 #define u8x8_add_across       simde_vaddv_u8
@@ -78,6 +79,7 @@ typedef simde_float64x2_t f64x2;
 #define u8x16_xor              simde_veorq_u8
 #define u8x16_swizzle          simde_vqtbl1q_u8
 #define u8x16_get_lane         simde_vgetq_lane_u8
+#define u8x16_set_lane         simde_vsetq_lane_u8
 #define u8x16_extract          simde_vextq_u8
 #define u8x16_select           simde_vbslq_u8
 #define u8x16_add_across       simde_vaddvq_u8
@@ -104,6 +106,7 @@ typedef simde_float64x2_t f64x2;
 #define i8x8_xor              simde_veor_s8
 #define i8x8_swizzle          simde_vqtbl1_s8
 #define i8x8_get_lane         simde_vget_lane_s8
+#define i8x8_set_lane         simde_vset_lane_s8
 #define i8x8_extract          simde_vext_s8
 #define i8x8_select           simde_vbsl_s8
 #define i8x8_add_across       simde_vaddv_s8
@@ -131,6 +134,7 @@ typedef simde_float64x2_t f64x2;
 #define i8x16_xor              simde_veorq_s8
 #define i8x16_swizzle          simde_vqtbl1q_s8
 #define i8x16_get_lane         simde_vgetq_lane_s8
+#define i8x16_set_lane         simde_vsetq_lane_s8
 #define i8x16_extract          simde_vextq_s8
 #define i8x16_select           simde_vbslq_s8
 #define i8x16_add_across       simde_vaddvq_s8
@@ -165,6 +169,7 @@ typedef simde_float64x2_t f64x2;
 #define u16x4_or               simde_vorr_u16
 #define u16x4_xor              simde_veor_u16
 #define u16x4_get_lane         simde_vget_lane_u16
+#define u16x4_set_lane         simde_vset_lane_u16
 #define u16x4_extract          simde_vext_u16
 #define u16x4_select           simde_vbsl_u16
 #define u16x4_add_across       simde_vaddv_u16
@@ -191,6 +196,7 @@ typedef simde_float64x2_t f64x2;
 #define u16x8_or               simde_vorrq_u16
 #define u16x8_xor              simde_veorq_u16
 #define u16x8_get_lane         simde_vgetq_lane_u16
+#define u16x8_set_lane         simde_vsetq_lane_u16
 #define u16x8_extract          simde_vextq_u16
 #define u16x8_select           simde_vbslq_u16
 #define u16x8_add_across       simde_vaddvq_u16
@@ -218,6 +224,7 @@ typedef simde_float64x2_t f64x2;
 #define i16x4_or               simde_vorr_s16
 #define i16x4_xor              simde_veor_s16
 #define i16x4_get_lane         simde_vget_lane_s16
+#define i16x4_set_lane         simde_vset_lane_s16
 #define i16x4_extract          simde_vext_s16
 #define i16x4_select           simde_vbsl_s16
 #define i16x4_add_across       simde_vaddv_s16
@@ -245,6 +252,7 @@ typedef simde_float64x2_t f64x2;
 #define i16x8_or               simde_vorrq_s16
 #define i16x8_xor              simde_veorq_s16
 #define i16x8_get_lane         simde_vgetq_lane_s16
+#define i16x8_set_lane         simde_vsetq_lane_s16
 #define i16x8_extract          simde_vextq_s16
 #define i16x8_select           simde_vbslq_s16
 #define i16x8_add_across       simde_vaddvq_s16
@@ -276,6 +284,7 @@ typedef simde_float64x2_t f64x2;
 #define u32x2_or               simde_vorr_u32
 #define u32x2_xor              simde_veor_u32
 #define u32x2_get_lane         simde_vget_lane_u32
+#define u32x2_set_lane         simde_vset_lane_u32
 #define u32x2_extract          simde_vext_u32
 #define u32x2_select           simde_vbsl_u32
 #define u32x2_add_across       simde_vaddv_u32
@@ -302,6 +311,7 @@ typedef simde_float64x2_t f64x2;
 #define u32x4_or               simde_vorrq_u32
 #define u32x4_xor              simde_veorq_u32
 #define u32x4_get_lane         simde_vgetq_lane_u32
+#define u32x4_set_lane         simde_vsetq_lane_u32
 #define u32x4_extract          simde_vextq_u32
 #define u32x4_select           simde_vbslq_u32
 #define u32x4_add_across       simde_vaddvq_u32
@@ -329,6 +339,7 @@ typedef simde_float64x2_t f64x2;
 #define i32x2_or               simde_vorr_s32
 #define i32x2_xor              simde_veor_s32
 #define i32x2_get_lane         simde_vget_lane_s32
+#define i32x2_set_lane         simde_vset_lane_s32
 #define i32x2_extract          simde_vext_s32
 #define i32x2_select           simde_vbsl_s32
 #define i32x2_add_across       simde_vaddv_s32
@@ -356,6 +367,7 @@ typedef simde_float64x2_t f64x2;
 #define i32x4_or               simde_vorrq_s32
 #define i32x4_xor              simde_veorq_s32
 #define i32x4_get_lane         simde_vgetq_lane_s32
+#define i32x4_set_lane         simde_vsetq_lane_s32
 #define i32x4_extract          simde_vextq_s32
 #define i32x4_select           simde_vbslq_s32
 #define i32x4_add_across       simde_vaddvq_s32
@@ -389,6 +401,7 @@ typedef simde_float64x2_t f64x2;
 #define f32x2_round            simde_vrndn_f32
 #define f32x2_scale_add        simde_vmla_n_f32
 #define f32x2_get_lane         simde_vget_lane_f32
+#define f32x2_set_lane         simde_vset_lane_f32
 #define f32x2_extract          simde_vext_f32
 #define f32x2_select           simde_vbsl_f32
 #define f32x2_add_across       simde_vaddv_f32
@@ -418,6 +431,7 @@ typedef simde_float64x2_t f64x2;
 #define f32x4_round            simde_vrndnq_f32
 #define f32x4_scale_add        simde_vmlaq_n_f32
 #define f32x4_get_lane         simde_vgetq_lane_f32
+#define f32x4_set_lane         simde_vsetq_lane_f32
 #define f32x4_extract          simde_vextq_f32
 #define f32x4_select           simde_vbslq_f32
 #define f32x4_add_across       simde_vaddvq_f32
