@@ -213,6 +213,12 @@ internal bool str_starts_with_cstr(char* cstr, Str str) {
     return !cstr[i];
 }
 
+internal Str str_substr_to(Str str, usize idx) {
+    if (idx >= str.count) return (Str){0};
+    str.count = idx;
+    return str;
+}
+
 internal Str str_substr_from(Str str, usize idx) {
     if (idx >= str.count) return (Str){0};
     str.items += idx;

@@ -63,6 +63,7 @@ internal i64  str_parse_i64(Str str, i32 base);
 internal i32  str_parse_u32(Str str, i32 base);
 internal i32  str_parse_i32(Str str, i32 base);
 internal bool str_starts_with_cstr(char* cstr, Str str);
+internal Str  str_substr_to(Str str, usize idx);
 internal Str  str_substr_from(Str str, usize idx);
 
 internal char* u64_print_with_commas(Arena* arena, u64 num);
