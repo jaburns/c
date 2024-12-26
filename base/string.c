@@ -214,8 +214,7 @@ internal bool str_starts_with_cstr(char* cstr, Str str) {
 }
 
 internal Str str_substr_to(Str str, usize idx) {
-    if (idx >= str.count) return (Str){0};
-    str.count = idx;
+    if (idx < str.count) str.count = idx;
     return str;
 }
 
@@ -224,6 +223,10 @@ internal Str str_substr_from(Str str, usize idx) {
     str.items += idx;
     str.count -= idx;
     return str;
+}
+
+internal Str str_substr(Str str, usize idx, usize len) {
+    return str_substr_to(str_substr_from(str, idx), len);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
