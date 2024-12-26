@@ -220,6 +220,22 @@ internal no_return void panic_expr(char* msg) {
 
 #define ArrayLen(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+#define Swap(type, a, b)  \
+    do {                  \
+        type temp = a;    \
+        a         = b;    \
+        b         = temp; \
+    } while (0)
+
+#define ArrayReverse(elem_type, array, count)        \
+    do {                                             \
+        usize max = (count) / 2;                     \
+        for (usize i = 0; i < max; ++i) {            \
+            usize j = count - 1 - i;                 \
+            Swap(elem_type, (array)[i], (array)[j]); \
+        }                                            \
+    } while (0)
+
 #define ArrayQuickSort(array, count, comparator)          \
     qsort(                                                \
         (array),                                          \
@@ -243,13 +259,6 @@ internal no_return void panic_expr(char* msg) {
 // use vla pointer casting combined with ub sanitization to get a bounds-checked array
 #define DeclCheckedArrayPtr(name, type, count, items) \
     type(*name)[(count)] = (type(*)[(count)])(items)
-
-#define Swap(type, a, b)  \
-    do {                  \
-        type temp = a;    \
-        a         = b;    \
-        b         = temp; \
-    } while (0)
 
 #define SliceBinarySearch(out_i32_result_idx, slice, field_type, field, seeking) \
     do {                                                                         \
